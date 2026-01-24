@@ -71,23 +71,23 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CONT-01 | — | Pending |
-| CONT-02 | — | Pending |
-| CONT-03 | — | Pending |
-| CONT-04 | — | Pending |
-| COMM-01 | — | Pending |
-| COMM-02 | — | Pending |
-| COMM-03 | — | Pending |
-| COMM-04 | — | Pending |
-| SRCH-01 | — | Pending |
-| ADMN-01 | — | Pending |
-| ADMN-02 | — | Pending |
-| ADMN-03 | — | Pending |
-| ADMN-04 | — | Pending |
-| FRNT-01 | — | Pending |
-| FRNT-02 | — | Pending |
-| FRNT-03 | — | Pending |
-| FRNT-04 | — | Pending |
+| CONT-01 | Phase 3 | Pending |
+| CONT-02 | Phase 3 | Pending |
+| CONT-03 | Phase 3 | Pending |
+| CONT-04 | Phase 2 | Pending |
+| COMM-01 | Phase 4 | Pending |
+| COMM-02 | Phase 4 | Pending |
+| COMM-03 | Phase 4 | Pending |
+| COMM-04 | Phase 4 | Pending |
+| SRCH-01 | Phase 5 | Pending |
+| ADMN-01 | Phase 6 | Pending |
+| ADMN-02 | Phase 6 | Pending |
+| ADMN-03 | Phase 6 | Pending |
+| ADMN-04 | Phase 6 | Pending |
+| FRNT-01 | Phase 3 | Pending |
+| FRNT-02 | Phase 3 | Pending |
+| FRNT-03 | Phase 3 | Pending |
+| FRNT-04 | Phase 7 | Pending |
 
 ---
-*Last updated: 2026-01-24 after requirements definition*
+*Last updated: 2026-01-24 after roadmap creation*
