@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 1 of 7 (Data Migration & Models)
-Plan: 1 of TBD in current phase
+Plan: 2 of TBD in current phase
 Status: In progress
-Last activity: 2026-01-24 — Completed 01-01-PLAN.md (WordPress Database Access)
+Last activity: 2026-01-24 — Completed 01-02-PLAN.md (Database Migrations)
 
-Progress: [█░░░░░░░░░] ~10%
+Progress: [██░░░░░░░░] ~20%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 10min
-- Total execution time: 0.17 hours
+- Total plans completed: 2
+- Average duration: 11min
+- Total execution time: 0.37 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-data-migration-models | 1 | 10min | 10min |
+| 01-data-migration-models | 2 | 22min | 11min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (10min)
-- Trend: First plan completed
+- Last 5 plans: 01-01 (10min), 01-02 (12min)
+- Trend: Consistent velocity
 
 *Updated after each plan completion*
 
@@ -49,6 +49,10 @@ Recent decisions affecting current work:
 - Set WordPress connection strict mode to false for compatibility (01-01)
 - Use WordPress uppercase ID convention for primary keys (01-01)
 - Models are read-only with no fillable properties (01-01)
+- Polymorphic relationships for tags/categories enable flexible content taxonomy (01-02)
+- Self-referencing parent_id in comments enables WordPress-style threading (01-02)
+- Custom unique constraint names prevent MySQL 64-character identifier limit errors (01-02)
+- Compound indexes on comments table optimize queries for 160K+ records (01-02)
 
 ### Pending Todos
 
@@ -60,7 +64,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-24 20:20 UTC
-Stopped at: Completed 01-01-PLAN.md
+Last session: 2026-01-24 20:23 UTC
+Stopped at: Completed 01-02-PLAN.md
 Resume file: None
-Next action: Continue with next plan in Phase 1 or plan remaining phase 1 work
+Next action: Continue with next plan in Phase 1 (Eloquent Models or Seeders)
