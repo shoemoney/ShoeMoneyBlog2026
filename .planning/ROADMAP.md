@@ -23,19 +23,25 @@ Decimal phases appear between their surrounding integers in numeric order.
 ## Phase Details
 
 ### Phase 1: Data Migration & Models
-**Goal**: WordPress database fully imported with all relationships preserved, Eloquent models operational, hybrid authentication working
+**Goal**: WordPress database fully imported with all relationships preserved, Eloquent models operational
 **Depends on**: Nothing (foundation phase)
 **Requirements**: Foundation for CONT-01, CONT-02, CONT-03, COMM-01, ADMN-01, ADMN-02, ADMN-03, ADMN-04
 **Success Criteria** (what must be TRUE):
   1. All WordPress posts, users, comments, categories, tags, and taxonomy relationships exist in Laravel database with correct associations
-  2. Existing WordPress users can log in using their original passwords (hybrid phpass/bcrypt validation working)
+  2. (SKIPPED - user handles manually) Password migration
   3. Post content renders without broken shortcodes (converted to HTML/Blade during migration)
   4. Comment threading preserved with correct parent-child relationships visible in database
   5. User roles mapped from WordPress (Administrator, Editor, Author) to Laravel permission system
-**Plans**: TBD
+**Plans**: 7 plans in 6 waves
 
 Plans:
-- [ ] TBD during phase planning
+- [ ] 01-01-PLAN.md - Database configuration and WordPress read-only models
+- [ ] 01-02-PLAN.md - Laravel schema migrations (users, posts, pages, comments, taxonomies)
+- [ ] 01-03-PLAN.md - Laravel Eloquent models with relationships
+- [ ] 01-04-PLAN.md - User, category, and tag seeders with role mapping
+- [ ] 01-05-PLAN.md - Post, page, and taxonomy relationship seeders
+- [ ] 01-06-PLAN.md - Comment seeder (160K+ records with threading)
+- [ ] 01-07-PLAN.md - Migration verification and shortcode audit
 
 ### Phase 2: URL Preservation & Routing
 **Goal**: All WordPress URLs mapped exactly to Laravel routes, no 404s on indexed content, SEO value protected
@@ -131,11 +137,11 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Data Migration & Models | 0/TBD | Not started | - |
+| 1. Data Migration & Models | 0/7 | Planned | - |
 | 2. URL Preservation & Routing | 0/TBD | Not started | - |
 | 3. Public Content Display | 0/TBD | Not started | - |
 | 4. Comment System | 0/TBD | Not started | - |
