@@ -25,12 +25,14 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Phase 2: Content (depends on users and taxonomies)
-        // PostSeeder, PageSeeder, TaxonomyRelationshipSeeder
-        // Added in Plan 05
+        $this->call([
+            PostSeeder::class,
+            PageSeeder::class,
+            TaxonomyRelationshipSeeder::class,
+        ]);
 
         // Phase 3: Engagement (depends on posts)
-        // CommentSeeder
-        // Added in Plan 06
+        // CommentSeeder - Added in Plan 06
 
         $this->command->newLine();
         $this->command->info('=== Migration Complete ===');
