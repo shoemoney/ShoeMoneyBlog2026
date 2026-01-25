@@ -17,6 +17,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Sitemap - served with correct Content-Type for search engines
+Route::get('/sitemap.xml', function () {
+    $path = public_path('sitemap.xml');
+
+    if (!file_exists($path)) {
+        abort(404, 'Sitemap not generated. Run: php artisan sitemap:generate');
+    }
+
+    return response()->file($path, [
+        'Content-Type' => 'application/xml',
+    ]);
+})->name('sitemap');
+
 // Homepage - blog listing
 Route::get('/', [PostController::class, 'index'])->name('home');
 
