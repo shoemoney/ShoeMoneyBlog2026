@@ -83,26 +83,19 @@ Route::prefix('admin')
             return 'Admin Dashboard (placeholder - will be replaced by Livewire component)';
         })->name('admin.dashboard');
 
-        // Posts management placeholders
-        Route::get('/posts', function () {
-            return redirect()->route('admin.dashboard')->with('info', 'Posts management coming soon');
-        })->name('admin.posts.index');
-        Route::get('/posts/create', function () {
-            return redirect()->route('admin.dashboard')->with('info', 'Post creation coming soon');
-        })->name('admin.posts.create');
-        Route::get('/posts/{post}/edit', function () {
-            return redirect()->route('admin.dashboard')->with('info', 'Post editing coming soon');
-        })->name('admin.posts.edit');
+        // Posts management
+        Route::get('/posts', \App\Livewire\Admin\Posts\PostIndex::class)->name('admin.posts.index');
+        Route::get('/posts/create', \App\Livewire\Admin\Posts\PostCreate::class)->name('admin.posts.create');
+        Route::get('/posts/{post}/edit', \App\Livewire\Admin\Posts\PostEdit::class)->name('admin.posts.edit');
 
         // Comments management placeholder
         Route::get('/comments', function () {
             return redirect()->route('admin.dashboard')->with('info', 'Comments management coming soon');
         })->name('admin.comments.index');
 
-        // Categories management placeholder
-        Route::get('/categories', function () {
-            return redirect()->route('admin.dashboard')->with('info', 'Categories management coming soon');
-        })->name('admin.categories.index');
+        // Categories management
+        Route::get('/categories', \App\Livewire\Admin\Taxonomies\CategoryManager::class)
+            ->name('admin.categories.index');
 
         // Tags management placeholder
         Route::get('/tags', function () {
