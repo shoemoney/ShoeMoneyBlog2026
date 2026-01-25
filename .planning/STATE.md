@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 
 ## Current Position
 
-Phase: 3 of 7 (Public Content Display) - COMPLETE
-Plan: 8 of 8 in current phase
-Status: Phase complete
-Last activity: 2026-01-25 — Completed 03-08-PLAN.md (Visual Verification)
+Phase: 4 of 7 (Comment System)
+Plan: 2 of 7 in current phase
+Status: In progress
+Last activity: 2026-01-25 - Completed 04-02-PLAN.md (Comment Moderation Service)
 
-Progress: [█████░░░░░] ~50%
+Progress: [█████▓░░░░] ~55%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 22
-- Average duration: ~7.0min
-- Total execution time: ~2.8 hours
+- Total plans completed: 24
+- Average duration: ~6.5min
+- Total execution time: ~2.9 hours
 
 **By Phase:**
 
@@ -30,12 +30,14 @@ Progress: [█████░░░░░] ~50%
 | 01-data-migration-models | 7 | ~84min | ~12min |
 | 02-url-preservation-routing | 7 | ~30min | ~4.3min |
 | 03-public-content-display | 8 | ~26min | ~3.3min |
+| 04-comment-system | 2 | ~5min | ~2.5min |
 
 **Recent Trend:**
 - Phase 1: 01-01 (10min), 01-02 (12min), 01-03 (12min), 01-04, 01-05, 01-06, 01-07
 - Phase 2: 02-01 (8min), 02-02 (5min), 02-03 (1min), 02-04, 02-05 (1min), 02-06 (12min), 02-07 (3min)
 - Phase 3: 03-01 (6min), 03-02 (2min), 03-03 (2min), 03-04 (3min), 03-05 (2min), 03-06 (2min), 03-07 (4min), 03-08 (5min)
-- Trend: Component creation and verification tasks completing quickly
+- Phase 4: 04-01 (3min), 04-02 (2min)
+- Trend: Service and test creation executing efficiently
 
 *Updated after each plan completion*
 
@@ -46,10 +48,10 @@ Progress: [█████░░░░░] ~50%
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-- Livewire over Inertia/Vue — Simpler mental model, stays in PHP, good for content sites
-- Algolia over Meilisearch — User preference, proven at scale, excellent Laravel integration
-- Custom admin over Filament — Full control over UX, avoid package dependencies
-- Preserve WordPress URLs — Protect 20 years of SEO value
+- Livewire over Inertia/Vue - Simpler mental model, stays in PHP, good for content sites
+- Algolia over Meilisearch - User preference, proven at scale, excellent Laravel integration
+- Custom admin over Filament - Full control over UX, avoid package dependencies
+- Preserve WordPress URLs - Protect 20 years of SEO value
 - Set WordPress connection strict mode to false for compatibility (01-01)
 - Use WordPress uppercase ID convention for primary keys (01-01)
 - Models are read-only with no fillable properties (01-01)
@@ -90,6 +92,8 @@ Recent decisions affecting current work:
 - Category and tag views share identical structure with taxonomy-specific labels (03-06)
 - Hashtag prefix in SEO title for tags (#tagname) (03-06)
 - Visual verification via human checkpoint confirms production readiness (03-08)
+- Email normalization: lowercase + trim before lookup for consistent matching (04-02)
+- Query efficiency: exists() over count() for boolean checks (04-02)
 
 ### Pending Todos
 
@@ -102,6 +106,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 03-08-PLAN.md (Phase 3 complete)
+Stopped at: Completed 04-02-PLAN.md (Comment Moderation Service)
 Resume file: None
-Next action: Begin Phase 4 planning (Comment System)
+Next action: Execute 04-03-PLAN.md (CommentSection Livewire Component)
