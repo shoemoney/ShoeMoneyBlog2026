@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tag;
-use Illuminate\Http\JsonResponse;
+use Illuminate\View\View;
 
 class TagController extends Controller
 {
@@ -15,9 +15,9 @@ class TagController extends Controller
      * With 15,448 tags, pagination is essential for performance.
      *
      * @param string $slug
-     * @return JsonResponse
+     * @return View
      */
-    public function show(string $slug): JsonResponse
+    public function show(string $slug): View
     {
         // Look up tag by slug, 404 if not found
         $tag = Tag::where('slug', $slug)->firstOrFail();
@@ -26,18 +26,15 @@ class TagController extends Controller
         $posts = $tag->posts()
             ->whereNotNull('published_at')
             ->where('status', 'published')
-            ->with('author')
+            ->with(['author', 'categories'])
             ->orderByDesc('published_at')
             ->paginate(15);
 
-        return response()->json([
-            'tag' => [
-                'id' => $tag->id,
-                'name' => $tag->name,
-                'slug' => $tag->slug,
-                'url' => $tag->url,
-            ],
-            'posts' => $posts,
-        ]);
+        // Configure SEO meta tags
+        seo()
+            ->title('#' . $tag->name . ' - ShoeMoney')
+            ->description($tag->description ?: 'Posts tagged ' . $tag->name);
+
+        return view('tags.show', compact('tag', 'posts'));
     }
 }
