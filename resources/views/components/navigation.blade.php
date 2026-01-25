@@ -13,6 +13,11 @@
                 Making Money Online
             </span>
 
+            {{-- Search Bar (hidden on very small screens) --}}
+            <div class="hidden sm:block flex-1 max-w-xs mx-4">
+                <livewire:search.search-bar />
+            </div>
+
             {{-- Navigation Links --}}
             <nav class="flex items-center space-x-6 text-sm font-medium">
                 <a href="{{ route('home') }}"
