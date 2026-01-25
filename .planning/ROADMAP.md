@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: URL Preservation & Routing** - Map WordPress permalink structure, protect SEO value
 - [x] **Phase 3: Public Content Display** - Blog posts, categories, tags, static pages with ShoeMoney branding
 - [x] **Phase 4: Comment System** - Threaded comments, submission, moderation workflow, Gravatar avatars
-- [ ] **Phase 5: Search Integration** - Algolia-powered typeahead search across posts
+- [x] **Phase 5: Search Integration** - Algolia-powered typeahead search across posts
 - [ ] **Phase 6: Admin Panel** - Content management, comment moderation, user/role management
 - [ ] **Phase 7: Performance & Polish** - Caching, optimization, dark mode, launch preparation
 
@@ -119,9 +119,9 @@ Plans:
 **Plans**: 3 plans in 3 waves
 
 Plans:
-- [ ] 05-01-PLAN.md - Scout Extended installation and Post model configuration
-- [ ] 05-02-PLAN.md - SearchBar Livewire component with typeahead UI
-- [ ] 05-03-PLAN.md - Navigation integration, index import, and verification
+- [x] 05-01-PLAN.md - Scout Extended installation and Post model configuration
+- [x] 05-02-PLAN.md - SearchBar Livewire component with typeahead UI
+- [x] 05-03-PLAN.md - Navigation integration, index import, and verification
 
 ### Phase 6: Admin Panel
 **Goal**: Authors can manage content, moderate comments, and administer users via custom admin interface
@@ -133,10 +133,16 @@ Plans:
   3. Admin can create new categories and tags, edit names/slugs, and delete unused taxonomy terms
   4. Admin can create user accounts, assign roles (Admin/Editor/Author), and manage permissions
   5. Admin panel enforces role-based access (Authors can only edit own posts, Admins can edit all)
-**Plans**: TBD
+**Plans**: 7 plans in 3 waves
 
 Plans:
-- [ ] TBD during phase planning
+- [ ] 06-01-PLAN.md - Auth foundation with is_admin flag and Gate::before
+- [ ] 06-02-PLAN.md - Admin layout and dashboard component
+- [ ] 06-03-PLAN.md - Post management (list, create, edit, delete)
+- [ ] 06-04-PLAN.md - Comment moderation interface
+- [ ] 06-05-PLAN.md - Category and tag management
+- [ ] 06-06-PLAN.md - User management interface
+- [ ] 06-07-PLAN.md - Visual verification checkpoint
 
 ### Phase 7: Performance & Polish
 **Goal**: Site optimized for production traffic, dark mode implemented, launch-ready
@@ -164,8 +170,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 2. URL Preservation & Routing | 7/7 | Complete | 2026-01-24 |
 | 3. Public Content Display | 8/8 | Complete | 2026-01-25 |
 | 4. Comment System | 5/5 | Complete | 2026-01-25 |
-| 5. Search Integration | 0/3 | Planning complete | - |
-| 6. Admin Panel | 0/TBD | Not started | - |
+| 5. Search Integration | 3/3 | Complete | 2026-01-25 |
+| 6. Admin Panel | 0/7 | Planning complete | - |
 | 7. Performance & Polish | 0/TBD | Not started | - |
 
 ---
