@@ -1,0 +1,38 @@
+@import 'tailwindcss';
+@plugin "@tailwindcss/typography";
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* ShoeMoney Brand Colors */
+    --color-brand-primary: #1e40af;
+    --color-brand-accent: #f59e0b;
+    --color-brand-light: #f8fafc;
+}
+
+/* WordPress Content Styles */
+.wp-caption {
+    @apply my-6 mx-auto;
+}
+
+.wp-caption img {
+    @apply rounded-lg shadow-md;
+}
+
+.wp-caption figcaption {
+    @apply text-sm text-gray-500 mt-2 text-center italic;
+}
+
+.wp-video {
+    @apply w-full rounded-lg shadow-md my-6;
+}
+
+.wp-more {
+    @apply my-8 border-0 h-px bg-gray-200;
+}
