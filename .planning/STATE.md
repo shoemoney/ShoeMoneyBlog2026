@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 6 of 7 (Admin Panel)
-Plan: 1 of 7 in current phase
+Plan: 5 of 7 in current phase
 Status: In progress
-Last activity: 2026-01-25 - Completed 06-01-PLAN.md (Auth Foundation)
+Last activity: 2026-01-25 - Completed 06-05-PLAN.md (Taxonomy Management)
 
-Progress: [████████░░] ~77%
+Progress: [████████░░] ~83%
 
 ## Performance Metrics
 
@@ -38,8 +38,8 @@ Progress: [████████░░] ~77%
 - Phase 3: 03-01 (6min), 03-02 (2min), 03-03 (2min), 03-04 (3min), 03-05 (2min), 03-06 (2min), 03-07 (4min), 03-08 (5min)
 - Phase 4: 04-01 (3min), 04-02 (2min), 04-03 (1min), 04-04 (2min), 04-05 (3min)
 - Phase 5: 05-01 (4min), 05-02 (2min), 05-03 (15min)
-- Phase 6: 06-01 (4min)
-- Trend: Admin panel auth foundation complete
+- Phase 6: 06-01 (4min), 06-05 (3min)
+- Trend: Taxonomy management complete
 
 *Updated after each plan completion*
 
@@ -120,6 +120,9 @@ Recent decisions affecting current work:
 - Gate::before grants admin full access without individual policy checks (06-01)
 - Middleware class over inline closure for Laravel 12 route groups (06-01)
 - All admin routes defined as placeholders for immediate sidebar navigation (06-01)
+- Inline edit pattern: form toggles create/edit mode with same fields (06-05)
+- Pagination 50 per page for large tag sets (15K+ from WordPress) (06-05)
+- Delete protection: disable button if posts_count > 0 (06-05)
 
 ### Pending Todos
 
@@ -132,6 +135,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 06-01-PLAN.md (Auth Foundation)
+Stopped at: Completed 06-05-PLAN.md (Taxonomy Management)
 Resume file: None
-Next action: Continue with 06-02-PLAN.md (Admin Layout & Dashboard)
+Next action: Continue with remaining 06-XX plans
