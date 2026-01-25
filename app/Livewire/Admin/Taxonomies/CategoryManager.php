@@ -9,7 +9,7 @@ use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
-#[Layout('components.layout')]
+#[Layout('components.admin.layouts.app')]
 #[Title('Categories - Admin')]
 class CategoryManager extends Component
 {

@@ -8,7 +8,7 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-#[Layout('components.layout')]
+#[Layout('components.admin.layouts.app')]
 class PostIndex extends Component
 {
     use WithPagination;

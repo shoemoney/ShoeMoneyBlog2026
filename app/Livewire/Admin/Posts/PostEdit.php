@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
-#[Layout('components.layout')]
+#[Layout('components.admin.layouts.app')]
 class PostEdit extends Component
 {
     public Post $post;

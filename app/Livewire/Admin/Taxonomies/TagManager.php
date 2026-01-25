@@ -10,7 +10,7 @@ use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-#[Layout('components.layout')]
+#[Layout('components.admin.layouts.app')]
 #[Title('Tags - Admin')]
 class TagManager extends Component
 {
