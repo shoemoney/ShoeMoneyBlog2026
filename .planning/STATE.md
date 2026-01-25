@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 5 of 7 (Search Integration)
-Plan: 0 of TBD in current phase
-Status: Ready for planning
-Last activity: 2026-01-25 - Completed Phase 4 (Comment System)
+Plan: 1 of TBD in current phase
+Status: In progress
+Last activity: 2026-01-25 - Completed 05-01-PLAN.md (Scout Extended Setup)
 
-Progress: [██████▓░░░] ~65%
+Progress: [██████▓░░░] ~67%
 
 ## Performance Metrics
 
@@ -37,7 +37,8 @@ Progress: [██████▓░░░] ~65%
 - Phase 2: 02-01 (8min), 02-02 (5min), 02-03 (1min), 02-04, 02-05 (1min), 02-06 (12min), 02-07 (3min)
 - Phase 3: 03-01 (6min), 03-02 (2min), 03-03 (2min), 03-04 (3min), 03-05 (2min), 03-06 (2min), 03-07 (4min), 03-08 (5min)
 - Phase 4: 04-01 (3min), 04-02 (2min), 04-03 (1min), 04-04 (2min), 04-05 (3min)
-- Trend: Phase 4 completed efficiently; Livewire components well-integrated
+- Phase 5: 05-01 (4min)
+- Trend: Phase 5 started; Scout Extended with Algolia configuration
 
 *Updated after each plan completion*
 
@@ -102,6 +103,10 @@ Recent decisions affecting current work:
 - Rate limit: 5 comments per minute per IP (04-04)
 - Keep name/email after submit for user convenience (04-04)
 - Unique field IDs using parentId suffix for multiple forms (04-04)
+- Scout Extended over base Scout for zero-downtime reimports and settings sync (05-01)
+- Content truncated to ~5000 chars to stay under Algolia 10KB limit (05-01)
+- SCOUT_QUEUE=false for development, true for production (05-01)
+- Index prefix 'shoemoney_' for namespace isolation (05-01)
 
 ### Pending Todos
 
@@ -114,6 +119,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed Phase 4 (Comment System) - 5/5 plans, 5/5 must-haves verified
+Stopped at: Completed 05-01-PLAN.md (Scout Extended Setup) - 2/2 tasks complete
 Resume file: None
-Next action: Plan Phase 5 (Search Integration) with /gsd:plan-phase 5
+Next action: Execute 05-02-PLAN.md (Search Component)
