@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\ClearsResponseCache;
 use App\Services\ShortcodeProcessor;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,6 +15,7 @@ use Laravel\Scout\Searchable;
 
 class Post extends Model
 {
+    use ClearsResponseCache;
     use HasFactory;
     use Searchable;
 
