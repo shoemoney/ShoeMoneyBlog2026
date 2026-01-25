@@ -154,10 +154,14 @@ Plans:
   3. User can toggle between light and dark mode themes with preference persisted
   4. Database queries optimized with indexes on frequently-queried columns (no N+1 issues)
   5. Automated backup system configured and tested (daily backups to external storage)
-**Plans**: TBD
+**Plans**: 5 plans in 2 waves
 
 Plans:
-- [ ] TBD during phase planning
+- [ ] 07-01-PLAN.md - Response caching with spatie/laravel-responsecache
+- [ ] 07-02-PLAN.md - Dark mode with Tailwind v4 @custom-variant and Alpine.js
+- [ ] 07-03-PLAN.md - Database performance indexes migration
+- [ ] 07-04-PLAN.md - Automated backups with spatie/laravel-backup
+- [ ] 07-05-PLAN.md - Performance verification and visual checkpoint
 
 ## Progress
 
@@ -172,7 +176,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 4. Comment System | 5/5 | Complete | 2026-01-25 |
 | 5. Search Integration | 3/3 | Complete | 2026-01-25 |
 | 6. Admin Panel | 7/7 | Complete | 2026-01-25 |
-| 7. Performance & Polish | 0/TBD | Not started | - |
+| 7. Performance & Polish | 0/5 | Not started | - |
 
 ---
 *Last updated: 2026-01-25*
