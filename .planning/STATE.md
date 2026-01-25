@@ -60,6 +60,7 @@ Recent decisions affecting current work:
 - Role helpers use constants for cleaner authorization checks (01-03)
 - Route order strategy: specific patterns before catch-all (02-01)
 - Regex constraints on all routes for URL validation (02-01)
+- Date validation with whereYear/Month/Day prevents URL manipulation (02-02)
 - 15 items per page for taxonomy archives (02-03)
 - firstOrFail pattern for 404 handling on taxonomy lookups (02-03)
 
