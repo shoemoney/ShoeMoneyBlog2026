@@ -78,39 +78,33 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::prefix('admin')
     ->middleware(['auth', EnsureUserIsAdmin::class])
     ->group(function () {
-        // Dashboard - placeholder until 06-02 adds Livewire component
-        Route::get('/', function () {
-            return 'Admin Dashboard (placeholder - will be replaced by Livewire component)';
-        })->name('admin.dashboard');
+        // Dashboard
+        Route::get('/', \App\Livewire\Admin\Dashboard::class)->name('admin.dashboard');
 
         // Posts management
         Route::get('/posts', \App\Livewire\Admin\Posts\PostIndex::class)->name('admin.posts.index');
         Route::get('/posts/create', \App\Livewire\Admin\Posts\PostCreate::class)->name('admin.posts.create');
         Route::get('/posts/{post}/edit', \App\Livewire\Admin\Posts\PostEdit::class)->name('admin.posts.edit');
 
-        // Comments management placeholder
-        Route::get('/comments', function () {
-            return redirect()->route('admin.dashboard')->with('info', 'Comments management coming soon');
-        })->name('admin.comments.index');
+        // Comments management
+        Route::get('/comments', \App\Livewire\Admin\Comments\CommentModeration::class)
+            ->name('admin.comments.index');
 
         // Categories management
         Route::get('/categories', \App\Livewire\Admin\Taxonomies\CategoryManager::class)
             ->name('admin.categories.index');
 
-        // Tags management placeholder
-        Route::get('/tags', function () {
-            return redirect()->route('admin.dashboard')->with('info', 'Tags management coming soon');
-        })->name('admin.tags.index');
+        // Tags management
+        Route::get('/tags', \App\Livewire\Admin\Taxonomies\TagManager::class)
+            ->name('admin.tags.index');
 
-        // Users management placeholders
-        Route::get('/users', function () {
-            return redirect()->route('admin.dashboard')->with('info', 'Users management coming soon');
-        })->name('admin.users.index');
+        // Users management
+        Route::get('/users', \App\Livewire\Admin\Users\UserIndex::class)->name('admin.users.index');
         Route::get('/users/create', function () {
-            return redirect()->route('admin.dashboard')->with('info', 'User creation coming soon');
+            return redirect()->route('admin.users.index')->with('info', 'User creation coming soon');
         })->name('admin.users.create');
         Route::get('/users/{user}/edit', function () {
-            return redirect()->route('admin.dashboard')->with('info', 'User editing coming soon');
+            return redirect()->route('admin.users.index')->with('info', 'User editing coming soon');
         })->name('admin.users.edit');
     });
 
