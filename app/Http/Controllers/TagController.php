@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use App\Models\Tag;
+use Illuminate\Http\JsonResponse;
 
 class TagController extends Controller
 {
@@ -12,11 +12,32 @@ class TagController extends Controller
      *
      * WordPress permalink format: /tag/{slug}/
      *
+     * With 15,448 tags, pagination is essential for performance.
+     *
      * @param string $slug
-     * @return Response
+     * @return JsonResponse
      */
-    public function show(string $slug): Response
+    public function show(string $slug): JsonResponse
     {
-        return response("Tag placeholder: {$slug} - to be implemented in Plan 02", 200);
+        // Look up tag by slug, 404 if not found
+        $tag = Tag::where('slug', $slug)->firstOrFail();
+
+        // Get published posts with this tag, paginated for performance
+        $posts = $tag->posts()
+            ->whereNotNull('published_at')
+            ->where('status', 'published')
+            ->with('author')
+            ->orderByDesc('published_at')
+            ->paginate(15);
+
+        return response()->json([
+            'tag' => [
+                'id' => $tag->id,
+                'name' => $tag->name,
+                'slug' => $tag->slug,
+                'url' => $tag->url,
+            ],
+            'posts' => $posts,
+        ]);
     }
 }
