@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@custom-variant dark (&:where(.dark, .dark *));
 @plugin "@tailwindcss/typography";
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -10,10 +11,15 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 
-    /* ShoeMoney Brand Colors */
+    /* ShoeMoney Brand Colors - Light Mode */
     --color-brand-primary: #1e40af;
     --color-brand-accent: #f59e0b;
     --color-brand-light: #f8fafc;
+
+    /* Dark Mode Colors */
+    --color-dark-bg: #0f172a;
+    --color-dark-surface: #1e293b;
+    --color-dark-text: #f1f5f9;
 }
 
 /* WordPress Content Styles */
@@ -35,4 +41,13 @@
 
 .wp-more {
     @apply my-8 border-0 h-px bg-gray-200;
+}
+
+/* Dark mode for WordPress content */
+.dark .wp-caption figcaption {
+    @apply text-gray-400;
+}
+
+.dark .wp-more {
+    @apply bg-gray-700;
 }
