@@ -124,15 +124,15 @@ Plans:
 - [x] 05-03-PLAN.md - Navigation integration, index import, and verification
 
 ### Phase 6: Admin Panel
-**Goal**: Authors can manage content, moderate comments, and administer users via custom admin interface
+**Goal**: Admin can manage content, moderate comments, and administer users via custom admin interface
 **Depends on**: Phase 3 (requires content models and routing), Phase 4 (requires comment models)
 **Requirements**: ADMN-01, ADMN-02, ADMN-03, ADMN-04
 **Success Criteria** (what must be TRUE):
   1. Admin can create new post, edit content with rich text editor, publish/unpublish, and delete posts
   2. Admin can view pending comments queue, approve/reject individual comments, and delete spam
   3. Admin can create new categories and tags, edit names/slugs, and delete unused taxonomy terms
-  4. Admin can create user accounts, assign roles (Admin/Editor/Author), and manage permissions
-  5. Admin panel enforces role-based access (Authors can only edit own posts, Admins can edit all)
+  4. Admin can manage user accounts (create, edit is_admin flag)
+  5. Admin panel protected by is_admin check (simple boolean, not complex role system)
 **Plans**: 7 plans in 3 waves
 
 Plans:
