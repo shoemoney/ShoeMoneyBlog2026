@@ -45,4 +45,9 @@
             </footer>
         @endif
     </article>
+
+    {{-- Comments section --}}
+    <section class="max-w-4xl mx-auto mt-12 pt-8 border-t border-gray-200">
+        <livewire:comments.comment-section :post="$post" />
+    </section>
 </x-layout>
