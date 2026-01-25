@@ -149,9 +149,11 @@ return [
 
             /*
              * The disk names on which the backups will be stored.
+             * Uses 'backups' (S3) in production, 'local' for development.
+             * Set BACKUP_DISK env var to override.
              */
             'disks' => [
-                'backups',
+                env('BACKUP_DISK', 'backups'),
             ],
         ],
 
@@ -255,7 +257,7 @@ return [
     'monitor_backups' => [
         [
             'name' => env('APP_NAME', 'laravel-backup'),
-            'disks' => ['backups'],
+            'disks' => [env('BACKUP_DISK', 'backups')],
             'health_checks' => [
                 \Spatie\Backup\Tasks\Monitor\HealthChecks\MaximumAgeInDays::class => 1,
                 \Spatie\Backup\Tasks\Monitor\HealthChecks\MaximumStorageInMegabytes::class => 5000,
