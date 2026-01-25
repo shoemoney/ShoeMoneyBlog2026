@@ -97,10 +97,14 @@ Plans:
   3. First-time commenter submissions held for moderation (status: pending)
   4. Approved commenters can post immediately (comments auto-approved based on email match)
   5. Gravatar avatars display next to comments based on commenter email address
-**Plans**: TBD
+**Plans**: 5 plans in 3 waves
 
 Plans:
-- [ ] TBD during phase planning
+- [ ] 04-01-PLAN.md - Livewire packages and layout configuration
+- [ ] 04-02-PLAN.md - CommentModerationService with auto-approval logic
+- [ ] 04-03-PLAN.md - CommentSection component for threaded display
+- [ ] 04-04-PLAN.md - CommentForm component with spam protection
+- [ ] 04-05-PLAN.md - Post view integration and visual verification
 
 ### Phase 5: Search Integration
 **Goal**: Fast, typo-tolerant search operational with Algolia-powered typeahead
@@ -157,7 +161,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 1. Data Migration & Models | 7/7 | Complete | 2026-01-24 |
 | 2. URL Preservation & Routing | 7/7 | Complete | 2026-01-24 |
 | 3. Public Content Display | 8/8 | Complete | 2026-01-25 |
-| 4. Comment System | 0/TBD | Ready | - |
+| 4. Comment System | 0/5 | Ready | - |
 | 5. Search Integration | 0/TBD | Not started | - |
 | 6. Admin Panel | 0/TBD | Not started | - |
 | 7. Performance & Polish | 0/TBD | Not started | - |
