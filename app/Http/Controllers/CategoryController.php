@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use Illuminate\Http\JsonResponse;
+use Illuminate\View\View;
 
 class CategoryController extends Controller
 {
@@ -13,9 +13,9 @@ class CategoryController extends Controller
      * WordPress permalink format: /category/{slug}/
      *
      * @param string $slug
-     * @return JsonResponse
+     * @return View
      */
-    public function show(string $slug): JsonResponse
+    public function show(string $slug): View
     {
         // Look up category by slug, 404 if not found
         $category = Category::where('slug', $slug)->firstOrFail();
@@ -24,19 +24,15 @@ class CategoryController extends Controller
         $posts = $category->posts()
             ->whereNotNull('published_at')
             ->where('status', 'published')
-            ->with('author')
+            ->with(['author', 'categories'])
             ->orderByDesc('published_at')
             ->paginate(15);
 
-        return response()->json([
-            'category' => [
-                'id' => $category->id,
-                'name' => $category->name,
-                'slug' => $category->slug,
-                'description' => $category->description,
-                'url' => $category->url,
-            ],
-            'posts' => $posts,
-        ]);
+        // Configure SEO meta tags
+        seo()
+            ->title($category->name . ' - ShoeMoney')
+            ->description($category->description ?: 'Posts in ' . $category->name);
+
+        return view('categories.show', compact('category', 'posts'));
     }
 }
