@@ -38,8 +38,8 @@ Progress: [████████░░] ~83%
 - Phase 3: 03-01 (6min), 03-02 (2min), 03-03 (2min), 03-04 (3min), 03-05 (2min), 03-06 (2min), 03-07 (4min), 03-08 (5min)
 - Phase 4: 04-01 (3min), 04-02 (2min), 04-03 (1min), 04-04 (2min), 04-05 (3min)
 - Phase 5: 05-01 (4min), 05-02 (2min), 05-03 (15min)
-- Phase 6: 06-01 (4min), 06-05 (3min)
-- Trend: Taxonomy management complete
+- Phase 6: 06-01 (4min), 06-02 (2min), 06-03 (5min), 06-05 (3min)
+- Trend: Post management CRUD complete
 
 *Updated after each plan completion*
 
@@ -126,6 +126,10 @@ Recent decisions affecting current work:
 - Inline edit pattern: form toggles create/edit mode with same fields (06-05)
 - Pagination 50 per page for large tag sets (15K+ from WordPress) (06-05)
 - Delete protection: disable button if posts_count > 0 (06-05)
+- Livewire Layout attribute for component pages (06-03)
+- URL query string persistence with #[Url(history: true)] for bookmarkable filters (06-03)
+- wire:model.blur for title to trigger slug generation after typing (06-03)
+- Preserve original published_at when re-saving published posts (06-03)
 
 ### Pending Todos
 
@@ -138,6 +142,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 06-05-PLAN.md (Taxonomy Management)
+Stopped at: Completed 06-03-PLAN.md (Post Management CRUD)
 Resume file: None
-Next action: Continue with remaining 06-XX plans
+Next action: Continue with 06-04-PLAN.md (Comment Management)
