@@ -113,20 +113,6 @@ return [
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
 
-        'wordpress' => [
-            'driver' => 'mysql',
-            'host' => env('WP_DB_HOST', '127.0.0.1'),
-            'port' => env('WP_DB_PORT', '3306'),
-            'database' => env('WP_DB_DATABASE', 'shoemoney_wp'),
-            'username' => env('WP_DB_USERNAME', 'root'),
-            'password' => env('WP_DB_PASSWORD', ''),
-            'unix_socket' => env('WP_DB_SOCKET', ''),
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
-            'prefix' => 'wp2_',
-            'strict' => false, // WordPress uses non-strict mode
-        ],
-
     ],
 
     /*
