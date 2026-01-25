@@ -4,6 +4,8 @@ use App\Http\Middleware\TrailingSlashRedirect;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Spatie\ResponseCache\Middlewares\CacheResponse;
+use Spatie\ResponseCache\Middlewares\DoNotCacheResponse;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -15,6 +17,16 @@ return Application::configure(basePath: dirname(__DIR__))
         // TrailingSlashRedirect must run before routing to catch URLs
         // without trailing slashes before they hit route matching
         $middleware->prepend(TrailingSlashRedirect::class);
+
+        // Response caching for public pages (prepend so it runs early)
+        $middleware->web(prepend: [
+            CacheResponse::class,
+        ]);
+
+        // Alias for excluding specific routes from caching
+        $middleware->alias([
+            'doNotCacheResponse' => DoNotCacheResponse::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

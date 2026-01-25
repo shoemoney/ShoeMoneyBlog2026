@@ -76,7 +76,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 */
 
 Route::prefix('admin')
-    ->middleware(['auth', EnsureUserIsAdmin::class])
+    ->middleware(['auth', EnsureUserIsAdmin::class, 'doNotCacheResponse'])
     ->group(function () {
         // Dashboard
         Route::get('/', \App\Livewire\Admin\Dashboard::class)->name('admin.dashboard');
