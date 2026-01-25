@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Services\ShortcodeProcessor;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -38,5 +40,18 @@ class Page extends Model
     public function getUrlAttribute(): string
     {
         return '/' . $this->slug . '/';
+    }
+
+    /**
+     * Get rendered content with shortcodes processed to HTML.
+     */
+    protected function renderedContent(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $processor = app(ShortcodeProcessor::class);
+                return $processor->process($this->content ?? '');
+            }
+        )->shouldCache();
     }
 }
