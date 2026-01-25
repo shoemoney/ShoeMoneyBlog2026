@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use App\Models\Category;
+use Illuminate\Http\JsonResponse;
 
 class CategoryController extends Controller
 {
@@ -13,10 +13,30 @@ class CategoryController extends Controller
      * WordPress permalink format: /category/{slug}/
      *
      * @param string $slug
-     * @return Response
+     * @return JsonResponse
      */
-    public function show(string $slug): Response
+    public function show(string $slug): JsonResponse
     {
-        return response("Category placeholder: {$slug} - to be implemented in Plan 02", 200);
+        // Look up category by slug, 404 if not found
+        $category = Category::where('slug', $slug)->firstOrFail();
+
+        // Get published posts in this category with pagination
+        $posts = $category->posts()
+            ->whereNotNull('published_at')
+            ->where('status', 'published')
+            ->with('author')
+            ->orderByDesc('published_at')
+            ->paginate(15);
+
+        return response()->json([
+            'category' => [
+                'id' => $category->id,
+                'name' => $category->name,
+                'slug' => $category->slug,
+                'description' => $category->description,
+                'url' => $category->url,
+            ],
+            'posts' => $posts,
+        ]);
     }
 }
