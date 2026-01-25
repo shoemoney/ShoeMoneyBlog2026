@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use App\Models\Page;
+use Illuminate\Http\JsonResponse;
 
 class PageController extends Controller
 {
@@ -13,10 +13,20 @@ class PageController extends Controller
      * WordPress permalink format: /{slug}/
      *
      * @param string $slug
-     * @return Response
+     * @return JsonResponse
      */
-    public function show(string $slug): Response
+    public function show(string $slug): JsonResponse
     {
-        return response("Page placeholder: {$slug} - to be implemented in Plan 02", 200);
+        $page = Page::where('slug', $slug)
+            ->with('author')
+            ->firstOrFail();
+
+        // Placeholder response until Phase 3 views
+        return response()->json([
+            'message' => 'Page found - view pending Phase 3',
+            'id' => $page->id,
+            'title' => $page->title,
+            'url' => $page->url,
+        ]);
     }
 }
