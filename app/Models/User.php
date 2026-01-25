@@ -31,6 +31,7 @@ class User extends Authenticatable
         'author_name',
         'wordpress_id',
         'role',
+        'is_admin',
     ];
 
     /**
@@ -53,6 +54,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_admin' => 'boolean',
         ];
     }
 
@@ -81,6 +83,14 @@ class User extends Authenticatable
     public function isEditor(): bool
     {
         return in_array($this->role, [self::ROLE_ADMINISTRATOR, self::ROLE_EDITOR]);
+    }
+
+    /**
+     * Check if user is an admin (super user with full access).
+     */
+    public function isAdmin(): bool
+    {
+        return (bool) $this->is_admin;
     }
 
     // Accessors

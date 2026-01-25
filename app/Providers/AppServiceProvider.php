@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -20,6 +21,20 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureSeo();
+        $this->configureAuthorization();
+    }
+
+    /**
+     * Configure authorization gates.
+     */
+    protected function configureAuthorization(): void
+    {
+        // Grant admin users full access to everything
+        Gate::before(function ($user, $ability) {
+            if ($user->isAdmin()) {
+                return true;
+            }
+        });
     }
 
     /**
