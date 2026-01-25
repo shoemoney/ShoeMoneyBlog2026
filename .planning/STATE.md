@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 7 of 7 (Performance & Polish)
-Plan: 0 of TBD in current phase
-Status: Not started
-Last activity: 2026-01-25 - Completed Phase 6 (Admin Panel)
+Plan: 3 of 5 in current phase
+Status: In progress
+Last activity: 2026-01-25 - Completed 07-03-PLAN.md (Database Performance Indexes)
 
-Progress: [█████████░] ~86%
+Progress: [█████████░] ~90%
 
 ## Performance Metrics
 
@@ -39,7 +39,8 @@ Progress: [█████████░] ~86%
 - Phase 4: 04-01 (3min), 04-02 (2min), 04-03 (1min), 04-04 (2min), 04-05 (3min)
 - Phase 5: 05-01 (4min), 05-02 (2min), 05-03 (15min)
 - Phase 6: 06-01 (4min), 06-02 (5min), 06-03 (5min), 06-04 (5min), 06-05 (3min), 06-06 (7min), 06-07 (verify)
-- Trend: Admin panel complete, ready for final polish
+- Phase 7: 07-03 (3min)
+- Trend: Performance indexes complete, continuing optimization
 
 *Updated after each plan completion*
 
@@ -138,6 +139,8 @@ Recent decisions affecting current work:
 - Password optional on edit to keep current password (06-06)
 - Self-protection: cannot toggle/delete own admin account (06-06)
 - Admin protection: cannot delete other admins without revoking first (06-06)
+- Compound index (status, published_at) for WHERE + ORDER BY pattern (07-03)
+- Explicit reverse lookup index naming for polymorphic relations (07-03)
 
 ### Pending Todos
 
@@ -150,6 +153,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed Phase 6 (Admin Panel) - all 7 plans executed
+Stopped at: Completed 07-03-PLAN.md (Database Performance Indexes)
 Resume file: None
-Next action: Plan Phase 7 (Performance & Polish)
+Next action: Execute 07-04-PLAN.md (Query Optimization)
