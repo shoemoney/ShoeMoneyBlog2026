@@ -51,3 +51,8 @@
 .dark .wp-more {
     @apply bg-gray-700;
 }
+
+/* Alpine.js cloak - hide until Alpine initializes */
+[x-cloak] {
+    display: none !important;
+}
