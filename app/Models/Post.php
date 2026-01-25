@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Services\ShortcodeProcessor;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -75,5 +77,28 @@ class Post extends Model
             $this->published_at->day,
             $this->slug
         );
+    }
+
+    /**
+     * Get rendered content with shortcodes processed to HTML.
+     */
+    protected function renderedContent(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $processor = app(ShortcodeProcessor::class);
+                return $processor->process($this->content ?? '');
+            }
+        )->shouldCache();
+    }
+
+    /**
+     * Get estimated reading time in minutes (200 words per minute).
+     */
+    protected function readingTime(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => max(1, (int) ceil(str_word_count(strip_tags($this->content ?? '')) / 200))
+        )->shouldCache();
     }
 }
