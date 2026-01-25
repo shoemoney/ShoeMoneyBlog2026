@@ -116,10 +116,12 @@ Plans:
   3. All published posts indexed in Algolia with verified count matching database
   4. New posts auto-sync to Algolia index when published (queued Scout observer working)
   5. Search handles typos gracefully (e.g., "wordpres" finds "WordPress" posts)
-**Plans**: TBD
+**Plans**: 3 plans in 3 waves
 
 Plans:
-- [ ] TBD during phase planning
+- [ ] 05-01-PLAN.md - Scout Extended installation and Post model configuration
+- [ ] 05-02-PLAN.md - SearchBar Livewire component with typeahead UI
+- [ ] 05-03-PLAN.md - Navigation integration, index import, and verification
 
 ### Phase 6: Admin Panel
 **Goal**: Authors can manage content, moderate comments, and administer users via custom admin interface
@@ -162,7 +164,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 2. URL Preservation & Routing | 7/7 | Complete | 2026-01-24 |
 | 3. Public Content Display | 8/8 | Complete | 2026-01-25 |
 | 4. Comment System | 5/5 | Complete | 2026-01-25 |
-| 5. Search Integration | 0/TBD | Not started | - |
+| 5. Search Integration | 0/3 | Planning complete | - |
 | 6. Admin Panel | 0/TBD | Not started | - |
 | 7. Performance & Polish | 0/TBD | Not started | - |
 
