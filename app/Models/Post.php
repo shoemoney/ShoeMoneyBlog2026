@@ -9,10 +9,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Str;
+use Laravel\Scout\Searchable;
 
 class Post extends Model
 {
     use HasFactory;
+    use Searchable;
 
     protected $fillable = [
         'wordpress_id',
@@ -100,5 +103,42 @@ class Post extends Model
         return Attribute::make(
             get: fn () => max(1, (int) ceil(str_word_count(strip_tags($this->content ?? '')) / 200))
         )->shouldCache();
+    }
+
+    // Search (Laravel Scout / Algolia)
+
+    /**
+     * Get the indexable data array for the model.
+     *
+     * Content is truncated to 5000 chars to stay under Algolia's 10KB limit.
+     */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'excerpt' => $this->excerpt,
+            'content' => Str::limit(strip_tags($this->content ?? ''), 5000),
+            'slug' => $this->slug,
+            'published_at' => $this->published_at?->timestamp,
+        ];
+    }
+
+    /**
+     * Determine if the model should be searchable.
+     *
+     * Only published posts with a published_at date are indexed.
+     */
+    public function shouldBeSearchable(): bool
+    {
+        return $this->status === 'published' && $this->published_at !== null;
+    }
+
+    /**
+     * Get the name of the index associated with the model.
+     */
+    public function searchableAs(): string
+    {
+        return config('scout.prefix') . 'posts';
     }
 }
