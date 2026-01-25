@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 7 of 7 (Performance & Polish)
-Plan: 2 of 5 in current phase
+Plan: 4 of 5 in current phase
 Status: In progress
-Last activity: 2026-01-25 - Completed 07-02-PLAN.md (Dark Mode Implementation)
+Last activity: 2026-01-25 - Completed 07-04-PLAN.md (Backup System)
 
-Progress: [█████████░] ~90%
+Progress: [█████████░] ~94%
 
 ## Performance Metrics
 
@@ -39,8 +39,8 @@ Progress: [█████████░] ~90%
 - Phase 4: 04-01 (3min), 04-02 (2min), 04-03 (1min), 04-04 (2min), 04-05 (3min)
 - Phase 5: 05-01 (4min), 05-02 (2min), 05-03 (15min)
 - Phase 6: 06-01 (4min), 06-02 (5min), 06-03 (5min), 06-04 (5min), 06-05 (3min), 06-06 (7min), 06-07 (verify)
-- Phase 7: 07-02 (5min), 07-03 (3min)
-- Trend: Dark mode and performance indexes complete, continuing optimization
+- Phase 7: 07-02 (5min), 07-03 (3min), 07-04 (3min)
+- Trend: Dark mode, indexes, and backup system complete, one plan remaining
 
 *Updated after each plan completion*
 
@@ -145,6 +145,10 @@ Recent decisions affecting current work:
 - FOUC script in head before @vite to prevent flash (07-02)
 - Alpine.js x-data on html element for cross-component theme state (07-02)
 - x-cloak CSS rule prevents icon flash before Alpine init (07-02)
+- BACKUP_DISK env var for disk selection (backups for production, local for dev) (07-04)
+- Backup schedule: 01:00 cleanup, 01:30 backup - avoids DST transition (07-04)
+- Separate S3 'backups' disk from general 's3' disk for bucket isolation (07-04)
+- Retention: 7d all, 30d daily, 8w weekly, 4m monthly, 2y yearly (07-04)
 
 ### Pending Todos
 
@@ -157,6 +161,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 07-02-PLAN.md (Dark Mode Implementation)
+Stopped at: Completed 07-04-PLAN.md (Backup System)
 Resume file: None
-Next action: Execute 07-01-PLAN.md or continue with remaining phase 7 plans
+Next action: Execute 07-05-PLAN.md (final plan) or complete phase 7
