@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 3 of 7 (Public Content Display)
-Plan: 6 of 8 in current phase
+Plan: 7 of 8 in current phase
 Status: In progress
-Last activity: 2026-01-25 — Completed 03-07-PLAN.md
+Last activity: 2026-01-25 — Completed 03-06-PLAN.md
 
-Progress: [████░░░░░░] ~42%
+Progress: [████░░░░░░] ~44%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 20
-- Average duration: ~7.5min
-- Total execution time: ~2.6 hours
+- Total plans completed: 21
+- Average duration: ~7.3min
+- Total execution time: ~2.7 hours
 
 **By Phase:**
 
@@ -29,12 +29,12 @@ Progress: [████░░░░░░] ~42%
 |-------|-------|-------|----------|
 | 01-data-migration-models | 7 | ~84min | ~12min |
 | 02-url-preservation-routing | 7 | ~30min | ~4.3min |
-| 03-public-content-display | 6 | ~19min | ~3.2min |
+| 03-public-content-display | 7 | ~21min | ~3min |
 
 **Recent Trend:**
 - Phase 1: 01-01 (10min), 01-02 (12min), 01-03 (12min), 01-04, 01-05, 01-06, 01-07
 - Phase 2: 02-01 (8min), 02-02 (5min), 02-03 (1min), 02-04, 02-05 (1min), 02-06 (12min), 02-07 (3min)
-- Phase 3: 03-01 (6min), 03-02 (2min), 03-03 (2min), 03-04 (3min), 03-05 (2min), 03-07 (4min)
+- Phase 3: 03-01 (6min), 03-02 (2min), 03-03 (2min), 03-04 (3min), 03-05 (2min), 03-06 (2min), 03-07 (4min)
 - Trend: Component creation tasks completing quickly
 
 *Updated after each plan completion*
@@ -87,6 +87,8 @@ Recent decisions affecting current work:
 - 200-char excerpt limit with Str::limit for post listings (03-04)
 - max-w-3xl for focused reading on static pages (03-07)
 - No author, date, reading time, categories, or tags on pages (03-07)
+- Category and tag views share identical structure with taxonomy-specific labels (03-06)
+- Hashtag prefix in SEO title for tags (#tagname) (03-06)
 
 ### Pending Todos
 
@@ -99,6 +101,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 03-07-PLAN.md
+Stopped at: Completed 03-06-PLAN.md
 Resume file: None
-Next action: Continue Phase 3 execution
+Next action: Continue Phase 3 execution (03-08 final verification remaining)
