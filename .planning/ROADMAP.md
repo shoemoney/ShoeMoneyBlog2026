@@ -75,10 +75,17 @@ Plans:
   4. User can browse tag pages (e.g., `/tag/seo/`) showing filtered post listings
   5. User can view static pages (About, Contact) with distinct layout from blog posts
   6. Site displays ShoeMoney brand identity (custom styling, colors, typography consistent with brand)
-**Plans**: TBD
+**Plans**: 8 plans in 4 waves
 
 Plans:
-- [ ] TBD during phase planning
+- [ ] 03-01-PLAN.md - Frontend packages and Tailwind CSS configuration
+- [ ] 03-02-PLAN.md - ShortcodeProcessor service and model accessors
+- [ ] 03-03-PLAN.md - Layout, navigation, and footer components
+- [ ] 03-04-PLAN.md - Blog homepage with post-card component
+- [ ] 03-05-PLAN.md - Single post view with typography styling
+- [ ] 03-06-PLAN.md - Category and tag archive views
+- [ ] 03-07-PLAN.md - Static page view
+- [ ] 03-08-PLAN.md - Visual verification checkpoint
 
 ### Phase 4: Comment System
 **Goal**: Readers can view and submit comments with moderation workflow operational
@@ -147,9 +154,9 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Data Migration & Models | 7/7 | Complete ✓ | 2026-01-24 |
-| 2. URL Preservation & Routing | 7/7 | Complete ✓ | 2026-01-24 |
-| 3. Public Content Display | 0/TBD | Not started | - |
+| 1. Data Migration & Models | 7/7 | Complete | 2026-01-24 |
+| 2. URL Preservation & Routing | 7/7 | Complete | 2026-01-24 |
+| 3. Public Content Display | 0/8 | Ready | - |
 | 4. Comment System | 0/TBD | Not started | - |
 | 5. Search Integration | 0/TBD | Not started | - |
 | 6. Admin Panel | 0/TBD | Not started | - |
