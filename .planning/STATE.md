@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 3 of 7 (Public Content Display)
-Plan: 5 of 8 in current phase
+Plan: 5 of 8 in current phase (03-04 also complete)
 Status: In progress
-Last activity: 2026-01-25 — Completed 03-05-PLAN.md
+Last activity: 2026-01-25 — Completed 03-04-PLAN.md
 
-Progress: [████░░░░░░] ~38%
+Progress: [████░░░░░░] ~40%
 
 ## Performance Metrics
 
@@ -29,12 +29,12 @@ Progress: [████░░░░░░] ~38%
 |-------|-------|-------|----------|
 | 01-data-migration-models | 7 | ~84min | ~12min |
 | 02-url-preservation-routing | 7 | ~30min | ~4.3min |
-| 03-public-content-display | 5 | ~12min | ~2.4min |
+| 03-public-content-display | 5 | ~15min | ~3min |
 
 **Recent Trend:**
 - Phase 1: 01-01 (10min), 01-02 (12min), 01-03 (12min), 01-04, 01-05, 01-06, 01-07
 - Phase 2: 02-01 (8min), 02-02 (5min), 02-03 (1min), 02-04, 02-05 (1min), 02-06 (12min), 02-07 (3min)
-- Phase 3: 03-01 (6min), 03-02 (2min), 03-03 (2min), 03-05 (2min)
+- Phase 3: 03-01 (6min), 03-02 (2min), 03-03 (2min), 03-04 (3min), 03-05 (2min)
 - Trend: Component creation tasks completing quickly
 
 *Updated after each plan completion*
@@ -83,6 +83,8 @@ Recent decisions affecting current work:
 - Display author.display_name with fallback to author.name (03-05)
 - Categories as pill links, tags as hashtag links (03-05)
 - prose prose-lg prose-slate for content typography (03-05)
+- Post-card as anonymous component with @props directive (03-04)
+- 200-char excerpt limit with Str::limit for post listings (03-04)
 
 ### Pending Todos
 
@@ -95,6 +97,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 03-05-PLAN.md
+Stopped at: Completed 03-04-PLAN.md
 Resume file: None
-Next action: Continue Phase 3 execution
+Next action: Continue Phase 3 execution (03-06 archives next)
