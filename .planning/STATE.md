@@ -92,6 +92,8 @@ Recent decisions affecting current work:
 - Category and tag views share identical structure with taxonomy-specific labels (03-06)
 - Hashtag prefix in SEO title for tags (#tagname) (03-06)
 - Visual verification via human checkpoint confirms production readiness (03-08)
+- Livewire 4.x with explicit @livewireStyles/@livewireScripts directives for clarity (04-01)
+- Honeypot config published for future spam protection customization (04-01)
 - Email normalization: lowercase + trim before lookup for consistent matching (04-02)
 - Query efficiency: exists() over count() for boolean checks (04-02)
 
