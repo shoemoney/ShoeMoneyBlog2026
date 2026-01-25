@@ -4,26 +4,28 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 class PostController extends Controller
 {
     /**
      * Display blog listing (homepage).
      *
-     * @return JsonResponse
+     * @return View
      */
-    public function index(): JsonResponse
+    public function index(): View
     {
         $posts = Post::published()
             ->with('author', 'categories')
             ->orderBy('published_at', 'desc')
             ->paginate(10);
 
-        // Placeholder response until Phase 3 views
-        return response()->json([
-            'message' => 'Homepage - view pending Phase 3',
-            'count' => $posts->total(),
-        ]);
+        seo()
+            ->title('ShoeMoney - Making Money Online')
+            ->description('The original blog about making money online since 2003');
+
+        return view('posts.index', compact('posts'));
     }
 
     /**
@@ -36,9 +38,9 @@ class PostController extends Controller
      * @param string $month
      * @param string $day
      * @param string $slug
-     * @return JsonResponse
+     * @return View
      */
-    public function show(string $year, string $month, string $day, string $slug): JsonResponse
+    public function show(string $year, string $month, string $day, string $slug): View
     {
         // Query with full date validation to prevent URL manipulation
         $post = Post::query()
@@ -50,13 +52,11 @@ class PostController extends Controller
             ->with('author', 'categories', 'tags')
             ->firstOrFail();
 
-        // Placeholder response until Phase 3 views
-        return response()->json([
-            'message' => 'Post found - view pending Phase 3',
-            'id' => $post->id,
-            'title' => $post->title,
-            'url' => $post->url,
-            'published_at' => $post->published_at->toIso8601String(),
-        ]);
+        seo()
+            ->title($post->title . ' - ShoeMoney')
+            ->description($post->excerpt ?: Str::limit(strip_tags($post->content), 160))
+            ->url(url($post->url));
+
+        return view('posts.show', compact('post'));
     }
 }
