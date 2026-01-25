@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Data Migration & Models** - Import WordPress database, establish Laravel foundation
 - [x] **Phase 2: URL Preservation & Routing** - Map WordPress permalink structure, protect SEO value
-- [ ] **Phase 3: Public Content Display** - Blog posts, categories, tags, static pages with ShoeMoney branding
+- [x] **Phase 3: Public Content Display** - Blog posts, categories, tags, static pages with ShoeMoney branding
 - [ ] **Phase 4: Comment System** - Threaded comments, submission, moderation workflow, Gravatar avatars
 - [ ] **Phase 5: Search Integration** - Algolia-powered typeahead search across posts
 - [ ] **Phase 6: Admin Panel** - Content management, comment moderation, user/role management
@@ -78,14 +78,14 @@ Plans:
 **Plans**: 8 plans in 5 waves
 
 Plans:
-- [ ] 03-01-PLAN.md - Frontend packages and Tailwind CSS configuration
-- [ ] 03-02-PLAN.md - ShortcodeProcessor service and model accessors
-- [ ] 03-03-PLAN.md - Layout, navigation, and footer components
-- [ ] 03-04-PLAN.md - Blog homepage with post-card component
-- [ ] 03-05-PLAN.md - Single post view with typography styling
-- [ ] 03-06-PLAN.md - Category and tag archive views
-- [ ] 03-07-PLAN.md - Static page view
-- [ ] 03-08-PLAN.md - Visual verification checkpoint
+- [x] 03-01-PLAN.md - Frontend packages and Tailwind CSS configuration
+- [x] 03-02-PLAN.md - ShortcodeProcessor service and model accessors
+- [x] 03-03-PLAN.md - Layout, navigation, and footer components
+- [x] 03-04-PLAN.md - Blog homepage with post-card component
+- [x] 03-05-PLAN.md - Single post view with typography styling
+- [x] 03-06-PLAN.md - Category and tag archive views
+- [x] 03-07-PLAN.md - Static page view
+- [x] 03-08-PLAN.md - Visual verification checkpoint
 
 ### Phase 4: Comment System
 **Goal**: Readers can view and submit comments with moderation workflow operational
@@ -156,11 +156,11 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 |-------|----------------|--------|-----------|
 | 1. Data Migration & Models | 7/7 | Complete | 2026-01-24 |
 | 2. URL Preservation & Routing | 7/7 | Complete | 2026-01-24 |
-| 3. Public Content Display | 0/8 | Ready | - |
-| 4. Comment System | 0/TBD | Not started | - |
+| 3. Public Content Display | 8/8 | Complete | 2026-01-25 |
+| 4. Comment System | 0/TBD | Ready | - |
 | 5. Search Integration | 0/TBD | Not started | - |
 | 6. Admin Panel | 0/TBD | Not started | - |
 | 7. Performance & Polish | 0/TBD | Not started | - |
 
 ---
-*Last updated: 2026-01-24*
+*Last updated: 2026-01-25*
