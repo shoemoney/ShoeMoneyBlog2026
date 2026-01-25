@@ -65,6 +65,9 @@ Recent decisions affecting current work:
 - firstOrFail pattern for 404 handling on taxonomy lookups (02-03)
 - 10-second HTTP timeout for URL verification requests (02-05)
 - JSON failure reports stored in storage/logs for debugging (02-05)
+- Only tags with published posts included in sitemap (915 vs 15k+) (02-04)
+- Priority levels: homepage 1.0, posts 0.8, pages 0.6, categories 0.5, tags 0.3 (02-04)
+- Chunked iteration (500/100) for memory-efficient large dataset processing (02-04)
 
 ### Pending Todos
 
