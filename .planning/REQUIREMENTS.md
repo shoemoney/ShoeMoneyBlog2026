@@ -11,10 +11,10 @@
 
 ### Comments
 
-- [ ] **COMM-01**: User can view threaded comments on posts with proper nesting and timestamps
-- [ ] **COMM-02**: User can submit comments on posts with name, email, and comment body fields
-- [ ] **COMM-03**: First-time commenters are held for moderation; approved commenters post immediately
-- [ ] **COMM-04**: Comments display Gravatar avatars based on commenter email address
+- [x] **COMM-01**: User can view threaded comments on posts with proper nesting and timestamps
+- [x] **COMM-02**: User can submit comments on posts with name, email, and comment body fields
+- [x] **COMM-03**: First-time commenters are held for moderation; approved commenters post immediately
+- [x] **COMM-04**: Comments display Gravatar avatars based on commenter email address
 
 ### Search
 
@@ -75,10 +75,10 @@
 | CONT-02 | Phase 3 | Complete |
 | CONT-03 | Phase 3 | Complete |
 | CONT-04 | Phase 2 | Complete |
-| COMM-01 | Phase 4 | Pending |
-| COMM-02 | Phase 4 | Pending |
-| COMM-03 | Phase 4 | Pending |
-| COMM-04 | Phase 4 | Pending |
+| COMM-01 | Phase 4 | Complete |
+| COMM-02 | Phase 4 | Complete |
+| COMM-03 | Phase 4 | Complete |
+| COMM-04 | Phase 4 | Complete |
 | SRCH-01 | Phase 5 | Pending |
 | ADMN-01 | Phase 6 | Pending |
 | ADMN-02 | Phase 6 | Pending |
@@ -90,4 +90,4 @@
 | FRNT-04 | Phase 7 | Pending |
 
 ---
-*Last updated: 2026-01-25 after Phase 3 completion*
+*Last updated: 2026-01-25 after Phase 4 completion*

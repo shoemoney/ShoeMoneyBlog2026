@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Data Migration & Models** - Import WordPress database, establish Laravel foundation
 - [x] **Phase 2: URL Preservation & Routing** - Map WordPress permalink structure, protect SEO value
 - [x] **Phase 3: Public Content Display** - Blog posts, categories, tags, static pages with ShoeMoney branding
-- [ ] **Phase 4: Comment System** - Threaded comments, submission, moderation workflow, Gravatar avatars
+- [x] **Phase 4: Comment System** - Threaded comments, submission, moderation workflow, Gravatar avatars
 - [ ] **Phase 5: Search Integration** - Algolia-powered typeahead search across posts
 - [ ] **Phase 6: Admin Panel** - Content management, comment moderation, user/role management
 - [ ] **Phase 7: Performance & Polish** - Caching, optimization, dark mode, launch preparation
@@ -100,11 +100,11 @@ Plans:
 **Plans**: 5 plans in 3 waves
 
 Plans:
-- [ ] 04-01-PLAN.md - Livewire packages and layout configuration
-- [ ] 04-02-PLAN.md - CommentModerationService with auto-approval logic
-- [ ] 04-03-PLAN.md - CommentSection component for threaded display
-- [ ] 04-04-PLAN.md - CommentForm component with spam protection
-- [ ] 04-05-PLAN.md - Post view integration and visual verification
+- [x] 04-01-PLAN.md - Livewire packages and layout configuration
+- [x] 04-02-PLAN.md - CommentModerationService with auto-approval logic
+- [x] 04-03-PLAN.md - CommentSection component for threaded display
+- [x] 04-04-PLAN.md - CommentForm component with spam protection
+- [x] 04-05-PLAN.md - Post view integration and visual verification
 
 ### Phase 5: Search Integration
 **Goal**: Fast, typo-tolerant search operational with Algolia-powered typeahead
@@ -161,7 +161,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | 1. Data Migration & Models | 7/7 | Complete | 2026-01-24 |
 | 2. URL Preservation & Routing | 7/7 | Complete | 2026-01-24 |
 | 3. Public Content Display | 8/8 | Complete | 2026-01-25 |
-| 4. Comment System | 0/5 | Ready | - |
+| 4. Comment System | 5/5 | Complete | 2026-01-25 |
 | 5. Search Integration | 0/TBD | Not started | - |
 | 6. Admin Panel | 0/TBD | Not started | - |
 | 7. Performance & Polish | 0/TBD | Not started | - |
