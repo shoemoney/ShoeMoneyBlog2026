@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 7 of 7 (Performance & Polish)
-Plan: 3 of 5 in current phase
+Plan: 2 of 5 in current phase
 Status: In progress
-Last activity: 2026-01-25 - Completed 07-03-PLAN.md (Database Performance Indexes)
+Last activity: 2026-01-25 - Completed 07-02-PLAN.md (Dark Mode Implementation)
 
 Progress: [█████████░] ~90%
 
@@ -39,8 +39,8 @@ Progress: [█████████░] ~90%
 - Phase 4: 04-01 (3min), 04-02 (2min), 04-03 (1min), 04-04 (2min), 04-05 (3min)
 - Phase 5: 05-01 (4min), 05-02 (2min), 05-03 (15min)
 - Phase 6: 06-01 (4min), 06-02 (5min), 06-03 (5min), 06-04 (5min), 06-05 (3min), 06-06 (7min), 06-07 (verify)
-- Phase 7: 07-03 (3min)
-- Trend: Performance indexes complete, continuing optimization
+- Phase 7: 07-02 (5min), 07-03 (3min)
+- Trend: Dark mode and performance indexes complete, continuing optimization
 
 *Updated after each plan completion*
 
@@ -141,6 +141,10 @@ Recent decisions affecting current work:
 - Admin protection: cannot delete other admins without revoking first (06-06)
 - Compound index (status, published_at) for WHERE + ORDER BY pattern (07-03)
 - Explicit reverse lookup index naming for polymorphic relations (07-03)
+- Class-based dark mode over media query for user override (07-02)
+- FOUC script in head before @vite to prevent flash (07-02)
+- Alpine.js x-data on html element for cross-component theme state (07-02)
+- x-cloak CSS rule prevents icon flash before Alpine init (07-02)
 
 ### Pending Todos
 
@@ -153,6 +157,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 07-03-PLAN.md (Database Performance Indexes)
+Stopped at: Completed 07-02-PLAN.md (Dark Mode Implementation)
 Resume file: None
-Next action: Execute 07-04-PLAN.md (Query Optimization)
+Next action: Execute 07-01-PLAN.md or continue with remaining phase 7 plans
