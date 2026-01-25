@@ -7,6 +7,8 @@
     <x-seo::meta />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    @livewireStyles
 </head>
 <body class="bg-white text-gray-900 antialiased min-h-screen flex flex-col">
     <x-navigation />
@@ -16,5 +18,7 @@
     </main>
 
     <x-footer />
+
+    @livewireScripts
 </body>
 </html>
