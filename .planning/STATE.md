@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 6 of 7 (Admin Panel)
-Plan: 5 of 7 in current phase
+Plan: 6 of 7 in current phase
 Status: In progress
-Last activity: 2026-01-25 - Completed 06-03-PLAN.md (Post Management CRUD)
+Last activity: 2026-01-25 - Completed 06-06-PLAN.md (User Management)
 
-Progress: [████████░░] ~83%
+Progress: [█████████░] ~89%
 
 ## Performance Metrics
 
@@ -38,8 +38,8 @@ Progress: [████████░░] ~83%
 - Phase 3: 03-01 (6min), 03-02 (2min), 03-03 (2min), 03-04 (3min), 03-05 (2min), 03-06 (2min), 03-07 (4min), 03-08 (5min)
 - Phase 4: 04-01 (3min), 04-02 (2min), 04-03 (1min), 04-04 (2min), 04-05 (3min)
 - Phase 5: 05-01 (4min), 05-02 (2min), 05-03 (15min)
-- Phase 6: 06-01 (4min), 06-02 (2min), 06-03 (5min), 06-05 (3min)
-- Trend: Post management CRUD complete
+- Phase 6: 06-01 (4min), 06-02 (2min), 06-03 (5min), 06-04 (5min), 06-05 (3min)
+- Trend: Comment moderation complete
 
 *Updated after each plan completion*
 
@@ -130,6 +130,10 @@ Recent decisions affecting current work:
 - URL query string persistence with #[Url(history: true)] for bookmarkable filters (06-03)
 - wire:model.blur for title to trigger slug generation after typing (06-03)
 - Preserve original published_at when re-saving published posts (06-03)
+- Status tabs with badge counts for quick comment queue overview (06-04)
+- 20 comments per page for manageable moderation sessions (06-04)
+- wire:confirm for delete to prevent accidental permanent deletion (06-04)
+- Alpine.js expand/collapse toggle for long comment content (06-04)
 
 ### Pending Todos
 
@@ -142,6 +146,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 06-03-PLAN.md (Post Management CRUD)
+Stopped at: Documented 06-04-PLAN.md (Comment Moderation)
 Resume file: None
-Next action: Continue with 06-04-PLAN.md (Comment Management)
+Next action: Continue with remaining 06-XX plans (06-06 User Management, 06-07 Final Review)
