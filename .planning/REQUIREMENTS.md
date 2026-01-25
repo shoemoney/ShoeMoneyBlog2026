@@ -7,7 +7,7 @@
 - [ ] **CONT-01**: User can view all migrated WordPress posts with original content, formatting, and metadata preserved
 - [ ] **CONT-02**: User can browse posts by category or tag, with category/tag pages showing filtered results
 - [ ] **CONT-03**: User can view static pages (About, Contact, etc.) with distinct styling from blog posts
-- [ ] **CONT-04**: User can access all existing posts via their original WordPress URLs (no 404s for indexed content)
+- [x] **CONT-04**: User can access all existing posts via their original WordPress URLs (no 404s for indexed content)
 
 ### Comments
 
@@ -74,7 +74,7 @@
 | CONT-01 | Phase 3 | Pending |
 | CONT-02 | Phase 3 | Pending |
 | CONT-03 | Phase 3 | Pending |
-| CONT-04 | Phase 2 | Pending |
+| CONT-04 | Phase 2 | Complete |
 | COMM-01 | Phase 4 | Pending |
 | COMM-02 | Phase 4 | Pending |
 | COMM-03 | Phase 4 | Pending |

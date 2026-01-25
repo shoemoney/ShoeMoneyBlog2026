@@ -13,7 +13,7 @@ This roadmap migrates 20+ years of WordPress content to a modern Laravel 12 plat
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Data Migration & Models** - Import WordPress database, establish Laravel foundation
-- [ ] **Phase 2: URL Preservation & Routing** - Map WordPress permalink structure, protect SEO value
+- [x] **Phase 2: URL Preservation & Routing** - Map WordPress permalink structure, protect SEO value
 - [ ] **Phase 3: Public Content Display** - Blog posts, categories, tags, static pages with ShoeMoney branding
 - [ ] **Phase 4: Comment System** - Threaded comments, submission, moderation workflow, Gravatar avatars
 - [ ] **Phase 5: Search Integration** - Algolia-powered typeahead search across posts
@@ -56,13 +56,13 @@ Plans:
 **Plans**: 7 plans in 4 waves
 
 Plans:
-- [ ] 02-01-PLAN.md - Routes setup with WordPress URL pattern matching
-- [ ] 02-02-PLAN.md - PostController and PageController implementation
-- [ ] 02-03-PLAN.md - CategoryController and TagController implementation
-- [ ] 02-04-PLAN.md - Sitemap generation with spatie/laravel-sitemap
-- [ ] 02-05-PLAN.md - URL verification Artisan command
-- [ ] 02-06-PLAN.md - Trailing slash redirect middleware
-- [ ] 02-07-PLAN.md - Final verification and human approval
+- [x] 02-01-PLAN.md - Routes setup with WordPress URL pattern matching
+- [x] 02-02-PLAN.md - PostController and PageController implementation
+- [x] 02-03-PLAN.md - CategoryController and TagController implementation
+- [x] 02-04-PLAN.md - Sitemap generation with spatie/laravel-sitemap
+- [x] 02-05-PLAN.md - URL verification Artisan command
+- [x] 02-06-PLAN.md - Trailing slash redirect middleware
+- [x] 02-07-PLAN.md - Final verification and human approval
 
 ### Phase 3: Public Content Display
 **Goal**: Public-facing blog fully functional with posts, archives, static pages, and ShoeMoney brand identity
@@ -148,7 +148,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Data Migration & Models | 7/7 | Complete ✓ | 2026-01-24 |
-| 2. URL Preservation & Routing | 0/7 | Planned | - |
+| 2. URL Preservation & Routing | 7/7 | Complete ✓ | 2026-01-24 |
 | 3. Public Content Display | 0/TBD | Not started | - |
 | 4. Comment System | 0/TBD | Not started | - |
 | 5. Search Integration | 0/TBD | Not started | - |
