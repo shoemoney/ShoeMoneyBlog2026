@@ -41,8 +41,8 @@ class TrailingSlashRedirect
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Only apply to GET requests
-        if (! $request->isMethod('GET')) {
+        // Only apply to GET and HEAD requests (HEAD is used by some crawlers)
+        if (! in_array($request->method(), ['GET', 'HEAD'], true)) {
             return $next($request);
         }
 
