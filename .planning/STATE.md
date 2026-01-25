@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 Phase: 6 of 7 (Admin Panel)
 Plan: 5 of 7 in current phase
 Status: In progress
-Last activity: 2026-01-25 - Completed 06-05-PLAN.md (Taxonomy Management)
+Last activity: 2026-01-25 - Completed 06-03-PLAN.md (Post Management CRUD)
 
 Progress: [████████░░] ~83%
 
@@ -120,6 +120,9 @@ Recent decisions affecting current work:
 - Gate::before grants admin full access without individual policy checks (06-01)
 - Middleware class over inline closure for Laravel 12 route groups (06-01)
 - All admin routes defined as placeholders for immediate sidebar navigation (06-01)
+- Dark sidebar with wire:navigate for SPA-like navigation (06-02)
+- Anonymous x-admin components over class-based for simple layout composition (06-02)
+- Three-type flash messages (success/error/info) with icons for admin feedback (06-02)
 - Inline edit pattern: form toggles create/edit mode with same fields (06-05)
 - Pagination 50 per page for large tag sets (15K+ from WordPress) (06-05)
 - Delete protection: disable button if posts_count > 0 (06-05)
