@@ -32,7 +32,7 @@
 - [x] **FRNT-01**: User can browse paginated blog listing showing recent posts with excerpts
 - [x] **FRNT-02**: User can view category and tag archive pages with filtered post listings
 - [x] **FRNT-03**: Frontend reflects ShoeMoney brand identity with custom styling and design
-- [ ] **FRNT-04**: User can toggle between light and dark mode themes
+- [x] **FRNT-04**: User can toggle between light and dark mode themes
 
 ---
 
@@ -87,7 +87,7 @@
 | FRNT-01 | Phase 3 | Complete |
 | FRNT-02 | Phase 3 | Complete |
 | FRNT-03 | Phase 3 | Complete |
-| FRNT-04 | Phase 7 | Pending |
+| FRNT-04 | Phase 7 | Complete |
 
 ---
-*Last updated: 2026-01-25 after Phase 6 completion*
+*Last updated: 2026-01-25 after Phase 7 completion*
