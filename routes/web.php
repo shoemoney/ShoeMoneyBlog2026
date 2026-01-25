@@ -100,12 +100,8 @@ Route::prefix('admin')
 
         // Users management
         Route::get('/users', \App\Livewire\Admin\Users\UserIndex::class)->name('admin.users.index');
-        Route::get('/users/create', function () {
-            return redirect()->route('admin.users.index')->with('info', 'User creation coming soon');
-        })->name('admin.users.create');
-        Route::get('/users/{user}/edit', function () {
-            return redirect()->route('admin.users.index')->with('info', 'User editing coming soon');
-        })->name('admin.users.edit');
+        Route::get('/users/create', \App\Livewire\Admin\Users\UserForm::class)->name('admin.users.create');
+        Route::get('/users/{user}/edit', \App\Livewire\Admin\Users\UserForm::class)->name('admin.users.edit');
     });
 
 // Page route (MUST be LAST - catch-all for single slugs)
