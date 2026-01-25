@@ -75,7 +75,7 @@ Plans:
   4. User can browse tag pages (e.g., `/tag/seo/`) showing filtered post listings
   5. User can view static pages (About, Contact) with distinct layout from blog posts
   6. Site displays ShoeMoney brand identity (custom styling, colors, typography consistent with brand)
-**Plans**: 8 plans in 4 waves
+**Plans**: 8 plans in 5 waves
 
 Plans:
 - [ ] 03-01-PLAN.md - Frontend packages and Tailwind CSS configuration
