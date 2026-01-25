@@ -18,14 +18,14 @@
 
 ### Search
 
-- [ ] **SRCH-01**: User can search posts via typeahead that shows instant results as they type (Algolia-powered)
+- [x] **SRCH-01**: User can search posts via typeahead that shows instant results as they type (Algolia-powered)
 
 ### Admin Panel
 
-- [ ] **ADMN-01**: Admin can create, edit, publish, and delete posts with rich text editor
-- [ ] **ADMN-02**: Admin can view pending comments, approve/reject them, and delete spam
-- [ ] **ADMN-03**: Admin can create, edit, and delete categories and tags
-- [ ] **ADMN-04**: Admin can manage multiple authors with role-based permissions (admin, editor, author)
+- [x] **ADMN-01**: Admin can create, edit, publish, and delete posts with rich text editor
+- [x] **ADMN-02**: Admin can view pending comments, approve/reject them, and delete spam
+- [x] **ADMN-03**: Admin can create, edit, and delete categories and tags
+- [x] **ADMN-04**: Admin can manage multiple authors with role-based permissions (admin, editor, author)
 
 ### Frontend
 
@@ -79,15 +79,15 @@
 | COMM-02 | Phase 4 | Complete |
 | COMM-03 | Phase 4 | Complete |
 | COMM-04 | Phase 4 | Complete |
-| SRCH-01 | Phase 5 | Pending |
-| ADMN-01 | Phase 6 | Pending |
-| ADMN-02 | Phase 6 | Pending |
-| ADMN-03 | Phase 6 | Pending |
-| ADMN-04 | Phase 6 | Pending |
+| SRCH-01 | Phase 5 | Complete |
+| ADMN-01 | Phase 6 | Complete |
+| ADMN-02 | Phase 6 | Complete |
+| ADMN-03 | Phase 6 | Complete |
+| ADMN-04 | Phase 6 | Complete |
 | FRNT-01 | Phase 3 | Complete |
 | FRNT-02 | Phase 3 | Complete |
 | FRNT-03 | Phase 3 | Complete |
 | FRNT-04 | Phase 7 | Pending |
 
 ---
-*Last updated: 2026-01-25 after Phase 4 completion*
+*Last updated: 2026-01-25 after Phase 6 completion*
