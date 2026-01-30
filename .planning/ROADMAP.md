@@ -39,11 +39,11 @@
   2. All text on the site renders in the new font stack (Space Grotesk for headings, Inter for body, JetBrains Mono for code) with no flash of unstyled text
   3. The Tailwind `@theme` block exposes all design tokens as utility classes (e.g., `bg-surface-page`, `text-primary`, `shadow-card`)
   4. The site looks and functions identically to its current state after this phase (no visual regressions from infrastructure-only changes)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 08-01: TBD
-- [ ] 08-02: TBD
+- [ ] 08-01-PLAN.md -- Self-hosted fonts and complete CSS design token system
+- [ ] 08-02-PLAN.md -- Layout font preloads, semantic body classes, and visual regression check
 
 ### Phase 9: Navigation & Layout
 **Goal**: Every public page displays the ShoeMoney brand identity through a distinctive header and minimal footer, with full mobile navigation support
@@ -114,7 +114,7 @@ Phases execute in numeric order: 8 -> 9 -> 10 -> 11 -> 12
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 1-7 | v1.0 | 42/42 | Complete | 2026-01-25 |
-| 8. Design Foundation | v2.0 | 0/TBD | Not started | - |
+| 8. Design Foundation | v2.0 | 0/2 | Planned | - |
 | 9. Navigation & Layout | v2.0 | 0/TBD | Not started | - |
 | 10. Typography & Content | v2.0 | 0/TBD | Not started | - |
 | 11. Dark Mode | v2.0 | 0/TBD | Not started | - |
