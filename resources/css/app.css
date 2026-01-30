@@ -1,58 +1,265 @@
 @import 'tailwindcss';
+
+/* Dark mode variant - manual toggle with class */
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* Plugin for blog content typography */
 @plugin "@tailwindcss/typography";
 
+/* Content scanning - already configured correctly */
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
-
-    /* ShoeMoney Brand Colors - Light Mode */
-    --color-brand-primary: #1e40af;
-    --color-brand-accent: #f59e0b;
-    --color-brand-light: #f8fafc;
-
-    /* Dark Mode Colors */
-    --color-dark-bg: #0f172a;
-    --color-dark-surface: #1e293b;
-    --color-dark-text: #f1f5f9;
+/* Variable font declarations */
+@font-face {
+  font-family: 'Space Grotesk Variable';
+  src: url('/fonts/space-grotesk-variable.woff2') format('woff2 supports variations'),
+       url('/fonts/space-grotesk-variable.woff2') format('woff2-variations'),
+       url('/fonts/space-grotesk-variable.woff2') format('woff2');
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
 }
 
-/* WordPress Content Styles */
+@font-face {
+  font-family: 'Inter Variable';
+  src: url('/fonts/inter-variable.woff2') format('woff2 supports variations'),
+       url('/fonts/inter-variable.woff2') format('woff2-variations'),
+       url('/fonts/inter-variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono Variable';
+  src: url('/fonts/jetbrains-mono-variable.woff2') format('woff2 supports variations'),
+       url('/fonts/jetbrains-mono-variable.woff2') format('woff2-variations'),
+       url('/fonts/jetbrains-mono-variable.woff2') format('woff2');
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Optimized fallback fonts with size-adjust */
+@font-face {
+  font-family: 'Space Grotesk Fallback';
+  src: local('Arial');
+  size-adjust: 107%;
+  ascent-override: 91%;
+  descent-override: 23%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Inter Fallback';
+  src: local('Arial');
+  size-adjust: 106.5%;
+  ascent-override: 90%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono Fallback';
+  src: local('Courier New');
+  size-adjust: 92%;
+  ascent-override: 82%;
+  descent-override: 20%;
+  line-gap-override: 0%;
+}
+
+/* Design token system */
+@theme {
+  /* Typography tokens */
+  --font-display: 'Space Grotesk Variable', 'Space Grotesk Fallback', system-ui, sans-serif;
+  --font-body: 'Inter Variable', 'Inter Fallback', system-ui, sans-serif;
+  --font-sans: 'Inter Variable', 'Inter Fallback', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono Fallback', 'Courier New', monospace;
+
+  /* Primitive color tokens - Light palette */
+  --color-slate-50: oklch(0.99 0.002 264.5);
+  --color-slate-100: oklch(0.97 0.005 264.5);
+  --color-slate-200: oklch(0.93 0.01 264.5);
+  --color-slate-300: oklch(0.87 0.015 264.5);
+  --color-slate-400: oklch(0.68 0.02 264.5);
+  --color-slate-500: oklch(0.54 0.03 264.5);
+  --color-slate-600: oklch(0.43 0.03 264.5);
+  --color-slate-700: oklch(0.36 0.03 264.5);
+  --color-slate-800: oklch(0.26 0.025 264.5);
+  --color-slate-900: oklch(0.19 0.02 264.5);
+
+  --color-blue-400: oklch(0.65 0.18 264.05);
+  --color-blue-500: oklch(0.55 0.22 264.05);
+  --color-blue-600: oklch(0.47 0.22 264.05);
+  --color-blue-700: oklch(0.40 0.21 264.05);
+
+  --color-amber-400: oklch(0.82 0.13 75.69);
+  --color-amber-500: oklch(0.75 0.15 75.69);
+  --color-amber-600: oklch(0.65 0.15 75.69);
+
+  /* Semantic color tokens - Light mode defaults */
+  --color-surface-page: var(--color-slate-50);
+  --color-surface-card: oklch(1 0 0);
+  --color-surface-raised: oklch(1 0 0);
+  --color-surface-overlay: oklch(1 0 0);
+
+  --color-text-primary: var(--color-slate-900);
+  --color-text-secondary: var(--color-slate-600);
+  --color-text-subtle: var(--color-slate-500);
+  --color-text-inverted: oklch(1 0 0);
+
+  --color-border-DEFAULT: var(--color-slate-200);
+  --color-border-subtle: var(--color-slate-100);
+  --color-border-strong: var(--color-slate-300);
+
+  --color-accent-primary: var(--color-blue-500);
+  --color-accent-primary-hover: var(--color-blue-600);
+  --color-accent-emphasis: var(--color-amber-500);
+  --color-accent-emphasis-hover: var(--color-amber-600);
+
+  /* Spacing scale - 8px base */
+  --spacing-0: 0;
+  --spacing-px: 1px;
+  --spacing-0\.5: 0.125rem;
+  --spacing-1: 0.25rem;
+  --spacing-1\.5: 0.375rem;
+  --spacing-2: 0.5rem;
+  --spacing-2\.5: 0.625rem;
+  --spacing-3: 0.75rem;
+  --spacing-3\.5: 0.875rem;
+  --spacing-4: 1rem;
+  --spacing-5: 1.25rem;
+  --spacing-6: 1.5rem;
+  --spacing-7: 1.75rem;
+  --spacing-8: 2rem;
+  --spacing-9: 2.25rem;
+  --spacing-10: 2.5rem;
+  --spacing-11: 2.75rem;
+  --spacing-12: 3rem;
+  --spacing-14: 3.5rem;
+  --spacing-16: 4rem;
+  --spacing-20: 5rem;
+  --spacing-24: 6rem;
+  --spacing-28: 7rem;
+  --spacing-32: 8rem;
+
+  /* Shadow tokens - elevation system */
+  --shadow-sm: 0 1px 2px 0 oklch(0 0 0 / 0.05);
+  --shadow-DEFAULT: 0 1px 3px 0 oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -2px oklch(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px oklch(0 0 0 / 0.1), 0 4px 6px -4px oklch(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px oklch(0 0 0 / 0.1), 0 8px 10px -6px oklch(0 0 0 / 0.1);
+
+  /* Semantic shadow tokens */
+  --shadow-card: var(--shadow-md);
+  --shadow-dropdown: var(--shadow-lg);
+  --shadow-modal: var(--shadow-xl);
+
+  /* Border radius tokens */
+  --radius-none: 0;
+  --radius-sm: 0.25rem;
+  --radius-DEFAULT: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* Semantic radius tokens */
+  --radius-card: var(--radius-lg);
+  --radius-button: var(--radius-md);
+  --radius-input: var(--radius-md);
+
+  /* Transition tokens */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-DEFAULT: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark mode overrides - only semantic tokens change */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-surface-page: oklch(0.15 0.015 264.5);
+    --color-surface-card: oklch(0.20 0.02 264.5);
+    --color-surface-raised: oklch(0.23 0.02 264.5);
+    --color-surface-overlay: oklch(0.26 0.025 264.5);
+
+    --color-text-primary: oklch(0.95 0.002 264.5);
+    --color-text-secondary: var(--color-slate-300);
+    --color-text-subtle: var(--color-slate-400);
+    --color-text-inverted: var(--color-slate-900);
+
+    --color-border-DEFAULT: var(--color-slate-700);
+    --color-border-subtle: var(--color-slate-800);
+    --color-border-strong: var(--color-slate-600);
+
+    --color-accent-primary: var(--color-blue-400);
+    --color-accent-primary-hover: var(--color-blue-500);
+    --color-accent-emphasis: var(--color-amber-400);
+    --color-accent-emphasis-hover: var(--color-amber-500);
+
+    /* Adjusted shadows for dark mode - lighter for visibility */
+    --shadow-sm: 0 1px 2px 0 oklch(0 0 0 / 0.3);
+    --shadow-DEFAULT: 0 1px 3px 0 oklch(0 0 0 / 0.4), 0 1px 2px -1px oklch(0 0 0 / 0.4);
+    --shadow-md: 0 4px 6px -1px oklch(0 0 0 / 0.5), 0 2px 4px -2px oklch(0 0 0 / 0.5);
+    --shadow-lg: 0 10px 15px -3px oklch(0 0 0 / 0.5), 0 4px 6px -4px oklch(0 0 0 / 0.5);
+    --shadow-xl: 0 20px 25px -5px oklch(0 0 0 / 0.6), 0 8px 10px -6px oklch(0 0 0 / 0.6);
+  }
+}
+
+/* Manual dark mode override (when .dark class is present) */
+.dark {
+  --color-surface-page: oklch(0.15 0.015 264.5);
+  --color-surface-card: oklch(0.20 0.02 264.5);
+  --color-surface-raised: oklch(0.23 0.02 264.5);
+  --color-surface-overlay: oklch(0.26 0.025 264.5);
+
+  --color-text-primary: oklch(0.95 0.002 264.5);
+  --color-text-secondary: var(--color-slate-300);
+  --color-text-subtle: var(--color-slate-400);
+  --color-text-inverted: var(--color-slate-900);
+
+  --color-border-DEFAULT: var(--color-slate-700);
+  --color-border-subtle: var(--color-slate-800);
+  --color-border-strong: var(--color-slate-600);
+
+  --color-accent-primary: var(--color-blue-400);
+  --color-accent-primary-hover: var(--color-blue-500);
+  --color-accent-emphasis: var(--color-amber-400);
+  --color-accent-emphasis-hover: var(--color-amber-500);
+
+  --shadow-sm: 0 1px 2px 0 oklch(0 0 0 / 0.3);
+  --shadow-DEFAULT: 0 1px 3px 0 oklch(0 0 0 / 0.4), 0 1px 2px -1px oklch(0 0 0 / 0.4);
+  --shadow-md: 0 4px 6px -1px oklch(0 0 0 / 0.5), 0 2px 4px -2px oklch(0 0 0 / 0.5);
+  --shadow-lg: 0 10px 15px -3px oklch(0 0 0 / 0.5), 0 4px 6px -4px oklch(0 0 0 / 0.5);
+  --shadow-xl: 0 20px 25px -5px oklch(0 0 0 / 0.6), 0 8px 10px -6px oklch(0 0 0 / 0.6);
+}
+
+/* WordPress content styles - using semantic tokens */
 .wp-caption {
-    @apply my-6 mx-auto;
+  @apply my-6 mx-auto;
 }
 
 .wp-caption img {
-    @apply rounded-lg shadow-md;
+  @apply rounded-lg shadow-md;
 }
 
 .wp-caption figcaption {
-    @apply text-sm text-gray-500 mt-2 text-center italic;
+  @apply text-sm text-text-subtle mt-2 text-center italic;
 }
 
 .wp-video {
-    @apply w-full rounded-lg shadow-md my-6;
+  @apply w-full rounded-lg shadow-md my-6;
 }
 
 .wp-more {
-    @apply my-8 border-0 h-px bg-gray-200;
-}
-
-/* Dark mode for WordPress content */
-.dark .wp-caption figcaption {
-    @apply text-gray-400;
-}
-
-.dark .wp-more {
-    @apply bg-gray-700;
+  @apply my-8 border-0 h-px bg-border-DEFAULT;
 }
 
 /* Alpine.js cloak - hide until Alpine initializes */
 [x-cloak] {
-    display: none !important;
+  display: none !important;
 }
