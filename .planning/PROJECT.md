@@ -50,7 +50,20 @@ Readers can find and read two decades of blog content quickly, and authors can p
 - ✓ Dark mode toggle — v1.0
 - ✓ Automated daily backups — v1.0
 
-### Active (v1.1 Candidates)
+### Active (v2.0 — UI Overhaul)
+
+- [ ] Bold, high-energy visual identity with new color palette
+- [ ] Content width and spacing fixes across all public pages
+- [ ] Improved typography system (headings, body, code blocks)
+- [ ] Responsive layout fixes for mobile and tablet
+- [ ] Admin panel UX improvements (workflows, forms, layouts)
+- [ ] Admin panel visual refresh (consistent with new brand)
+- [ ] Dark mode updated to match new design system
+- [ ] Post card and listing redesign
+- [ ] Navigation and header redesign
+- [ ] Footer redesign
+
+### Deferred (v2.1+ Candidates)
 
 - [ ] Post scheduling (publish at future date)
 - [ ] Email notifications for comment replies
@@ -96,5 +109,15 @@ Readers can find and read two decades of blog content quickly, and authors can p
 | Class-based dark mode | User override of system preference | ✓ Good |
 | S3 backups with local fallback | External storage for disaster recovery | ✓ Good |
 
+## Current Milestone: v2.0 UI Overhaul
+
+**Goal:** Transform ShoeMoney from a generic-looking blog into a bold, high-energy brand with distinctive personality — fixing content spacing, improving admin UX, and establishing a new design system with a fresh color palette.
+
+**Target features:**
+- New brand identity: bold colors, strong typography, high-energy personality
+- Public site: fix content width/spacing, redesign post cards, navigation, footer
+- Admin panel: UX workflow improvements + visual refresh aligned with new brand
+- Design system: consistent components, spacing scale, color tokens for dark/light modes
+
 ---
-*Last updated: 2026-01-25 after v1.0 milestone*
+*Last updated: 2026-01-29 after v2.0 milestone start*
