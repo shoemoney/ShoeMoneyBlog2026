@@ -1,348 +1,455 @@
-# Technology Stack
+# Technology Stack: UI Overhaul
 
-**Project:** ShoeMoney Blog (WordPress to Laravel Migration)
-**Researched:** 2026-01-24
+**Project:** ShoeMoney Blog UI Overhaul
+**Researched:** 2026-01-29
+**Scope:** Design tooling additions only (application framework already validated)
 **Overall Confidence:** HIGH
 
-## Recommended Stack
+## Current Stack (Already in Place -- DO NOT CHANGE)
 
-### Core Framework
+| Technology | Version | Status |
+|------------|---------|--------|
+| Laravel | ^12.0 | Locked |
+| Livewire | ^4.0 | Locked |
+| Tailwind CSS | ^4.0.0 | Locked |
+| @tailwindcss/typography | ^0.5.19 | Locked |
+| Alpine.js | (bundled with Livewire 4) | Locked |
+| Vite | ^7.0.7 | Locked |
+| PHP | 8.5 (runtime) | Locked |
 
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| Laravel | 12.x | Application framework | Already in use. Latest stable release (Feb 2025) with no breaking changes from 11.x. Industry standard for PHP web apps with excellent ecosystem support. |
-| PHP | ^8.2 | Runtime | Laravel 12 requires PHP 8.2+. Use 8.4 if possible for latest features (property hooks, typed properties) but 8.2 is minimum for broadest package compatibility. |
-| MySQL | 8.0+ | Primary database | Already in use for WordPress. Contains existing blog data. Excellent Laravel Eloquent support. |
+The existing `app.css` already uses Tailwind CSS 4's `@theme` directive with brand color tokens, `@custom-variant dark` for class-based dark mode, and `@plugin "@tailwindcss/typography"`. This is the correct CSS-first approach -- no `tailwind.config.js` needed.
 
-**Confidence:** HIGH - Verified from official Laravel 12.x documentation and package requirements.
+---
 
-### Frontend Stack
+## Recommended Additions
 
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| Livewire | ^4.0.3 | Interactive UI framework | Latest major release (Jan 2026) brings single-file components, Islands architecture for partial page updates. Perfect for blog interactivity (comments, search) without heavy JavaScript. Requires PHP 8.1+, supports Laravel 10-12. |
-| Tailwind CSS | 4.x | Styling framework | Already in use. Default with Laravel 12. Utility-first approach pairs perfectly with Livewire components. |
-| Alpine.js | (bundled with Livewire 4) | Client-side interactivity | Automatically included with Livewire 4. Lightweight JS for UI enhancements (dropdowns, modals). No separate installation needed. |
-| Vite | (default) | Build tool | Already configured. Default Laravel asset bundler. Fast HMR, better DX than Webpack. |
-| Flowbite | ^2.x | UI component library | Optional but recommended. Pre-built Tailwind components (buttons, modals, dropdowns) that work with Livewire. Saves time on common UI patterns. Open-source, actively maintained. |
+### 1. Icons: blade-ui-kit/blade-heroicons
 
-**Confidence:** HIGH - Livewire 4 version verified from Packagist (v4.0.3, Jan 23 2026). Tailwind 4 is default in Laravel 12 per official docs.
+| Detail | Value |
+|--------|-------|
+| Package | `blade-ui-kit/blade-heroicons` |
+| Version | ^2.4.0 (ships Heroicons v2.2.0) |
+| Install | `composer require blade-ui-kit/blade-heroicons` |
+| Confidence | HIGH (verified via Packagist, actively maintained) |
 
-### Search & Performance
+**Why Heroicons:** They are the Tailwind ecosystem's native icon set, designed by the same team. They match Tailwind's design language perfectly. Usage is dead simple in Blade: `<x-heroicon-o-arrow-right class="w-5 h-5" />`. Three styles (outline, solid, mini) cover all UI needs -- navigation, admin actions, content indicators.
 
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| Laravel Scout | ^10.23.0 | Search abstraction layer | Official Laravel package for full-text search. Clean API, queue support, multiple driver support. Latest stable Dec 2025. |
-| Algolia PHP Client | ^4.37.3 | Algolia integration | Required by Scout's Algolia driver. Fast, hosted search with Laravel-first documentation. Version 4.37.3 (Jan 20 2026) requires PHP 8.1+ (note: NOT compatible with PHP 8.3.0). |
-| Redis | 7.x | Cache & queue backend | Use for Scout queue, response caching, session storage. Significantly faster than file-based caching for blog traffic spikes. |
+**Why NOT Lucide or Tabler:** Lucide has a broader set but adds a second design language. For a personal blog (not a SaaS dashboard), Heroicons' 300+ icons are more than sufficient. Consistency with Tailwind's visual DNA matters more than icon count.
 
-**Confidence:** HIGH - Scout and Algolia versions verified from Packagist. Algolia explicitly requested in project requirements.
+### 2. Animations: @formkit/auto-animate (npm)
 
-**Why Algolia over Meilisearch:**
-- User preference (per project context)
-- Better Laravel/Scout documentation and examples
-- Proven at scale with high-traffic content sites
-- Advanced features (typo tolerance, relevance tuning) out-of-box
-- Trade-off: Hosted (cost) vs self-hosted (Meilisearch), but hosting complexity avoided
+| Detail | Value |
+|--------|-------|
+| Package | `@formkit/auto-animate` |
+| Version | ^0.9.0 |
+| Size | 3.28 KB gzipped, zero dependencies |
+| Install | `npm install @formkit/auto-animate` |
+| Confidence | MEDIUM (community-proven with Livewire, not official integration) |
 
-### Content Management
+**Why AutoAnimate:** It provides smooth add/remove/reorder animations for DOM lists with a single function call -- exactly what Livewire list rendering needs. It works by observing a parent element and animating its direct children. This means post lists, admin tables, and sidebar widgets get fluid transitions without writing CSS keyframes per component.
 
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| league/commonmark | ^2.x | Markdown parsing | Parse markdown to HTML for blog posts. Extensible, PHP 8.2+ compatible. Used by Laravel internally. If storing content as markdown (optional). |
-| cviebrock/eloquent-sluggable | ^12.0.0 | SEO-friendly URLs | Auto-generate slugs from post titles. Critical for URL preservation during WordPress migration. Version 12 released Feb 2025 for Laravel 12, requires PHP 8.2+. |
-| spatie/laravel-sitemap | ^7.3.8 | XML sitemap generation | Auto-generate sitemaps for SEO. Supports model-based generation (add all posts easily). Version 7.3.8 (Nov 2025) requires PHP 8.2+, Laravel 11-12. |
-| spatie/laravel-feed | ^4.4.4 | RSS/Atom feed generation | Generate RSS feeds from blog posts. Implement `Feedable` interface on Post model. Supports RSS, Atom, JSON formats. Version 4.4.4 (Jan 5 2026), requires PHP 8.2+, Laravel 10-12. |
+**Why NOT Alpine.js transitions alone:** Alpine's `x-transition` handles show/hide (modals, dropdowns, flash messages) perfectly and is already available. But Alpine has no solution for list reordering or content swap animations. AutoAnimate fills that specific gap.
 
-**Confidence:** MEDIUM-HIGH - Versions verified from Packagist. League/commonmark is optional (only if storing content as markdown vs HTML). All other packages are standard for Laravel blogs.
+**Why NOT GSAP or Motion One:** Overkill. GSAP is 23KB+ and designed for complex timeline animations. This is a blog, not a marketing microsite. AutoAnimate's zero-config philosophy matches the project's simplicity goals.
 
-### Authentication & Authorization
+**Integration pattern:**
+```javascript
+// In Alpine component or inline script
+import autoAnimate from '@formkit/auto-animate';
+// Apply to any parent element
+autoAnimate(document.getElementById('post-list'));
+```
 
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| Laravel Breeze | (default scaffolding) | Authentication starter kit | Already likely installed if auth scaffolding exists. Minimal, Livewire-compatible. Use if starting fresh. |
-| spatie/laravel-permission | ^6.24.0 | Role-based access control | Industry standard RBAC package (82M+ downloads). Database-driven roles/permissions for multi-author blog. Supports Laravel 8-12, PHP 8.0+. Latest Dec 2025. |
+For Livewire pages, wrap in an Alpine directive or apply after `Livewire.hook('morph.updated')`.
 
-**Confidence:** HIGH - Spatie permission version verified from Packagist. Package is battle-tested standard for RBAC in Laravel.
+### 3. Typography: Self-Hosted Variable Fonts (no npm package -- CSS only)
 
-**Roles needed for blog:**
-- Admin (full access)
-- Editor (create/edit any posts, moderate comments)
-- Author (create/edit own posts)
-- Moderator (manage comments only)
+| Detail | Value |
+|--------|-------|
+| Method | Self-hosted variable `.woff2` files in `/public/fonts/` |
+| Display font | **Space Grotesk** (variable, 300-700 weight, ~30KB woff2) |
+| Body font | **Inter** (variable, 100-900 weight, ~50KB woff2) |
+| Mono font | **JetBrains Mono** (variable, 100-800 weight, ~45KB woff2) |
+| Install | Download woff2 from Google Fonts / GitHub, place in `/public/fonts/` |
+| Confidence | HIGH (proven fonts, well-documented self-hosting path) |
 
-### Comments & Moderation
+**Why Space Grotesk for headings:** It has geometric precision with personality -- slightly quirky letterforms that feel energetic without being gimmicky. The variable weight axis (300-700) lets you go ultra-bold for hero headings and medium for subheads from a single file. It reads "tech-savvy entrepreneur" not "generic blog." Based on Space Mono but proportional, it brings a futuristic feel to classic grotesque typography.
 
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| forxer/laravel-gravatar | ^5.0.0 | Gravatar avatars | Display user avatars in comments. Latest version (Nov 2025) requires PHP 8.4+, Laravel 12+. Includes Eloquent casts, preset configs. Most actively maintained Gravatar package for Laravel. |
-| Custom implementation | - | Comment system | Build custom vs package. Packages like `hootlex/laravel-moderation` exist but are Laravel 5.x era. Custom tables (comments, comment_reports) give full control over moderation workflow. |
+**Why Inter for body:** Highest readability scores for long-form content, designed specifically for screens, variable font with full weight range (100-900). The high x-height keeps body text crisp at 16-18px. Used by Linear, Vercel, and countless other tech platforms.
 
-**Confidence:** HIGH for Gravatar (verified Packagist). MEDIUM for custom comments (recommended approach but requires implementation).
+**Why JetBrains Mono for code blocks:** Purpose-built for developer content. Ligatures for common code operators (`=>`, `!==`, `>=`), excellent readability at small sizes, and it visually signals "code" immediately. The blog contains 20+ years of content likely including code snippets -- a dedicated mono font elevates that content.
 
-**Why custom comments over package:**
-- Existing packages outdated (Laravel 5.x)
-- Simple schema: `comments` table with `post_id`, `user_id`, `parent_id` (for replies), `status` (pending/approved/spam)
-- Livewire perfect for comment form + real-time updates
-- First-time moderation: WHERE `user_id` NOT IN (SELECT DISTINCT user_id FROM comments WHERE status = 'approved')
+**Why self-host over Google CDN:** Self-hosted fonts eliminate third-party DNS lookups (faster LCP), allow full cache control, comply with GDPR privacy regulations, and work offline. Variable woff2 files are the most efficient format -- one file per family covers all weights. Total additional weight: ~125KB for all three families.
 
-### Data Migration
+**Why NOT Fontsource npm packages:** Fontsource (`@fontsource-variable/space-grotesk`, etc.) works well in React/Next.js bundler pipelines. For Laravel + Vite, directly placing woff2 files in `/public/fonts/` with manual `@font-face` declarations is simpler, avoids node_modules bloat, and gives explicit control. The Fontsource CSS import approach adds unnecessary abstraction when you are writing `@font-face` rules anyway.
 
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| Custom Artisan Command | - | WordPress import | Build custom vs `leeovery/wordpress-to-laravel` (package exists but may be outdated). Read from `shoemoney-blog-export.sql`, map WP tables to Laravel models. |
-| spatie/laravel-missing-page-redirector | ^2.x | 301 redirects for old URLs | Preserve SEO by redirecting old WordPress URLs to new Laravel routes. Package stores redirects in DB, catches 404s, auto-redirects. Critical for 20 years of inbound links. |
+**Why NOT keep Instrument Sans alone:** Instrument Sans (currently in `@theme`) is solid but generic. It lacks the boldness and personality needed for a "high-energy brand identity." Space Grotesk gives headings punch; Inter gives body text clarity; JetBrains Mono gives code blocks professionalism. Three fonts, one personality system.
 
-**Confidence:** MEDIUM - Custom import recommended (gives full control over 1.3GB SQL file). Missing page redirector is Spatie package (trusted) but version not verified (marked 2.x as likely).
+**@font-face + @theme integration:**
+```css
+@font-face {
+    font-family: 'Space Grotesk';
+    src: url('/fonts/SpaceGrotesk-Variable.woff2') format('woff2');
+    font-weight: 300 700;
+    font-display: swap;
+}
 
-**WordPress to Laravel mapping:**
-- `wp_posts` → `posts` table (preserve `post_name` as slug)
-- `wp_terms` + `wp_term_taxonomy` → `categories`, `tags` tables
-- `wp_comments` → `comments` table
-- `wp_users` → `users` table (hash passwords with bcrypt during import)
+@font-face {
+    font-family: 'Inter';
+    src: url('/fonts/Inter-Variable.woff2') format('woff2');
+    font-weight: 100 900;
+    font-display: swap;
+}
 
-**Import strategy for large dataset:**
-- Chunk reads (1000 records at a time) to avoid memory limits
-- Use database transactions
-- Queue import jobs for background processing
-- Log progress for resume-ability
+@font-face {
+    font-family: 'JetBrains Mono';
+    src: url('/fonts/JetBrainsMono-Variable.woff2') format('woff2');
+    font-weight: 100 800;
+    font-display: swap;
+}
 
-### DevOps & Monitoring
+@theme {
+    --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+    --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+```
 
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| Laravel Horizon | ^5.x | Queue monitoring | Dashboard for Redis queues. Critical for monitoring Scout indexing, import jobs. Real-time metrics, failed job retry. |
-| spatie/laravel-backup | ^9.3.7 | Automated backups | Schedule DB + file backups. Version 9.3.7 (Nov 2025) requires PHP 8.3+, Laravel 12.40+. Store backups to S3/DigitalOcean Spaces. Critical for recovering from attacks (security motivation for migration). |
-| Laravel Telescope | ^5.x | Debugging & monitoring | Request/query debugging in local/staging. Disable in production or protect with auth middleware. |
+This generates `font-display`, `font-body`, and `font-mono` utility classes automatically in Tailwind v4.
 
-**Confidence:** HIGH for Backup (verified Packagist). MEDIUM-HIGH for Horizon/Telescope (standard Laravel packages, versions estimated).
+### 4. Syntax Highlighting: highlight.js (client-side)
 
-### Supporting Libraries
+| Detail | Value |
+|--------|-------|
+| Package | `highlight.js` |
+| Version | ^11.11.1 (latest as of Jan 2026) |
+| Size | ~30KB core + theme CSS (configurable per-language) |
+| Install | `npm install highlight.js` |
+| Confidence | HIGH (24.8K GitHub stars, actively maintained, zero dependencies) |
 
-| Library | Version | Purpose | When to Use |
-|---------|---------|---------|-------------|
-| spatie/laravel-responsecache | ^7.x | HTTP response caching | Cache rendered blog post pages. Invalidate on post update. Reduces DB queries for high-traffic posts. Optional but recommended for performance. |
-| butschster/laravel-meta-tags | ^2.x | SEO meta tag management | Manage meta tags, OpenGraph, Twitter Card from controllers/models. Alternative: build custom (simple `<meta>` tags in Blade). Use if want centralized SEO management. |
-| intervention/image | ^3.x | Image manipulation | Resize featured images, generate thumbnails. Only if blog includes image uploads. May not be needed if WordPress images preserved as-is. |
+**Why highlight.js (client-side):** For a WordPress-migrated blog with 2,500+ posts, code blocks exist as raw HTML `<pre><code>` in stored content. Client-side highlighting is the pragmatic choice because:
+1. It auto-detects languages -- no need to retroactively tag 20 years of code blocks with language classes.
+2. It works directly on existing content without modifying stored HTML.
+3. It requires zero backend processing -- important when you have 2,500 posts that would need server-side re-rendering.
+4. It has 189+ languages built-in, covering anything from the blog's history.
 
-**Confidence:** MEDIUM - Packages exist and are well-maintained, but versions not fully verified. Optional packages depending on feature scope.
+**Why NOT Tempest Highlight (server-side PHP):** Tempest Highlight (`tempest/highlight` v2.14.0, PHP ^8.4) is the modern PHP-native option and would be ideal for a new blog or one using Markdown. However, this blog stores content as raw HTML from WordPress. Server-side highlighting would require either:
+- Processing every post's HTML at render time to find and highlight `<pre><code>` blocks (adds latency per page load), or
+- A migration to re-process all 2,500 posts and store highlighted HTML (fragile, couples content to a specific highlighter).
+Client-side highlight.js avoids both problems.
+
+**Why NOT Torchlight (API):** Torchlight produces beautiful VS Code-quality highlighting via an API, but it introduces an external dependency for rendering. Every uncached page load would hit the Torchlight API. For a blog with high content volume and no revenue model, adding an API dependency for syntax highlighting is unnecessary risk. It also requires paid subscription for revenue-generating sites.
+
+**Why NOT Prism.js:** Prism.js is effectively abandoned -- Prism v2 development stalled in 2022 and no updates have shipped. highlight.js is actively maintained (GitHub updated Jan 2026) and has better auto-detection, which matters for legacy content without language annotations.
+
+**Why NOT Shiki (client-side):** Shiki produces the highest quality output (VS Code grammar engine) but weighs ~280KB and requires a WASM dependency. For a blog that may have occasional code blocks, that payload-to-value ratio is wrong. Shiki is best for documentation sites where every page has code.
+
+**Integration pattern:**
+```javascript
+// resources/js/app.js
+import hljs from 'highlight.js/lib/core';
+// Import only needed languages to reduce bundle size
+import javascript from 'highlight.js/lib/languages/javascript';
+import php from 'highlight.js/lib/languages/php';
+import xml from 'highlight.js/lib/languages/xml';
+import css from 'highlight.js/lib/languages/css';
+import bash from 'highlight.js/lib/languages/bash';
+import sql from 'highlight.js/lib/languages/sql';
+
+hljs.registerLanguage('javascript', javascript);
+hljs.registerLanguage('php', php);
+hljs.registerLanguage('xml', xml);
+hljs.registerLanguage('css', css);
+hljs.registerLanguage('bash', bash);
+hljs.registerLanguage('sql', sql);
+
+// Auto-highlight all code blocks on page load
+hljs.highlightAll();
+
+// Re-highlight after Livewire navigation
+document.addEventListener('livewire:navigated', () => {
+    hljs.highlightAll();
+});
+```
+
+**Theme integration:** highlight.js ships 40+ themes as CSS files. Import one that matches the royal blue + dark brand:
+```javascript
+// Use a dark theme for code blocks
+import 'highlight.js/styles/atom-one-dark.css';
+```
+
+Alternatively, create a custom highlight.js theme using the `@theme` design tokens to ensure code blocks match the brand palette exactly.
+
+### 5. Design Tokens: Expanded @theme Configuration (no package -- CSS only)
+
+| Detail | Value |
+|--------|-------|
+| Method | Expand existing `@theme` block in `app.css` |
+| Install | Nothing to install |
+| Confidence | HIGH (this is how Tailwind CSS 4 is designed to work) |
+
+The current `@theme` block has 6 tokens. A bold UI overhaul needs a complete design token system. This is not a library -- it is Tailwind CSS 4's native approach.
+
+**Recommended token expansion:**
+```css
+@theme {
+    /* Typography */
+    --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+    --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+    /* Brand Palette -- royal blue + black + white */
+    --color-brand-primary: #1e3a8a;      /* royal blue (blue-900) */
+    --color-brand-vivid: #2563eb;        /* vivid blue for CTAs (blue-600) */
+    --color-brand-accent: #f59e0b;       /* amber energy for highlights */
+    --color-brand-success: #10b981;
+    --color-brand-danger: #ef4444;
+
+    /* Surfaces */
+    --color-surface-light: #ffffff;
+    --color-surface-muted: #f8fafc;
+    --color-surface-dark: #0f172a;
+    --color-surface-dark-raised: #1e293b;
+
+    /* Text */
+    --color-text-primary: #0f172a;
+    --color-text-secondary: #475569;
+    --color-text-muted: #94a3b8;
+    --color-text-inverse: #f8fafc;
+
+    /* Spacing scale (content rhythm) */
+    --spacing-content: 1.5rem;
+    --spacing-section: 4rem;
+
+    /* Border radius */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+
+    /* Shadows */
+    --shadow-card: 0 1px 3px rgba(0,0,0,0.1);
+    --shadow-elevated: 0 10px 25px rgba(0,0,0,0.1);
+
+    /* Transitions */
+    --ease-snappy: cubic-bezier(0.2, 0, 0, 1);
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+}
+```
+
+Every `--color-*` token auto-generates `bg-`, `text-`, `border-` utilities. Every `--font-*` generates `font-` utilities. This is zero-dependency, zero-overhead design system infrastructure.
+
+**Note on brand palette:** The original `@theme` uses `#1e40af` (blue-800) as primary. For the royal blue + black + white scheme described in the project context, `#1e3a8a` (blue-900) is more authentically "royal blue" -- deeper and more regal. The vivid blue (`#2563eb`) serves as the interactive/CTA color for buttons and links where contrast against white is needed.
+
+### 6. Dark Mode: @custom-variant Pattern (already in place -- document the strategy)
+
+| Detail | Value |
+|--------|-------|
+| Method | `@custom-variant dark (&:where(.dark, .dark *));` already in `app.css` |
+| Toggle | Alpine.js + localStorage (already implemented) |
+| Install | Nothing -- already working |
+| Confidence | HIGH (this is the official Tailwind v4 pattern) |
+
+**Current state:** The project already has the correct Tailwind v4 dark mode setup. The `@custom-variant dark` directive in `app.css` replaces the old `darkMode: 'class'` from Tailwind v3/config-based approach. Alpine.js toggles the `.dark` class on the `<html>` element, and localStorage persists the preference.
+
+**What needs to happen for the UI overhaul (design work, not stack additions):**
+1. Define dark mode surface/text colors in the `@theme` block (already started with `--color-dark-bg`, `--color-dark-surface`, `--color-dark-text`).
+2. Use `dark:` prefix consistently on every component: `dark:bg-surface-dark`, `dark:text-text-inverse`, etc.
+3. Ensure highlight.js theme works in both modes -- either use a theme that works on both backgrounds, or swap themes via Alpine's dark mode state.
+4. Ensure the `@tailwindcss/typography` prose styles have dark mode overrides: `dark:prose-invert` class on `<article>` elements handles this automatically.
+
+**Why NOT use `prefers-color-scheme` media query (Tailwind v4 default):** The project uses manual toggle (class-based), which is correct for a blog where users may prefer different settings than their OS. The `@custom-variant` override is already in place.
+
+**Why NOT use data attributes:** Some frameworks prefer `data-theme="dark"` over a `.dark` class. Both work with `@custom-variant`. The `.dark` class approach is already implemented and is the most common pattern in the Tailwind ecosystem, keeping examples and community resources directly applicable.
+
+### 7. Image Handling: CSS-Only Approach (no package needed)
+
+| Detail | Value |
+|--------|-------|
+| Method | CSS aspect-ratio + background placeholders + responsive images via `srcset` |
+| Install | Nothing to install |
+| Confidence | HIGH (native CSS/HTML, no library needed) |
+
+**Why NOT Spatie Media Library:** `spatie/laravel-medialibrary` is the gold standard for Laravel image handling (responsive srcset generation, SVG placeholder generation, conversions). However, this project's images come from WordPress -- they are external URLs or already-migrated files, not Media Library-managed uploads. Adopting Media Library would require re-importing all post images into its system. That is a data migration, not a UI overhaul.
+
+**What to do instead (CSS-only approach):**
+1. **Missing featured images:** Use CSS to show a branded SVG placeholder or gradient background when no featured image exists. A simple `<div>` with `bg-brand-primary` and the blog logo/pattern is more on-brand than a generic placeholder service.
+2. **Responsive images for new content:** Use standard HTML `<img>` with `loading="lazy"` and `srcset` if multiple sizes are available. The `@tailwindcss/typography` plugin already styles images within prose content.
+3. **Aspect ratio consistency:** Use Tailwind's built-in `aspect-video` or `aspect-square` utilities on image containers to prevent layout shift (CLS). These are built into Tailwind v4 core.
+4. **WordPress content images:** The existing `ShortcodeProcessor` already handles WordPress image markup. The UI overhaul should style `.wp-caption` and related classes (already started in `app.css`) with the new design tokens.
+
+**Why NOT Intervention Image:** `intervention/image` is for server-side image manipulation (resize, crop, watermark). The UI overhaul is about CSS presentation, not image processing. If image resizing is needed later, it belongs in a separate operations milestone.
+
+---
+
+## What NOT to Add (and Why)
+
+### Flux UI (livewire/flux) -- DO NOT ADD
+
+Flux is the official Livewire UI component library ($99/year for Pro). It is excellent for new projects starting from scratch, but wrong for this project because:
+
+1. **Existing admin UI is custom Blade/Livewire components.** Adopting Flux means rewriting every admin page to use `<flux:input>`, `<flux:table>`, `<flux:modal>` instead of existing components. That is a full rewrite, not an overhaul.
+2. **Cost for limited value.** The free tier covers basics (buttons, dropdowns, modals) that are already built. The paid tier adds datepickers and charts that a blog does not need.
+3. **Design lock-in.** Flux imposes its own design language. The goal is a custom brand identity, not a Flux-flavored one.
+
+**Instead:** Improve existing Blade components with the new design tokens. The admin already works. It needs better colors, typography, and spacing -- not a component framework swap.
+
+### daisyUI / maryUI -- DO NOT ADD
+
+These are CSS component libraries that add predefined component classes. They conflict with the design token approach: you would fight their defaults instead of building from your tokens. Tailwind CSS 4's `@theme` is the component styling system.
+
+### Motion / Framer Motion / GSAP -- DO NOT ADD
+
+These are JavaScript animation powerhouses designed for marketing sites, complex page transitions, and scroll-driven storytelling. A blog needs:
+- Show/hide transitions (Alpine.js `x-transition` -- already have it)
+- List animations (AutoAnimate -- recommended above)
+- Hover effects (CSS transitions -- already have it via Tailwind)
+
+Adding a 20KB+ animation library for effects achievable with CSS and Alpine is pure bloat.
+
+### Tailwind CSS Component Libraries (Headless UI, Radix, shadcn) -- DO NOT ADD
+
+These are React-oriented or framework-agnostic headless component libraries. This project uses Livewire + Alpine.js for interactivity. Adding React-based headless UI components creates a second reactivity system. Alpine.js already provides the equivalent patterns (dropdowns, modals, tabs, accordions) natively within the Livewire ecosystem.
+
+### @tailwindcss/container-queries plugin -- DO NOT ADD
+
+Container queries are now built into Tailwind CSS v4 core. The `@container` directive and `@sm:`, `@md:`, `@lg:` variants work out of the box without any plugin. Use them freely for component-scoped responsive design (e.g., post cards that adapt to sidebar vs. main content width).
+
+### Spatie Laravel Media Library -- DO NOT ADD (for this milestone)
+
+As explained in section 7, adopting Media Library for image handling would require re-importing all WordPress-migrated images. That is a data migration effort that belongs in a future milestone, not a visual overhaul. The CSS-only approach handles the UI presentation needs.
+
+### Flowbite / Preline / other component libraries -- DO NOT ADD
+
+Pre-made component designs conflict with the bespoke brand identity we are building. Every pre-styled component would need to be restyled anyway, negating the value of using it.
+
+---
+
+## Installation Summary
+
+### Composer (PHP)
+```bash
+composer require blade-ui-kit/blade-heroicons
+```
+
+### npm (JavaScript)
+```bash
+npm install highlight.js @formkit/auto-animate
+```
+
+### Fonts (manual download)
+Download variable woff2 files and place in `/public/fonts/`:
+- `SpaceGrotesk-Variable.woff2` -- from [Google Fonts](https://fonts.google.com/specimen/Space+Grotesk) or [GitHub](https://github.com/floriankarsten/space-grotesk/blob/master/fonts/woff2/)
+- `Inter-Variable.woff2` -- from [Google Fonts](https://fonts.google.com/specimen/Inter)
+- `JetBrainsMono-Variable.woff2` -- from [GitHub](https://github.com/JetBrains/JetBrainsMono/releases)
+
+Add `@font-face` declarations in `app.css` before the `@theme` block (see section 3 for full code).
+
+### CSS (no install -- edit app.css)
+Expand the existing `@theme` block with the full design token set documented in section 5.
+
+---
+
+## Total Impact Assessment
+
+| Metric | Before | After |
+|--------|--------|-------|
+| Composer packages | 9 production | 10 production (+1: blade-heroicons) |
+| npm packages | 6 dev | 8 dev (+2: highlight.js, auto-animate) |
+| CSS bundle impact | Minimal | +highlight.js theme CSS (~2KB) |
+| JS bundle impact | 0 | ~33KB gzipped (highlight.js core+6 langs ~30KB + auto-animate ~3KB) |
+| Font load | ~20KB (Instrument Sans via system) | ~125KB (3 variable families, self-hosted) |
+| New concepts to learn | 0 | 2 (highlight.js config, AutoAnimate API) |
+
+This is a deliberately minimal stack addition. The overhaul's visual impact comes from design decisions (color, typography, spacing, contrast) expressed through Tailwind CSS 4's native `@theme` system, not from adding libraries.
+
+**Bundle optimization note:** highlight.js supports tree-shaking by importing individual languages. By importing only ~6 core languages (JS, PHP, HTML/XML, CSS, Bash, SQL) instead of the full 189+ language bundle, the JS addition stays at ~30KB gzipped rather than ~100KB+. If the blog turns out to have exotic languages in code blocks, add them incrementally.
+
+---
 
 ## Alternatives Considered
 
 | Category | Recommended | Alternative | Why Not |
 |----------|-------------|-------------|---------|
-| Frontend Framework | Livewire 4 | Inertia.js + Vue | Project preference for PHP-only stack. Livewire simpler mental model for content sites. Inertia requires Vue/React knowledge. |
-| Search Engine | Algolia (via Scout) | Meilisearch | User preference for Algolia. Meilisearch is self-hosted (cheaper but more DevOps). Algolia has better Laravel docs. |
-| Search Engine | Algolia | MySQL full-text search | Scout's database driver works but poor relevance for blog search. No typo tolerance, slower for large datasets. |
-| Admin Panel | Custom (Livewire) | Filament | Project explicitly wants custom admin. Filament is excellent but opinionated. Custom gives full UX control. |
-| Comments | Custom Livewire | Disqus/3rd-party | Custom gives data ownership, no external JS, matches site design. Disqus has ads/tracking concerns. |
-| Markdown Parser | league/commonmark | Built-in `Str::markdown()` | League/commonmark more extensible. Laravel's helper uses league/commonmark internally anyway. Either works. |
-| Slugs | eloquent-sluggable | Manual implementation | Package handles edge cases (duplicate slugs, special chars). Manual is ~20 lines but error-prone. |
-| RBAC | spatie/laravel-permission | Laravel Gates/Policies | Gates work for simple cases. Database-driven RBAC better for multi-role blog with future growth. |
-| Gravatar | forxer/laravel-gravatar | Manual URL building | Package handles sizing, defaults, caching. Manual works but reinvents wheel. Package is tiny dependency. |
+| Icons | blade-heroicons | Lucide via blade-lucide-icons | Extra design language; Heroicons match Tailwind DNA |
+| Icons | blade-heroicons | Flux icons | Requires Flux adoption; not standalone |
+| Animations | @formkit/auto-animate | Alpine x-transition only | No list reorder animations |
+| Animations | @formkit/auto-animate | GSAP | 7x larger, overkill for blog |
+| Syntax highlighting | highlight.js (client) | Tempest Highlight (PHP) | Would need to process 2,500 posts of raw HTML server-side |
+| Syntax highlighting | highlight.js (client) | Shiki (client) | 280KB + WASM, overkill for occasional code blocks |
+| Syntax highlighting | highlight.js (client) | Torchlight (API) | External API dependency; paid for revenue sites |
+| Syntax highlighting | highlight.js (client) | Prism.js (client) | Effectively abandoned since 2022 |
+| Display font | Space Grotesk | Oswald | Condensed/news-like, not tech-personality |
+| Display font | Space Grotesk | Poppins | Ubiquitous; lacks distinctiveness |
+| Body font | Inter | Open Sans | Inter has better screen optimization and variable support |
+| Mono font | JetBrains Mono | Fira Code | JetBrains Mono has better readability at small sizes |
+| Mono font | JetBrains Mono | Source Code Pro | Lacks ligatures; less personality |
+| Image handling | CSS-only | Spatie Media Library | Requires re-importing all WordPress images |
+| Image handling | CSS-only | Intervention Image | Server-side processing not needed for UI overhaul |
+| Dark mode | @custom-variant (existing) | prefers-color-scheme only | Users want manual toggle; already implemented |
+| Container queries | Built-in (Tailwind v4) | @tailwindcss/container-queries | Plugin unnecessary; feature is in core |
+| Component lib | None (custom) | Flux UI | Full rewrite of working admin; design lock-in |
+| Component lib | None (custom) | daisyUI / maryUI | Fights Tailwind @theme approach |
 
-## Installation
+---
 
-### Core Dependencies
+## Admin UI Component Strategy (No Library Needed)
 
-```bash
-# Backend packages
-composer require laravel/scout
-composer require algolia/algoliasearch-client-php
-composer require livewire/livewire
-composer require spatie/laravel-permission
-composer require cviebrock/eloquent-sluggable
-composer require forxer/laravel-gravatar
-composer require spatie/laravel-sitemap
-composer require spatie/laravel-feed
+The admin panel uses custom Livewire full-page components with Blade views. Rather than introducing a component library, the overhaul should:
 
-# DevOps & monitoring
-composer require laravel/horizon
-composer require spatie/laravel-backup
-composer require --dev laravel/telescope
+1. **Create reusable Blade components** for repeated admin patterns:
+   - `<x-admin.card>` -- white card with consistent padding/shadow
+   - `<x-admin.button>` -- primary/secondary/danger variants using brand tokens
+   - `<x-admin.table>` -- consistent table styling with gray-50 headers
+   - `<x-admin.stat-card>` -- dashboard metric cards
+   - `<x-admin.form-group>` -- label + input + error message wrapper
 
-# Optional but recommended
-composer require spatie/laravel-responsecache
-composer require league/commonmark  # If using markdown storage
-```
+2. **Apply design tokens consistently** via the expanded `@theme` variables, so all admin components inherit the brand palette.
 
-### Frontend Dependencies
+3. **Use Alpine.js for interactions** (already available): dropdowns, confirmations, tabs, sidebar collapse. No additional JS library needed.
 
-```bash
-# Flowbite for UI components (optional)
-npm install flowbite
-```
+This approach costs zero dependencies and produces a perfectly branded admin experience.
 
-### Configuration Steps
-
-1. **Publish configs:**
-```bash
-php artisan vendor:publish --provider="Laravel\Scout\ScoutServiceProvider"
-php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"
-php artisan vendor:publish --tag="eloquent-sluggable"
-```
-
-2. **Run migrations:**
-```bash
-php artisan migrate  # Creates roles/permissions tables
-```
-
-3. **Configure environment variables:**
-```env
-# Algolia credentials
-ALGOLIA_APP_ID=your_app_id
-ALGOLIA_SECRET=your_admin_key
-
-# Scout configuration
-SCOUT_DRIVER=algolia
-SCOUT_QUEUE=true
-
-# Redis for queues/cache
-REDIS_HOST=127.0.0.1
-REDIS_PASSWORD=null
-REDIS_PORT=6379
-
-# Queue driver
-QUEUE_CONNECTION=redis
-```
-
-4. **Queue worker:**
-```bash
-php artisan horizon  # For production
-# OR for development:
-php artisan queue:work redis --tries=3
-```
-
-## Version Compatibility Matrix
-
-| Package | Min PHP | Min Laravel | Max Laravel | Notes |
-|---------|---------|-------------|-------------|-------|
-| Laravel 12 | 8.2 | - | - | No breaking changes from 11.x |
-| Livewire | 8.1 | 10.0 | 12.0 | v4.0.3 latest (Jan 2026) |
-| Scout | 8.1 | 10.0 | 12.0 | v10.23.0 latest (Dec 2025) |
-| Algolia Client | 8.1 | - | - | NOT compatible with PHP 8.3.0 |
-| spatie/laravel-permission | 8.0 | 8.12 | 12.0 | v6.24.0 (Dec 2025) |
-| eloquent-sluggable | 8.2 | 12.0 | 12.0 | v12.0.0 (Feb 2025) |
-| forxer/laravel-gravatar | 8.4 | 12.0 | 12.0 | v5.0.0 (Nov 2025) |
-| spatie/laravel-sitemap | 8.2 | 11.0 | 12.0 | v7.3.8 (Nov 2025) |
-| spatie/laravel-feed | 8.2 | 10.0 | 12.0 | v4.4.4 (Jan 2026) |
-| spatie/laravel-backup | 8.3 | 12.40 | 12.0 | v9.3.7 (Nov 2025) |
-
-**Recommended PHP version: 8.2** (broadest compatibility, especially with Algolia client which excludes 8.3.0)
-
-**Note on PHP 8.4:** Some packages support it (Livewire, Gravatar, spatie/permission), but Algolia client explicitly excludes PHP 8.3.0 and may have issues with 8.4. Stick with PHP 8.2 for safety.
-
-## Architecture Integration Points
-
-### Scout + Algolia Setup
-
-```php
-// In Post model
-use Laravel\Scout\Searchable;
-
-class Post extends Model
-{
-    use Searchable;
-
-    public function toSearchableArray()
-    {
-        return [
-            'id' => $this->id,
-            'title' => $this->title,
-            'content' => strip_tags($this->content),
-            'excerpt' => $this->excerpt,
-            'slug' => $this->slug,
-            'published_at' => $this->published_at->timestamp,
-            'author' => $this->author->name,
-            'categories' => $this->categories->pluck('name')->toArray(),
-            'tags' => $this->tags->pluck('name')->toArray(),
-        ];
-    }
-
-    public function shouldBeSearchable()
-    {
-        return $this->published_at !== null; // Only index published posts
-    }
-}
-```
-
-### Livewire Comment Component
-
-```php
-// app/Livewire/CommentForm.php
-use Livewire\Component;
-
-class CommentForm extends Component
-{
-    public $post;
-    public $content;
-
-    public function submit()
-    {
-        $this->validate(['content' => 'required|min:10|max:5000']);
-
-        $comment = $this->post->comments()->create([
-            'user_id' => auth()->id(),
-            'content' => $this->content,
-            'status' => auth()->user()->hasApprovedComment() ? 'approved' : 'pending',
-        ]);
-
-        $this->content = '';
-        $this->dispatch('comment-added');
-    }
-}
-```
-
-### Role-Based Access Control
-
-```php
-// In database seeder
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
-
-// Create roles
-$admin = Role::create(['name' => 'admin']);
-$editor = Role::create(['name' => 'editor']);
-$author = Role::create(['name' => 'author']);
-
-// Create permissions
-Permission::create(['name' => 'publish posts']);
-Permission::create(['name' => 'edit any post']);
-Permission::create(['name' => 'moderate comments']);
-
-// Assign permissions to roles
-$admin->givePermissionTo(Permission::all());
-$editor->givePermissionTo(['publish posts', 'edit any post', 'moderate comments']);
-$author->givePermissionTo(['publish posts']);
-```
+---
 
 ## Sources
 
-### Official Documentation
-- [Laravel 12.x Scout Documentation](https://laravel.com/docs/12.x/scout) - HIGH confidence
-- [Livewire 4.x Documentation](https://livewire.laravel.com/) - HIGH confidence
-- [Algolia Laravel Scout Integration](https://www.algolia.com/doc/framework-integration/laravel/tutorials/getting-started-with-laravel-scout-vuejs) - HIGH confidence
-- [Spatie Laravel Permission Documentation](https://spatie.be/docs/laravel-permission/v6/introduction) - HIGH confidence
+### Tailwind CSS 4
+- [Tailwind CSS v4 @theme documentation](https://tailwindcss.com/docs/theme) -- HIGH confidence
+- [Tailwind CSS v4 announcement](https://tailwindcss.com/blog/tailwindcss-v4) -- HIGH confidence
+- [Tailwind CSS v4 dark mode docs](https://tailwindcss.com/docs/dark-mode) -- HIGH confidence
+- [Tailwind CSS adding custom styles](https://tailwindcss.com/docs/adding-custom-styles) -- HIGH confidence
+- [Tailwind CSS v4 container queries (built-in)](https://tailwindcss.com/blog/tailwindcss-v4) -- HIGH confidence
+- [Custom font setup in Tailwind v4](https://github.com/tailwindlabs/tailwindcss/discussions/13890) -- HIGH confidence
 
-### Package Repositories (Packagist - verified versions)
-- [livewire/livewire v4.0.3](https://packagist.org/packages/livewire/livewire) - HIGH confidence
-- [laravel/scout v10.23.0](https://packagist.org/packages/laravel/scout) - HIGH confidence
-- [algolia/algoliasearch-client-php v4.37.3](https://packagist.org/packages/algolia/algoliasearch-client-php) - HIGH confidence
-- [spatie/laravel-permission v6.24.0](https://packagist.org/packages/spatie/laravel-permission) - HIGH confidence
-- [cviebrock/eloquent-sluggable v12.0.0](https://packagist.org/packages/cviebrock/eloquent-sluggable) - HIGH confidence
-- [forxer/laravel-gravatar v5.0.0](https://packagist.org/packages/forxer/laravel-gravatar) - HIGH confidence
-- [spatie/laravel-sitemap v7.3.8](https://packagist.org/packages/spatie/laravel-sitemap) - HIGH confidence
-- [spatie/laravel-feed v4.4.4](https://packagist.org/packages/spatie/laravel-feed) - HIGH confidence
-- [spatie/laravel-backup v9.3.7](https://packagist.org/packages/spatie/laravel-backup) - HIGH confidence
+### Syntax Highlighting
+- [highlight.js npm](https://www.npmjs.com/package/highlight.js) -- v11.11.1, HIGH confidence
+- [highlight.js GitHub](https://github.com/highlightjs/highlight.js) -- 24.8K stars, updated Jan 2026, HIGH confidence
+- [Tempest Highlight Packagist](https://packagist.org/packages/tempest/highlight) -- v2.14.0, HIGH confidence (evaluated, not recommended for this use case)
+- [Torchlight Laravel](https://torchlight.dev/docs/clients/laravel) -- v0.6.1, HIGH confidence (evaluated, not recommended)
+- [Syntax highlighter comparison](https://chsm.dev/blog/2025/01/08/comparing-web-code-highlighters) -- MEDIUM confidence
+- [Prism vs highlight.js vs Shiki (npm-compare)](https://npm-compare.com/highlight.js,prismjs,react-syntax-highlighter,shiki) -- MEDIUM confidence
 
-### Community Resources
-- [Laravel Best Practices for 2026](https://smartlogiceg.com/en/post/laravel-best-practices-for-2026) - MEDIUM confidence
-- [Building a Blog with Laravel, Livewire, and Laravel Breeze](https://neon.com/guides/laravel-livewire-blog) - MEDIUM confidence
-- [Implementing Flowbite in Laravel 12](https://medium.com/@aakriticodes/implementing-flowbite-in-laravel-12-modern-ui-components-with-tailwind-css-36429ece1379) - MEDIUM confidence
-- [Spatie Permissions vs Laravel Policies](https://dev.to/cyber_aurora_/spatie-permissions-vs-laravel-policies-and-gates-handling-role-based-access-1bdn) - MEDIUM confidence
-- [WordPress to Laravel Migration Guide](https://freek.dev/906-on-migrating-my-blog-from-wordpress-to-a-laravel-application) - MEDIUM confidence
+### Typography / Fonts
+- [Space Grotesk on Google Fonts](https://fonts.google.com/specimen/Space+Grotesk) -- HIGH confidence
+- [Space Grotesk GitHub (variable woff2)](https://github.com/floriankarsten/space-grotesk) -- HIGH confidence
+- [Inter on Google Fonts](https://fonts.google.com/specimen/Inter) -- HIGH confidence
+- [JetBrains Mono GitHub](https://github.com/JetBrains/JetBrainsMono) -- HIGH confidence
+- [Self-hosting web fonts (Google Fonts Knowledge)](https://fonts.google.com/knowledge/using_type/self_hosting_web_fonts) -- HIGH confidence
+- [Fontsource Space Grotesk variable](https://www.npmjs.com/package/@fontsource-variable/space-grotesk) -- HIGH confidence (evaluated, not recommended for this setup)
 
-### Additional References
-- [Livewire 4 Release Announcement](https://laravel-news.com/everything-new-in-livewire-4) - MEDIUM confidence
-- [Laravel 12 Modern Patterns](https://medium.com/@codermanjeet/5-laravel-game-changing-features-every-artisan-must-master-in-2026-63aa262f3714) - LOW confidence (blog post)
-- [Flowbite Laravel Integration](https://flowbite.com/docs/getting-started/laravel/) - HIGH confidence
+### Icons
+- [blade-ui-kit/blade-heroicons GitHub](https://github.com/blade-ui-kit/blade-heroicons) -- HIGH confidence
+- [Blade Icons site](https://blade-ui-kit.com/blade-icons) -- HIGH confidence
+
+### Animations
+- [@formkit/auto-animate GitHub](https://github.com/formkit/auto-animate) -- HIGH confidence
+- [@formkit/auto-animate npm](https://www.npmjs.com/package/@formkit/auto-animate) -- HIGH confidence
+
+### Image Handling
+- [Spatie Laravel Media Library responsive images](https://spatie.be/docs/laravel-medialibrary/v11/responsive-images/getting-started-with-responsive-images) -- HIGH confidence (evaluated, not recommended for this milestone)
+
+### Evaluated but Not Recommended
+- [Flux UI](https://fluxui.dev/) -- HIGH confidence (evaluated, not recommended)
+- [Prism.js](https://prismjs.com/) -- HIGH confidence (evaluated, abandoned)
+- [Shiki](https://shiki.style/) -- HIGH confidence (evaluated, too heavy)

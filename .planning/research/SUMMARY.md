@@ -1,388 +1,220 @@
 # Project Research Summary
 
-**Project:** ShoeMoney Blog (WordPress to Laravel Migration)
-**Domain:** Multi-author Blog Platform
-**Researched:** 2026-01-24
+**Project:** ShoeMoney Blog v2.0 UI Overhaul
+**Domain:** Personal brand blog visual redesign (existing Laravel/Livewire platform)
+**Researched:** 2026-01-29
 **Confidence:** HIGH
 
 ## Executive Summary
 
-This project is migrating a 20+ year legacy WordPress blog to a modern Laravel/Livewire stack with Algolia search. The migration involves 1.3GB of database content including posts, comments, media files, and user data. Expert migrations of this type prioritize **SEO preservation** (exact URL mapping with 301 redirects), **data integrity** (chunked imports, relationship preservation), and **password compatibility** (hybrid validation to support WordPress phpass hashes).
+This is a pure visual overhaul of a live Laravel 11 + Livewire 3 + Tailwind CSS 4 blog with 2,500+ posts and 160,000+ comments spanning 20+ years. The existing application architecture is sound and unchanged -- v2.0 replaces the generic default styling with a bold personal brand identity built on royal blue + black + white, geometric sans-serif typography (Space Grotesk headings, Inter body), card-based post grids, and a properly engineered dark mode. The recommended approach is a 3-layer semantic design token system in Tailwind CSS 4's native `@theme inline` directive, which eliminates 60-70% of `dark:` prefixes and makes the entire site rebrandable by changing 3-5 primitive CSS variables. Stack additions are minimal: one Composer package (blade-heroicons), two npm packages (highlight.js, auto-animate), and three self-hosted font files.
 
-The recommended approach uses Laravel 12 with Livewire 4 for interactive components, Algolia/Scout for search, and a custom admin panel. Critical success factors include: (1) mapping WordPress permalink structures EXACTLY to Laravel routes to prevent catastrophic SEO loss, (2) using chunked/queued imports for large datasets to avoid memory exhaustion, (3) implementing hybrid password validation to preserve user access, and (4) converting WordPress shortcodes during migration to prevent broken content rendering.
+The highest-impact risk is legacy content rendering. Twenty years of WordPress HTML includes inline styles, fixed-width embeds, `<center>` tags, and hand-coded tables from 2004. Any typography or color change can make old posts unreadable. The mitigation is non-negotiable: build a content stress-test page sampling posts from every era before changing a single prose style. The second critical risk is response cache serving stale HTML after CSS deploys -- add `responsecache:clear` to the deploy pipeline before any visual work ships. The third is designing card layouts around the fact that 80%+ of posts have zero featured images -- the text-only card must be the primary design, not a fallback.
 
-Key risks center on **URL structure breaking** (70-90% traffic loss if not mapped correctly), **Livewire performance degradation** with large comment threads (must use computed properties, never public collections), and **WordPress-specific data loss** (comment threading, SEO metadata, media files, user roles). Mitigation requires meticulous pre-migration analysis, incremental verification testing, and understanding the impedance mismatch between WordPress's legacy architecture and Laravel's modern patterns.
+The overhaul decomposes into 7 phases following a strict dependency chain: design tokens and infrastructure first (everything depends on colors and fonts), then public layout shell, then homepage transformation, then post reading experience, then engagement polish, then admin dark mode and token migration, and finally verification/cleanup. Each phase leaves the site fully functional. No phase breaks existing behavior.
 
 ## Key Findings
 
 ### Recommended Stack
 
-Laravel 12 with PHP 8.2 provides the foundation, chosen for its mature ecosystem and compatibility with legacy WordPress data. **PHP 8.2 is critical** — not 8.3 or 8.4 — due to Algolia client incompatibility with PHP 8.3.0. The frontend stack combines Livewire 4 (latest, released Jan 2026 with single-file components) with Tailwind CSS 4 for styling, avoiding heavy JavaScript frameworks to maintain a PHP-only stack that's easier to maintain for content-focused sites.
+The existing stack (Laravel 11, Livewire 3, Tailwind CSS 4, Alpine.js, Vite) is locked and unchanged. Stack additions are deliberately minimal -- the overhaul's visual impact comes from design decisions expressed through Tailwind's native `@theme` system, not from libraries.
 
-**Core technologies:**
-- **Laravel 12.x** with PHP 8.2 — Application framework already in use, latest stable release with no breaking changes from 11.x
-- **Livewire 4.0.3** — Interactive UI framework with single-file components and Islands architecture, perfect for comment forms and search without heavy JS
-- **Algolia via Scout** — Hosted search with fast typeahead, explicitly requested by project, better Laravel documentation than Meilisearch
-- **MySQL 8.0+** — Already in use for WordPress, contains existing blog data with excellent Eloquent support
-- **Redis 7.x** — Cache and queue backend for Scout indexing, response caching, and session storage to handle traffic spikes
-- **Spatie packages** — Permission system (RBAC), sitemap generation, RSS feeds, backups — all battle-tested Laravel standards
+**Additions only:**
+- **blade-heroicons** (Composer): Tailwind-native icon set, 300+ icons, Blade component syntax -- matches Tailwind's design DNA
+- **highlight.js** (npm, ~30KB gzipped): Client-side syntax highlighting with auto-language-detection -- critical for legacy WordPress `<pre><code>` blocks that lack language class attributes
+- **@formkit/auto-animate** (npm, ~3KB gzipped): Zero-config list animations for Livewire DOM updates -- fills the gap Alpine.js transitions cannot cover
+- **Space Grotesk + Inter + JetBrains Mono** (self-hosted woff2, ~125KB total): Variable fonts for display/body/code -- self-hosted for performance, privacy, and cache control
+- **Expanded @theme tokens** (CSS-only): 25-30 semantic design tokens replacing the current 6, enabling automatic dark mode switching
 
-**Critical packages:**
-- `cviebrock/eloquent-sluggable` v12.0.0 — Auto-generate slugs with URL preservation for migration
-- `forxer/laravel-gravatar` v5.0.0 — Comment avatars without user uploads
-- `spatie/laravel-permission` v6.24.0 — Database-driven RBAC for multi-author blog (Admin/Editor/Author/Moderator roles)
-- `spatie/laravel-backup` v9.3.7 — Automated backups critical for recovering from attacks (primary migration motivation)
-
-**Why not alternatives:**
-- Inertia.js/Vue: Project preference for PHP-only stack, simpler mental model
-- Filament admin panel: Project explicitly wants custom admin for full UX control
-- Meilisearch: User preference for Algolia despite cost, better Laravel docs/examples
-- MySQL full-text search: Poor relevance, no typo tolerance, slower at scale
+**Explicitly rejected:** Flux UI (design lock-in, rewrites working admin), daisyUI/maryUI (fights @theme approach), GSAP/Motion (overkill for a blog), Shiki (280KB + WASM), Prism.js (abandoned, requires language classes on code blocks), Spatie Media Library (requires image re-import), React-based headless UI libraries (second reactivity system).
 
 ### Expected Features
 
-WordPress migrations must achieve **content parity** before adding differentiators. The research identifies clear table stakes (expected features that if missing cause "broken" perception), competitive differentiators (features that make this better than WordPress), and explicit anti-features (scope traps to avoid).
+**Table stakes (must have for a modern blog in 2026):**
+- Semantic color system with CSS custom properties (foundation for everything)
+- Typography system with display + body + mono fonts and strict type scale
+- Card-based post grid replacing the current divider list
+- Responsive mobile navigation with hamburger menu
+- Dark mode as a designed system, not naive color inversion
+- "Load More" pagination replacing default Laravel links
+- Content width constraint (750-800px for optimal reading)
+- Code block syntax highlighting with copy button
+- Reading progress indicator on post detail pages
+- Social sharing buttons (X, LinkedIn, copy link)
+- Author bio card at end of posts
+- Related posts section (3-card grid)
+- Back-to-top button
+- WCAG AA accessible color contrast in both modes
+- Featured image support with graceful text-only fallback
+- Warm background tones (off-white, not pure white)
 
-**Must have (table stakes):**
-- Post publishing with WYSIWYG/markdown editor, categories, tags, featured images
-- Multi-author management with profiles (bio, avatar, social links)
-- Comment system with threaded replies and first-time moderation (spam control without friction)
-- Static pages (About, Contact) with custom templates
-- RSS/Atom feeds (syndication baseline)
-- SEO fundamentals (meta tags, OpenGraph, sitemap.xml, structured data)
-- Responsive mobile-first design (71% of consumers expect it)
-- URL preservation with 301 redirects for 20 years of inbound links
+**Differentiators (brand identity):**
+- Bold homepage hero section with photo, headline, and CTA
+- Featured/pinned posts "Start Here" section
+- "As Seen In" credibility bar with publication logos
+- Category color coding system
+- Scroll-triggered fade-in animations (respecting prefers-reduced-motion)
+- Hover micro-interactions (card lift, button states)
+- Newsletter signup CTAs (hero + post-end, local storage first)
+- Animated stat counters ("2,500+ posts. 20+ years.")
 
-**Should have (competitive differentiators):**
-- Algolia typeahead search with instant results (major UX win over WordPress)
-- First-time comment moderation (approve once, then auto-approve regulars)
-- Code syntax highlighting for technical blog posts
-- Reading time estimates calculated from word count
-- Dark mode with user preference detection
-- Table of contents auto-generated from H2/H3 headings
-- Performance optimization targeting sub-1s page loads (vs 2.6s WordPress average)
-- Advanced SEO with schema.org Article markup and breadcrumbs
+**Anti-features (deliberately avoided):**
+- Sticky header, aggressive popups, sidebar on every page, infinite scroll, parallax, auto-playing video, carousels, social feed embeds, generic stock photography, cookie-cutter component libraries
 
-**Defer (v2+):**
-- Email newsletter integration (use Substack/Buttondown initially)
-- Webmentions/IndieWeb features (niche, low ROI)
-- AI-assisted content suggestions (nice-to-have)
-- Content series/collections (categories work initially)
-- Monetization features (not immediate need)
-
-**Anti-features (explicitly avoid):**
-- Custom page builder (WordPress complexity trap, maintenance nightmare)
-- Built-in analytics dashboard (privacy nightmare, use Matomo/Plausible)
-- Plugin/extension system (security risk, focus on Livewire components)
-- Multi-language support (massive complexity for personal blog)
-- Forum/community features (different product, link to Discord if needed)
-- WYSIWYG editor from scratch (use TipTap/Quill/markdown)
+**Deferred to later milestones:**
+- Content hub / topic cluster pages
+- "Most Popular" widget (needs analytics data)
+- Video support, keyboard navigation, branded newsletter slide-in
 
 ### Architecture Approach
 
-Laravel/Livewire blogs follow a **layered MVC architecture** with event-driven components and service abstraction. The key pattern is separating concerns across Presentation (Livewire components), Application (Controllers/Policies), Business (Services/Events/Observers), Persistence (Eloquent models), and Infrastructure (Database/Algolia/Queue) layers.
+The architecture centers on a 3-layer semantic token system: Layer 1 (primitives in `:root` -- raw hex values never used in templates), Layer 2 (semantic tokens in `:root` + `.dark` -- intent-based names like `--surface-page` that swap values), Layer 3 (`@theme inline` -- bridges semantic tokens to Tailwind utility classes). This means `bg-surface-page` automatically adapts when `.dark` toggles, eliminating most `dark:` prefixes. One CSS file serves both public and admin interfaces with namespaced admin tokens (`--color-admin-sidebar-*`).
 
-**Major components:**
-1. **Eloquent Models** (Post, User, Category, Tag, Comment) — Domain entities with relationships and Scout integration for search
-2. **Livewire Components** (PostList, PostDetail, CommentForm, SearchBar, Admin CRUD) — Presentation layer using single-file components for most UI
-3. **Service Layer** (PostService, CommentModerationService, WordPressMigrationService) — Complex business logic and multi-step workflows
-4. **Observer Layer** (PostObserver, CommentObserver) — Lifecycle automation for auto-slugs, search sync, notifications
-5. **Policy Layer** (PostPolicy, CommentPolicy) — Authorization rules for multi-author permissions
-6. **Custom Admin Panel** — Livewire-based CRUD interfaces for full control vs package like Nova/Filament
+**Major components and boundaries:**
+1. **Design token system** (`app.css`) -- Single source of truth for all colors, fonts, spacing, shadows. 3-layer architecture with ~25-30 semantic tokens.
+2. **Font loading** (`public/fonts/` + `@font-face`) -- Self-hosted variable woff2 files with `font-display: swap` and preload for the display font only.
+3. **Code highlighting** (`app.js`) -- highlight.js with 8 registered languages, `livewire:navigated` re-initialization, always-dark code block background.
+4. **Public layout shell** (4 Blade files) -- layout, navigation (+ mobile hamburger), footer (+ dark mode fix), theme toggle.
+5. **Public content components** (~6 files) -- Redesigned post card (text-first with optional image), card grid index, constrained-width post detail, search bar, sidebar widgets, comments.
+6. **Admin infrastructure** (2 existing + 2 new extracted Blade components) -- Dark mode support for admin layout, extracted sidebar-link and flash-messages components for DRY.
+7. **Admin Livewire views** (~15 files) -- Formulaic token swap across all admin pages.
 
-**Critical patterns:**
-- **Livewire single-file components** — Combine PHP logic and Blade in `.php` files for faster development
-- **Computed properties for collections** — NEVER store collections in public Livewire properties (causes massive serialization overhead)
-- **Observer-based search sync** — Auto-sync published posts to Algolia via Scout trait, queued for production
-- **Route model binding with slugs** — SEO-friendly URLs using `slug` instead of `id` in routes
-- **Hybrid password validation** — Support WordPress phpass hashes, upgrade to bcrypt on successful login
-
-**Database schema:**
-- Normalized relationships (separate tags table with pivot, not JSON)
-- Soft deletes for posts/comments (recovery capability)
-- Status enums (draft/published/archived) instead of booleans
-- Nested comments via `parent_id` for threaded discussions
-- SEO metadata columns (meta_title, meta_description, og_image) on posts table
-- WordPress compatibility: `wordpress_id` columns during migration for reference
+**Key architectural decisions:**
+- One CSS entry point for both public and admin (no split)
+- Admin sidebar stays perpetually dark in both modes (standard admin pattern)
+- Featured images use database column + accessor fallback (extract first `<img>` from content)
+- No `@apply` component classes (Blade components are the abstraction layer)
+- Backward-compatible token migration (old names aliased until all references updated)
+- Text-only card as the primary design state; image as progressive enhancement
 
 ### Critical Pitfalls
 
-The research identified 15 pitfalls ranging from critical (cause rewrites/SEO collapse) to minor (annoyances). The top 6 can destroy the project if not addressed proactively.
+1. **Legacy content rendering breaks** -- 20 years of WordPress HTML with inline styles, fixed-width embeds, and deprecated tags will break under new prose/typography styles. **Prevention:** Build a content stress-test page sampling posts from each era (2004-2026) before any typography changes. Keep all WordPress compatibility CSS intact.
 
-1. **URL Structure Breaking SEO** — WordPress permalink patterns must be mapped EXACTLY to Laravel routes. Failure causes 70-90% traffic loss within weeks from 404s on all indexed pages. Prevention: Export all WordPress URLs before starting, implement identical route patterns, use 301 redirects ONLY for necessary changes, test with URL verification script in staging.
+2. **Response cache serves stale HTML** -- `spatie/laravel-responsecache` caches entire HTTP responses including Vite asset references. After CSS deploys, cached pages reference nonexistent hashed filenames, showing completely unstyled pages. **Prevention:** Add `php artisan responsecache:clear` to every deployment touching CSS/JS. Consider disabling cache during active development.
 
-2. **Importing 1.3GB Database Without Chunking** — Loading large SQL files into memory causes PHP exhaustion, timeouts, or partial imports. Prevention: Use MySQL CLI with `pv` for progress, OR stream SQL file line-by-line in PHP, OR split into 100MB chunks. Never use `file_get_contents()` on the full file.
+3. **Dark mode coverage gaps** -- The footer and entire admin panel currently have zero dark mode support. Every component change must be verified in both modes. **Prevention:** Build a component showcase page. Enforce dual-mode review rule. Semantic tokens eliminate most but not all `dark:` needs.
 
-3. **WordPress Password Hash Incompatibility** — WordPress uses phpass (`$P$B...` format), Laravel uses bcrypt. Direct migration locks out all users. Prevention: Implement hybrid password validation that checks WordPress format first, then upgrades to bcrypt on successful login. Gradual migration, not forced reset.
+4. **Livewire DOM morphing breaks after markup restructuring** -- Restructuring HTML hierarchy (adding wrapper divs for grid layouts, changing tag types) confuses Livewire's morph engine, causing ghost elements, lost form state, and duplicated content. **Prevention:** Add `wire:key` to all dynamic elements. Prefer `x-show` over `@if` for visibility toggles. Test all interactivity after every structural change.
 
-4. **Livewire Performance Degradation with Large Comment Threads** — Serializing 500+ comments as public properties creates 500KB-2MB payloads, causing 7-60 second response times. Prevention: Use computed properties exclusively for collections, implement pagination (20 comments/page), lazy load nested replies, debounce user input (500ms minimum).
-
-5. **Algolia/Scout Initial Import Without Queueing** — Running `scout:import` on 50,000 posts synchronously times out after 60-300 seconds with no resume point. Prevention: Configure Redis queue workers BEFORE importing, use `--chunk=500` flag, monitor queue worker logs, verify Algolia count matches database count.
-
-6. **WordPress Shortcodes Breaking Content Rendering** — 20 years of content contains `[gallery]`, `[caption]`, `[embed]` shortcodes that display as literal text in Laravel. Prevention: Parse and convert shortcodes during migration (convert to HTML/Blade), OR use runtime Laravel shortcode parser package, OR identify and manually migrate critical shortcodes.
-
-**Additional high-impact pitfalls:**
-- Comment thread nesting lost (preserve `comment_parent` → `parent_id`)
-- Media files not copied (404s on all images, must copy `/wp-content/uploads/`)
-- SEO metadata lost (Yoast/RankMath data in `wp_postmeta`, not main posts table)
-- User roles unmapped (import from `wp_usermeta` serialized arrays)
-- Taxonomy relationships lost (WordPress uses 3-table structure: terms, term_taxonomy, term_relationships)
+5. **Card layout with no featured images** -- The Post model has no `featured_image` field. All 2,500+ posts lack image data. Cards designed around images will look like broken wireframes. **Prevention:** Design text-only cards as the primary state. Add `featured_image` column with accessor fallback that extracts first `<img>` from content. Test with real data where 80%+ of posts have no image.
 
 ## Implications for Roadmap
 
-Based on research, the migration requires **7 phases** with specific ordering driven by dependencies and risk mitigation. The sequence prioritizes data integrity, SEO preservation, and performance from the start.
+Based on research, suggested phase structure (7 phases):
 
-### Phase 1: Foundation & Data Migration
-**Rationale:** Must establish clean data before building features. WordPress import is the critical path — all other work depends on having migrated content to work with.
+### Phase 1: Design Foundation and Infrastructure
+**Rationale:** Everything depends on the design token system, fonts, and build tooling. This phase changes CSS/JS infrastructure only -- zero template modifications, zero visual changes to the live site. Backward-compatible by design.
+**Delivers:** Complete 3-layer semantic token system, self-hosted fonts with @font-face, highlight.js initialization, auto-animate setup, heroicons package installed. Content stress-test page and component showcase page for verification. Site looks identical after this phase (no templates changed yet).
+**Addresses features:** Semantic color system (#1), typography system (#2), warm background tones (#16), code highlighting infrastructure (#15)
+**Avoids pitfalls:** Token rename breaks (keep old names as aliases), font loading CLS (self-host with swap + preload), response cache (add clear to deploy pipeline)
+**Pre-work included:** Content stress-test page, component showcase page, audit bare border/ring usage, review database-stored injected code, publish Laravel pagination views
 
-**Delivers:**
-- Complete database schema with WordPress compatibility columns
-- All WordPress data imported and verified (posts, users, comments, categories, tags, media references)
-- Hybrid password validation implemented
-- Shortcode conversion applied to content
-- SEO metadata preserved from Yoast/RankMath
-- Comment threading preserved
-- User roles mapped to Laravel permission system
+### Phase 2: Public Layout Shell
+**Rationale:** The 4 layout shell files frame every public page. Updating them first establishes the visual frame before filling in content components. Mobile navigation is table stakes.
+**Delivers:** New fonts visible site-wide, semantic token classes on all structural elements, mobile hamburger menu, footer dark mode support, full-bleed section capability, content width constraint.
+**Addresses features:** Responsive mobile navigation (#4), content width constraint (#3), layout restructure for full-bleed sections (#25), footer redesign
+**Avoids pitfalls:** FOUC script displacement (keep as first head element), custom code injection breaks (preserve injection point positions), wire:navigate CSS persistence (single CSS entry point), sidebar conditional layout (test both states), embedded content overflow (add overflow-x-auto)
 
-**Critical features:**
-- Chunked database import (avoiding Pitfall #2)
-- Password hash compatibility (avoiding Pitfall #3)
-- Shortcode conversion (avoiding Pitfall #6)
-- Comment parent_id mapping (avoiding Pitfall #7)
-- Media file migration (avoiding Pitfall #9)
-- SEO metadata extraction (avoiding Pitfall #10)
-- Role mapping from wp_usermeta (avoiding Pitfall #8)
+### Phase 3: Homepage Transformation
+**Rationale:** The homepage is the first impression and most-visited page. Hero section, card grid, and featured posts create the brand identity. This phase has the highest visual impact.
+**Delivers:** Bold hero section with photo/headline/CTA, card-based post grid (text-first design), featured/pinned posts "Start Here" section, "Load More" pagination, "As Seen In" credibility bar.
+**Addresses features:** Hero section (#17), card grid (#5), featured posts (#21), Load More (#7), As Seen In (#20), featured image support with fallback (#8)
+**Avoids pitfalls:** Empty card problem (text-first design), variable card heights (line-clamp + grid-auto-rows), dark mode gaps (dual-mode review)
 
-**Avoids:** Memory exhaustion, password lockout, broken content, lost relationships
+### Phase 4: Post Reading Experience
+**Rationale:** Post detail is where readers spend the most time. Typography refinement, code blocks, and engagement features make the reading experience premium. Code highlighting infrastructure from Phase 1 activates here.
+**Delivers:** Refined post detail typography at 750-800px width, syntax-highlighted code blocks with copy button and language label, reading progress bar, social sharing buttons, author bio card, related posts section (3-card grid), back-to-top button.
+**Addresses features:** Reading progress (#10), post typography (#13), code blocks (#15), social sharing (#9), author bio (#12), related posts (#11), back-to-top (#13)
+**Avoids pitfalls:** Legacy content rendering (stress-test page from Phase 1), code block styling conflicts with prose (override prose code styles explicitly), embedded content overflow, widget HTML breaks at sidebar width
 
-**Duration estimate:** 2-3 weeks (largest phase, most risk)
+### Phase 5: Engagement and Polish
+**Rationale:** Personality layer that transforms "a blog" into "THE ShoeMoney blog." Animations, micro-interactions, newsletter forms, category colors, and breadcrumbs. Enhancement features that build on the structural work of Phases 1-4.
+**Delivers:** Newsletter signup CTAs (hero + post-end), category color coding system, scroll-triggered fade-in animations, hover micro-interactions (card lift, button states), animated stat counters, breadcrumb navigation with Schema.org markup.
+**Addresses features:** Newsletter CTA (#23), category colors (#22), scroll animations (#24), hover interactions (#26), stat counters (#27), breadcrumbs (#28)
+**Avoids pitfalls:** Reduced motion (respect prefers-reduced-motion), dark mode gaps (verify all new interactive states in both modes)
 
-### Phase 2: URL Routing & SEO Preservation
-**Rationale:** Must come before ANY public launch. URL structure determines SEO survival. This cannot be retrofitted.
+### Phase 6: Admin Dark Mode and Token Migration
+**Rationale:** Admin is not user-facing and is lower priority than public pages. However, dark mode support and consistent token usage improve the developer/admin experience. Formulaic work -- same pattern repeated across 15+ files.
+**Delivers:** Admin dark mode support (Alpine.js data binding, FOUC script), extracted sidebar-link and flash-messages Blade components (DRY), all 15 admin Livewire views using semantic tokens, consistent styling across all admin pages.
+**Addresses features:** Dark mode design system full coverage (#6), admin panel token consistency
+**Avoids pitfalls:** Livewire DOM morphing (wire:key on all dynamic elements, test interactivity), shared CSS bundle (single entry point, namespaced admin tokens), threaded comments visual hierarchy (test deeply nested threads at mobile widths)
 
-**Delivers:**
-- Exact WordPress permalink pattern mapping in Laravel routes
-- 301 redirects for any necessary URL changes
-- Canonical tags preventing duplicate content
-- URL verification testing suite
-- Sitemap.xml generation from routes
-- Robots.txt configuration
-
-**Critical features:**
-- Route model binding with slugs (table stakes)
-- Redirect rules imported from Redirection plugin (avoiding Pitfall #11)
-- Automated URL verification script (avoiding Pitfall #1)
-
-**Avoids:** Catastrophic SEO collapse, 70-90% traffic loss, broken inbound links
-
-**Stack:** Laravel routing, `spatie/laravel-sitemap`, `spatie/laravel-missing-page-redirector`
-
-**Duration estimate:** 1 week
-
-### Phase 3: Public Frontend with Livewire
-**Rationale:** With data imported and URLs preserved, build the public-facing blog using performance-first Livewire patterns.
-
-**Delivers:**
-- Blog post listing with pagination
-- Single post view with comment display
-- Comment form with first-time moderation
-- Category/tag archive pages
-- Author profile pages
-- Static pages (About, Contact)
-- Responsive Tailwind design
-- RSS/Atom feeds
-
-**Critical features:**
-- Livewire components using computed properties (avoiding Pitfall #4)
-- Comment pagination and lazy loading (avoiding Pitfall #4)
-- Gravatar integration for avatars
-- Reading time calculation
-- Social sharing meta tags
-
-**Avoids:** Livewire performance degradation, comment serialization overhead
-
-**Stack:** Livewire 4, Tailwind CSS 4, `spatie/laravel-feed`, `forxer/laravel-gravatar`
-
-**Duration estimate:** 3-4 weeks
-
-### Phase 4: Search Integration (Algolia/Scout)
-**Rationale:** Depends on Phase 1 data and Phase 3 components. Search is a differentiator but not blocking for basic blog functionality.
-
-**Delivers:**
-- Algolia index configuration
-- Queued Scout sync on post create/update
-- SearchBar Livewire component with typeahead
-- Search results page
-- Initial bulk import of all published posts
-- Search index verification
-
-**Critical features:**
-- Queue workers configured BEFORE import (avoiding Pitfall #5)
-- Chunked `scout:import` with monitoring (avoiding Pitfall #5)
-- Computed properties in SearchBar component (avoiding Pitfall #4)
-
-**Avoids:** Import timeout, synchronous blocking, incomplete indexing
-
-**Stack:** Laravel Scout, Algolia PHP Client, Redis queues, Horizon for monitoring
-
-**Duration estimate:** 1-2 weeks
-
-### Phase 5: Custom Admin Panel
-**Rationale:** Can develop in parallel with Phase 4. Depends on Phase 1 models and Phase 2 authorization.
-
-**Delivers:**
-- Dashboard with stats and recent activity
-- Post CRUD interface (create, edit, delete, publish)
-- Category/tag management
-- Comment moderation queue
-- User management with role assignment
-- Media library interface
-
-**Critical features:**
-- Policy-based authorization (multi-author RBAC)
-- Draft/scheduled/published workflow
-- SEO metadata fields in post editor
-- Code syntax highlighting preview
-- Revision history (optional, nice-to-have)
-
-**Stack:** Livewire components, `spatie/laravel-permission`, Flowbite UI components (optional)
-
-**Duration estimate:** 4-5 weeks
-
-### Phase 6: Performance Optimization
-**Rationale:** After core features work, optimize for production traffic. Research shows WordPress averages 2.6s loads; target sub-1s.
-
-**Delivers:**
-- Response caching for rendered posts
-- Query caching for computed properties
-- Image optimization and WebP conversion
-- CDN configuration for static assets
-- Database query optimization and indexing
-- Livewire lazy loading tuning
-
-**Critical features:**
-- Cache invalidation on post updates
-- Debounced user input (500ms minimum)
-- N+1 query elimination with eager loading
-- Database indexes on frequently queried columns
-
-**Stack:** `spatie/laravel-responsecache`, Redis, CDN integration
-
-**Duration estimate:** 1-2 weeks
-
-### Phase 7: Polish & Launch Preparation
-**Rationale:** Final touches before switching DNS from WordPress to Laravel.
-
-**Delivers:**
-- Dark mode with user preference detection
-- Table of contents for long-form posts
-- Advanced SEO (schema.org Article markup, breadcrumbs)
-- Automated backup configuration
-- Monitoring and logging setup
-- Pre-launch verification checklist
-
-**Critical features:**
-- Comprehensive testing with actual high-traffic posts
-- URL verification on production-like environment
-- Search result quality validation
-- Performance testing under load
-
-**Stack:** `spatie/laravel-backup`, Telescope for debugging, Horizon for queue monitoring
-
-**Duration estimate:** 2 weeks
+### Phase 7: Verification and Cleanup
+**Rationale:** Final sweep to catch cross-phase regressions. Comprehensive audit ensures nothing was missed across 27+ template files.
+**Delivers:** Clean codebase with zero hardcoded color references, full dark mode coverage verified on every page type, WCAG AA accessibility audit passed, legacy content rendering verified across eras, deprecated token aliases removed, cross-browser testing complete.
+**Addresses features:** Accessible color contrast (#14)
+**Avoids pitfalls:** All remaining -- this is the comprehensive verification phase
 
 ### Phase Ordering Rationale
 
-**Why this sequence:**
-- **Data first** — Cannot build features without migrated content (Phase 1 is foundation)
-- **SEO before launch** — URL structure mistakes are irreversible after indexing (Phase 2 blocks public launch)
-- **Public before admin** — Frontend validates data migration correctness, admin is internal-facing (Phase 3 before Phase 5)
-- **Search after core** — Algolia is differentiator but blog works without it initially (Phase 4 after Phase 3)
-- **Performance after features** — Need working features to optimize (Phase 6 near end)
-- **Polish last** — Dark mode/ToC are enhancements, not blockers (Phase 7 final)
-
-**Parallel opportunities:**
-- Phase 4 (Search) and Phase 5 (Admin) can develop concurrently after Phase 3 completes
-- Phase 6 (Performance) work can start during Phase 5 (test optimizations on public frontend)
-
-**Critical path:** Phase 1 → Phase 2 → Phase 3 → Phase 7 (data, URLs, public frontend, launch)
+- **Tokens before templates:** The 3-layer token system must exist before any component migration. Phase 1 is additive (no breaking changes) and enables all subsequent phases.
+- **Layout shell before components:** Navigation, footer, and layout frame every page. Updating the frame first means component work inherits the correct visual context.
+- **Homepage before post detail:** Highest traffic page first. Hero section establishes brand identity that informs post detail styling decisions.
+- **Public before admin:** User-facing pages take priority over internal-facing admin.
+- **Engagement last (before verification):** Animations, micro-interactions, and newsletter forms are polish on top of structure. They depend on the card grid, hero, and post detail being complete.
+- **Verification always last:** Comprehensive sweep catches cross-phase regressions.
 
 ### Research Flags
 
-**Phases likely needing deeper research during planning:**
-- **Phase 1 (Data Migration):** WordPress-specific edge cases (custom post types, custom fields, plugin-specific data). May need `/gsd:research-phase` for shortcode inventory and conversion strategy.
-- **Phase 4 (Algolia/Scout):** Algolia index configuration optimization for blog search (ranking formulas, typo tolerance tuning). Standard integration but advanced tuning may need research.
+**Phases needing deeper research during planning:**
+- **Phase 3 (Homepage):** Hero section content strategy (photo, headline copy, CTA destination) requires stakeholder input. Featured post curation criteria need definition. "As Seen In" logo assets need sourcing. Database migration for `is_featured` and `featured_image` columns needs planning.
+- **Phase 4 (Post Reading):** Related posts query strategy (shared categories/tags vs. recent) needs performance testing against 2,500+ posts. Social sharing URL formats for current platforms should be verified.
+- **Phase 5 (Engagement):** Newsletter provider integration decision (Mailchimp, ConvertKit, or local-only) affects form implementation. Category color assignments need stakeholder input. Schema.org breadcrumb markup should be verified against current Google recommendations.
 
-**Phases with standard patterns (skip deep research):**
-- **Phase 2 (URL Routing):** Well-documented Laravel routing patterns, straightforward implementation
-- **Phase 3 (Livewire Frontend):** Standard Livewire blog patterns, extensive examples in Laravel community
-- **Phase 5 (Admin Panel):** Standard CRUD with Livewire, clear Spatie permission documentation
-- **Phase 6 (Performance):** Laravel caching patterns well-documented, standard optimizations
-- **Phase 7 (Polish):** Mostly UI/UX work with known packages
-
-**Research confidence by phase:**
-- Phase 1: HIGH (WordPress migration well-documented, multiple case studies)
-- Phase 2: HIGH (Laravel routing standard, SEO migration guides available)
-- Phase 3: HIGH (Livewire blog tutorials abundant)
-- Phase 4: HIGH (Scout/Algolia official Laravel docs comprehensive)
-- Phase 5: MEDIUM-HIGH (Custom admin less documented than packages, but Livewire CRUD patterns clear)
-- Phase 6: HIGH (Laravel performance optimization well-covered)
-- Phase 7: MEDIUM (Some features like dark mode are design-dependent)
+**Phases with standard patterns (skip phase research):**
+- **Phase 1 (Foundation):** Tailwind CSS 4 @theme, @font-face, highlight.js -- all thoroughly documented with verified patterns in STACK.md and ARCHITECTURE.md.
+- **Phase 2 (Layout Shell):** Mobile hamburger menu with Alpine.js, semantic token class replacement -- well-established Tailwind/Alpine patterns.
+- **Phase 6 (Admin):** Formulaic token swap, component extraction -- repetitive work with no novel patterns.
+- **Phase 7 (Verification):** Audit and testing process -- no research needed.
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | All package versions verified from Packagist with specific releases. PHP 8.2 requirement confirmed from Algolia client constraints. Laravel 12/Livewire 4 compatibility matrix validated. |
-| Features | HIGH | Feature expectations derived from multiple blog platform comparisons (Ghost, Medium, Substack) and WordPress plugin ecosystem analysis. Table stakes vs differentiators clearly separated. |
-| Architecture | HIGH | Architecture patterns sourced from official Livewire 4 docs, Laravel best practices guides, and verified GitHub example projects. Database schema standard for Laravel blogs. |
-| Pitfalls | HIGH | Critical pitfalls (URL breakage, password compatibility, Livewire performance) confirmed in multiple WordPress→Laravel migration case studies and Livewire GitHub discussions with version-specific details. |
+| Stack | HIGH | All recommendations verified against official docs and package registries. Minimal additions to a locked, working stack. highlight.js and auto-animate both confirmed on npm with active maintenance. |
+| Features | HIGH | Table stakes confirmed across multiple 2026 design trend sources. Feature dependencies mapped with clear critical path. Anti-features explicitly justified. |
+| Architecture | HIGH | 3-layer token system verified against Tailwind CSS 4 official docs and GitHub discussions. `@theme inline` behavior confirmed. Component boundary analysis based on direct source code inspection of 27 templates. |
+| Pitfalls | HIGH | Derived from direct source code inspection of all Blade templates plus verified community reports. Existing bugs (footer dark mode, admin dark mode absence) confirmed in codebase. Response cache and Livewire morphing pitfalls backed by official repo discussions. |
 
 **Overall confidence:** HIGH
 
-The research benefits from:
-1. **Official documentation** — Laravel 12, Livewire 4, Scout, Algolia all have comprehensive official docs
-2. **Real migration case studies** — Multiple documented 7+ year WordPress to Laravel migrations with lessons learned
-3. **Package version verification** — All Packagist versions checked as of Jan 2026, not guessed
-4. **Community consensus** — Patterns like "avoid repositories, use services" confirmed across multiple Laravel experts
-5. **Specific pitfall evidence** — Livewire performance issues documented in GitHub discussions with reproducible examples
-
 ### Gaps to Address
 
-Despite high confidence, some areas need validation during implementation:
-
-- **Shortcode complexity** — The full inventory of shortcode types in 20 years of content is unknown until the WordPress export is analyzed. May discover custom plugin shortcodes requiring manual conversion. Address: Phase 1 should start with shortcode regex scan to categorize before migration.
-
-- **Comment volume per post** — Research assumes some posts have 500+ comments based on 20 years of content, but actual distribution unknown. If most posts have <50 comments, Livewire performance mitigations may be less critical. Address: Analyze comment distribution during Phase 1 to prioritize optimization work.
-
-- **WordPress plugin dependencies** — Unknown if WordPress site uses custom post types, custom fields, or plugin-specific features beyond standard blog functionality. Address: Export and analyze `wp_postmeta` and `wp_posts.post_type` before Phase 1 to identify surprises.
-
-- **Existing redirect rules** — Unknown how many custom redirects exist in Redirection plugin or .htaccess. Could be 10 or 10,000. Address: Export redirect count during pre-migration analysis to estimate Phase 2 scope.
-
-- **Image storage size** — `/wp-content/uploads/` directory size unknown. If multi-GB, may impact migration strategy (S3 vs local storage decision). Address: Check WordPress uploads directory size before Phase 1 to plan storage approach.
-
-- **Algolia index limits** — Free/paid tier limits for Algolia unclear from project context. May impact search feature scope if on free tier (10K records). Address: Verify Algolia plan during Phase 4 planning.
+- **Featured image data:** The Post model has no `featured_image` column. A migration must be created (Phase 3 at latest). The accessor fallback (extract first img from content) needs testing against real data to determine what percentage of posts have extractable images.
+- **Hero section content:** Research covers the pattern and layout but not the actual content (photo, headline, CTA text, "As Seen In" logos). This requires stakeholder input before Phase 3 implementation.
+- **Newsletter provider:** Phase 5 newsletter forms are designed to store emails locally first. The eventual provider integration is deferred but the form HTML/UX should anticipate it.
+- **Legacy content audit depth:** The stress-test page approach is prescribed but the actual distribution of problematic HTML patterns across 2,500+ posts is unknown. Early database queries during Phase 1 pre-work will quantify this.
+- **Admin dark mode scope confirmation:** Architecture research recommends full admin dark mode. Pitfalls research flags the shared CSS bundle risk. Stakeholder should confirm admin dark mode is in scope before Phase 6 planning.
 
 ## Sources
 
 ### Primary (HIGH confidence)
-- [Laravel 12.x Scout Documentation](https://laravel.com/docs/12.x/scout) — Search integration, queue configuration
-- [Livewire 4.x Documentation](https://livewire.laravel.com/) — Component patterns, performance best practices
-- [Algolia Laravel Scout Integration](https://www.algolia.com/doc/framework-integration/laravel/tutorials/getting-started-with-laravel-scout-vuejs) — Setup guide, indexing configuration
-- [Spatie Laravel Permission Documentation](https://spatie.be/docs/laravel-permission/v6/introduction) — RBAC implementation
-- Packagist verified versions for all packages (livewire/livewire v4.0.3, laravel/scout v10.23.0, algolia/algoliasearch-client-php v4.37.3, spatie packages)
+- [Tailwind CSS v4 @theme documentation](https://tailwindcss.com/docs/theme) -- token system, @theme inline, utility generation
+- [Tailwind CSS v4 dark mode documentation](https://tailwindcss.com/docs/dark-mode) -- @custom-variant, class-based toggling
+- [Tailwind CSS v4 release blog](https://tailwindcss.com/blog/tailwindcss-v4) -- breaking changes, new defaults, container queries
+- [highlight.js GitHub](https://github.com/highlightjs/highlight.js) -- 24.8K stars, auto-detection, DOM API
+- [blade-ui-kit/blade-heroicons](https://github.com/blade-ui-kit/blade-heroicons) -- Blade icon components
+- [@formkit/auto-animate](https://github.com/formkit/auto-animate) -- list animation library
+- [Spatie Laravel ResponseCache](https://github.com/spatie/laravel-responsecache) -- cache invalidation
+- [Livewire wire:navigate documentation](https://livewire.laravel.com/docs/3.x/navigate) -- SPA navigation behavior
+- [@tailwindcss/typography](https://github.com/tailwindlabs/tailwindcss-typography) -- prose styling behavior with CMS content
+- [Tailwind CSS v4 Upgrade Guide](https://tailwindcss.com/docs/upgrade-guide) -- breaking default changes
+- Project source code inspection (27 Blade templates, app.css, app.js, models, routes)
 
 ### Secondary (MEDIUM confidence)
-- [WordPress to Laravel migration case study](https://medium.com/@hosnyben/migrating-a-7-year-old-wordpress-business-to-laravel-bf9f11542fc1) — Real-world 7-year migration, password handling, pitfalls
-- [Livewire performance GitHub discussions](https://github.com/livewire/livewire/discussions/4492) — Comment serialization issues, computed property solutions
-- [Laravel Best Practices for 2026](https://smartlogiceg.com/en/post/laravel-best-practices-for-2026) — Architecture patterns, service layer guidance
-- [Building a Blog with Laravel, Livewire, and Laravel Breeze](https://neon.com/guides/laravel-livewire-blog) — Feature expectations, component structure
-- [WordPress migration SEO guide](https://creativetweed.co.uk/laravel-to-wordpress-migration/) — URL preservation strategies, redirect implementation
+- [GitHub Discussion: Dark Mode CSS Variables in v4](https://github.com/tailwindlabs/tailwindcss/discussions/15083) -- community @theme inline patterns
+- [GitHub Discussion: Dark-Mode-Specific CSS Variables](https://github.com/tailwindlabs/tailwindcss/discussions/16730) -- :root + .dark recommended workaround
+- [Building a Production Design System with Tailwind CSS v4](https://dev.to/saswatapal/building-a-production-design-system-with-tailwind-css-v4-1d9e) -- community best practices
+- [Avoiding DOM-Diffing Bugs in Livewire 3](https://medium.com/codex/avoiding-dom-diffing-bugs-in-livewire-3) -- morphing pitfalls
+- [Syntax highlighter comparison](https://chsm.dev/blog/2025/01/08/comparing-web-code-highlighters) -- hljs vs Prism vs Shiki
+- Design trend sources: Creative Boom, Elementor, Adobe, Muzli, Tubik Studio (2026 font and UI trends)
+- Blog layout UX: BdThemes, Schwartz-Edmisten (optimal content width), Marketer Milk (2026 blog designs)
+- Dark mode design systems: Siva Designer, Frank Congson, Imperavi, GitLab Pajamas
 
 ### Tertiary (LOW confidence)
-- Community blog posts on Laravel 12 features (Medium articles) — Used for feature discovery but validated against official docs
-- WordPress plugin comparison articles — Used to infer table stakes features but not authoritative for Laravel implementation
+- [Multi-Theme System with Tailwind CSS v4](https://medium.com/render-beyond/build-a-flawless-multi-theme-ui-using-new-tailwind-css-v4-react-dca2b3c95510) -- React-focused but CSS patterns transfer
 
 ---
-*Research completed: 2026-01-24*
+*Research completed: 2026-01-29*
 *Ready for roadmap: yes*

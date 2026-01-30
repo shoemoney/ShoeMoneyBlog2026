@@ -1,293 +1,429 @@
-# Feature Landscape: Modern Blog Platform
+# Feature Landscape: ShoeMoney Blog UI Overhaul (v2.0)
 
-**Domain:** Personal/Professional Blog Platform (Laravel-based)
-**Researched:** 2026-01-24
-**Context:** WordPress migration with 20+ years of content, Livewire frontend, Algolia search
+**Domain:** Personal brand blog for internet entrepreneur (20+ years of content, 2,500+ posts)
+**Researched:** 2026-01-29
+**Mode:** Ecosystem (UI features and design patterns for bold personal brand)
+**Context:** Subsequent milestone -- existing blog is functional, this is a visual redesign
+
+---
+
+## Design Decisions Already Made
+
+These were established before research and constrain feature scope:
+
+| Decision | Value | Implication |
+|----------|-------|-------------|
+| Post layout | Card-based grid | Replace current divider-separated list |
+| Display typography | Geometric sans-serif (e.g., Space Grotesk) | Need font loading strategy |
+| Content width | 750-800px for body text | Constrain `prose` container |
+| Body text size | 18-20px | Override Tailwind prose defaults |
+| Whitespace | Generous | Increase spacing tokens across the board |
+| Header | Static (not sticky) | Simpler implementation than sticky-on-scroll |
+| Footer | Minimal | Do NOT over-engineer footer; keep it lean |
+| Pagination | "Load More" button | Replace Laravel paginator links |
+| Brand colors | Royal blue + black (Superman-style) | Bold, high-contrast palette |
+
+These decisions are NOT up for debate in the feature landscape. Features below work within these constraints.
+
+---
+
+## Current State Assessment
+
+Review of existing Blade templates confirms:
+
+- **Homepage** (`posts/index.blade.php`): `h1` "Latest Posts" with `divide-y` list of post cards. No hero, no grid, no visual identity.
+- **Post card** (`post-card.blade.php`): Plain `article` with border-bottom. Title, date/author/read-time metadata, excerpt, category links. No images, no badges, no hover effects.
+- **Post detail** (`posts/show.blade.php`): Title, metadata row, category badges, `prose prose-lg` content, tags footer, comments. No progress bar, no sharing, no related posts, no author bio card.
+- **Navigation** (`navigation.blade.php`): Horizontal text links, search bar, theme toggle. No mobile hamburger menu -- links overflow on small screens.
+- **Footer** (`footer.blade.php`): 20 lines. Copyright + Privacy/Terms links. No social, no newsletter, no brand reinforcement.
+- **Layout** (`layout.blade.php`): `bg-white dark:bg-slate-900` body. Container with optional sidebar. No semantic color tokens.
+
+---
 
 ## Table Stakes
 
-Features users expect from any modern blog platform. Missing = product feels incomplete or broken.
+Features users expect from a modern blog in 2026. Missing any of these makes the site feel dated or incomplete.
 
-| Feature | Why Expected | Complexity | Notes |
-|---------|--------------|------------|-------|
-| **Post Publishing & Editing** | Core blog functionality | Low | WYSIWYG or markdown editor with preview |
-| **Categories & Tags** | Content organization is baseline | Low | Hierarchical categories, flat tags |
-| **Author Management** | Multiple authors = need attribution | Low | Author profiles with bio, avatar, social links |
-| **Comment System** | User engagement expected on blogs | Medium | Threaded comments, moderation required |
-| **RSS/Atom Feeds** | Standard syndication protocol | Low | Auto-generated from posts, per-category feeds |
-| **Search Functionality** | Finding content on any site >50 posts | Medium | Already planned: Algolia for typeahead |
-| **Responsive Design** | 71% of consumers expect mobile experience | Medium | Livewire components must be mobile-friendly |
-| **SEO Fundamentals** | Traffic = rankings = SEO basics | Medium | Meta tags, OpenGraph, structured data, sitemaps |
-| **Permalink Structure** | Clean URLs are expected | Low | Must preserve existing URLs for SEO migration |
-| **Static Pages** | About, Contact, etc. required | Low | Separate from posts, custom templates |
-| **Image Management** | Posts need images, must be optimized | Medium | Upload, resize, WebP conversion, alt text |
-| **Archive Views** | By date, category, tag, author | Low | Standard Laravel queries with pagination |
-| **Related Posts** | Keep readers engaged | Low-Medium | Tag/category matching or basic ML |
-| **Social Sharing** | Distribution depends on sharing | Low | Open Graph tags, share buttons optional |
+| # | Feature | Why Expected | Complexity | Depends On | Current State |
+|---|---------|--------------|------------|------------|---------------|
+| 1 | **Semantic color system (CSS custom properties)** | Foundation for everything else. Colors defined as `--color-surface`, `--color-text-primary`, `--color-accent` etc. Light and dark palettes swap token values, not individual classes. Without this, every component needs duplicate `dark:` classes that drift out of sync. | Medium | Nothing (foundational) | Hard-coded Tailwind colors with `dark:` prefix inversion |
+| 2 | **Typography system** | Display font (geometric sans-serif like Space Grotesk) for headings + clean body font (Inter or system). Strict type scale: 4 heading sizes, 1 body, 1 small. Two weights max per typeface. Font loaded via Google Fonts or self-hosted WOFF2. | Low | Nothing (foundational) | System fonts / Tailwind defaults |
+| 3 | **Content width constraint** | 750-800px max for body text (approximately 50-75 characters per line). UX consensus: 66 chars/line is ideal for reading comprehension. | Low | Nothing | Unconstrained `flex-1 min-w-0` fills all available space |
+| 4 | **Responsive mobile navigation** | 60%+ traffic is mobile. Hamburger menu with slide-out or dropdown. Alpine.js toggle is sufficient -- no heavy JS library needed. | Low | Nothing | Nav links overflow/wrap on small screens, no hamburger |
+| 5 | **Card-based post grid** | Replace divider list with visual cards. CSS Grid with `repeat(auto-fit, minmax(min(100%, 320px), 1fr))` for responsive columns. Cards need: category badge, title in display font, excerpt, metadata row. Subtle shadow or border with hover lift. | Medium | Typography, Color system | Flat text list with `divide-y` dividers |
+| 6 | **Dark mode design system** | Current dark mode is naive color inversion (`dark:bg-slate-900`). Proper approach: semantic tokens that swap values. Accent colors need reduced brightness for dark backgrounds. Shadows become lighter/softer. Images may need reduced brightness filter. Must pass WCAG AA contrast (4.5:1 body text). | Medium | Color system | Functional but not designed |
+| 7 | **"Load More" pagination** | Replace Laravel's default pagination links with a single "Load More" button. Livewire makes this straightforward -- increment page count, append results. Keep URL state for back-button support. | Low | Card grid | Standard Laravel pagination links |
+| 8 | **Featured image support with fallback** | Posts with images: show image on card and detail page. Posts without images (majority of 2,500+ legacy posts): graceful fallback. Options: (a) category-colored gradient header, (b) typography-only card (no image area), (c) branded placeholder. Recommend option (b): do NOT show placeholder images. Let cards without images be text-focused -- this is honest and avoids stock-photo feel. | Medium | Color system, Card grid | No image support anywhere |
+| 9 | **Social sharing buttons** | Minimum: X/Twitter, LinkedIn, copy link. Appear on post detail page after content. Use native share URLs (no third-party JS). Copy-to-clipboard via Alpine.js. | Low | Nothing | Missing entirely |
+| 10 | **Reading progress indicator** | Thin bar at top of viewport showing scroll position through article. Brand color. CSS-only or lightweight Alpine.js scroll listener. Fixed position, appears only on post detail pages. | Low | Color system | Missing |
+| 11 | **Related posts section** | 3-card grid after article content, before comments. Query by shared categories/tags. Falls back to recent posts if no matches. Keeps readers on-site. | Medium | Card grid | Posts end with tags then comments |
+| 12 | **Author bio card** | Photo, name, one-liner bio, social links. End of every post. Reinforces personal brand. | Low | Typography | Just "By [name]" text |
+| 13 | **Back-to-top button** | Floating button, appears after scrolling down. Essential for long-form posts (2,500+ words common). Alpine.js scroll listener. | Low | Nothing | Missing |
+| 14 | **Accessible color contrast** | WCAG AA minimum (4.5:1 body text, 3:1 large text). Must audit both light and dark palettes. Royal blue on white and on near-black both need verification. | Low | Color system | Needs audit -- gray-500/600 text may fail |
+| 15 | **Code block styling** | Technical blog with code examples. Need syntax highlighting (Prism.js or highlight.js), dark/light theme-aware, copy button, language label. Rounded corners, distinct background color from page surface. Horizontal scroll for long lines. | Medium | Color system, Dark mode | Default `prose` code styling only |
+| 16 | **Warm background tones** | Replace pure `bg-white` with warm off-white (e.g., `#FAFAF8` or `slate-50`). Reduces eye strain for content-heavy reading. Dark mode uses warm dark gray instead of cold slate. | Low | Color system | Pure `bg-white` / `dark:bg-slate-900` |
 
-### Content Publishing
-- Draft/scheduled/published states are mandatory
-- Auto-save drafts to prevent data loss
-- Revision history for major edits (optional but valued)
-- Featured image support with automatic thumbnails
-
-### User Experience
-- Fast page loads (<2.5s LCP for Core Web Vitals)
-- Accessible (WCAG 2.1 AA minimum)
-- Clear typography and readable content width (600-800px optimal)
-- Print stylesheet for long-form content
-
-### Technical Foundation
-- HTTPS only (security baseline in 2026)
-- GDPR-compliant analytics (not Google Analytics without consent)
-- Sitemap.xml auto-generation for search engines
-- Robots.txt configuration
+---
 
 ## Differentiators
 
-Features that set this platform apart. Not expected, but create competitive advantage.
+Features that transform the site from "a blog" to "THE ShoeMoney blog." These create brand identity and memorable experience.
 
-| Feature | Value Proposition | Complexity | Notes |
-|---------|-------------------|------------|-------|
-| **Algolia Typeahead Search** | Instant search beats standard search | Medium | Already planned, major UX win |
-| **First-Time Comment Moderation** | Spam-free while allowing regulars | Low | Smart middle ground vs full moderation |
-| **Gravatar Integration** | Professional look without user uploads | Low | Fallback to initials/generated avatars |
-| **Multi-Author with RBAC** | Professional multi-author publishing | Medium | Admin/Editor/Author/Contributor roles |
-| **Code Syntax Highlighting** | Technical blog requires this | Low | Prism.js or highlight.js integration |
-| **Reading Time Estimates** | Helps readers decide to engage | Low | Calculate from word count |
-| **Email Newsletter Integration** | Owns audience vs algorithmic distribution | High | RSS-to-email or newsletter platform API |
-| **Advanced SEO** | Beyond basics: schema.org markup | Medium | Article schema, breadcrumbs, canonical URLs |
-| **Performance Optimization** | Sub-1s load times vs 2.6s WordPress avg | High | Livewire lazy loading, CDN, image optimization |
-| **Content Series/Collections** | Group related posts beyond categories | Medium | Custom taxonomy for multi-part content |
-| **Pin/Feature Posts** | Highlight important content | Low | Sticky posts on homepage or category pages |
-| **Table of Contents** | Navigation for long-form posts | Low | Auto-generate from H2/H3 headings |
-| **Dark Mode** | Accessibility + modern expectation | Medium | CSS custom properties, user preference detection |
-| **Webmentions** | IndieWeb engagement tracking | Medium | Pingback replacement, show external mentions |
+### Tier 1: Identity (Makes it feel like a brand)
 
-### Content Discovery
-- Smart related posts using ML/vector similarity
-- Content recommendations based on reading history
-- Tag clouds weighted by popularity
-- "Popular this week/month" trending content
+| # | Feature | Value Proposition | Complexity | Depends On | Notes |
+|---|---------|-------------------|------------|------------|-------|
+| 17 | **Bold homepage hero section** | First impression IS the brand. Large photo, punchy headline ("I built a $17M business from a blog"), single CTA. Full-bleed brand-color background breaks the container. This is what every strong personal brand does. Without it, the site is "just a blog." | Medium | Color system, Typography | Currently: generic "Latest Posts" h1 |
+| 18 | **Signature color palette applied to structure** | Royal blue + black is not just for links. Brand color on hero background, category badges, button fills, progress bar, blockquote borders. Monochromatic boldness -- one color pushed to extremes. This is the 2026 trend: own your color. | Medium | Color system | `brand-primary` exists but only used on link hover |
+| 19 | **Custom display typography** | Space Grotesk (or similar geometric sans-serif) for headings. This typeface becomes brand recognition -- readers associate the font with ShoeMoney. Available on Google Fonts, 5 weights, retro-future character, works great at large sizes. Pair with Inter for body. | Low | Font loading setup | System fonts |
+| 20 | **"As Seen In" credibility bar** | Social proof strip with logos of publications/podcasts/events. Jeremy sold AuctionAds for $17M. Instantly communicates authority. Low complexity: static image row with flexbox. | Low | Nothing | Not present |
 
-### Authoring Experience
-- AI-assisted content suggestions (titles, meta descriptions)
-- Inline image optimization and formatting
-- Automatic internal linking suggestions
-- SEO score feedback (Yoast-style)
+### Tier 2: Engagement (Keeps people on-site)
 
-### Migration-Specific Differentiators
-- **URL Preservation with 301s**: Critical for 20+ years of SEO equity
-- **WordPress Import Tool**: One-click migration of posts, taxonomies, comments
-- **Comment Thread Preservation**: Maintain discussion continuity
-- **Legacy Shortcode Support**: Convert WordPress shortcodes to Livewire components
+| # | Feature | Value Proposition | Complexity | Depends On | Notes |
+|---|---------|-------------------|------------|------------|-------|
+| 21 | **Featured/pinned posts section** | "Start Here" or "Best Of" -- curated 3-5 cornerstone posts on homepage below hero. Guides new visitors through 20 years of content. Admin toggle: `is_featured` boolean on posts table. | Medium | Card grid, Admin field | No featured post system |
+| 22 | **Category color coding** | Each major category gets an accent color. Category badges on cards and detail pages use these colors. Creates visual variety while maintaining system consistency. Admin: color picker per category. | Low | Color system, Admin field | Categories shown as plain text |
+| 23 | **Newsletter signup CTA** | Email capture in 2 locations: hero section and post-end. Brand-colored form. Not aggressive -- appears after content delivery. Integration with provider (Mailchimp, ConvertKit, etc.) is Phase 4+; start with form UI that stores emails locally. | Medium | Color system | No email capture anywhere |
+| 24 | **Scroll-triggered fade-in animations** | Elements fade/slide in as they enter viewport via Intersection Observer. Adds energy and premium feel. MUST respect `prefers-reduced-motion`. Keep subtle: 200-300ms duration, small translate distances (10-20px). | Low | Nothing | Zero animations |
 
-### Monetization (If Needed)
-- Native ad placement zones (non-invasive)
-- Affiliate link management and tracking
-- Membership/paywall capability (Ghost-style)
-- Tip jar / Buy Me a Coffee integration
+### Tier 3: Polish (Makes it feel premium)
+
+| # | Feature | Value Proposition | Complexity | Depends On | Notes |
+|---|---------|-------------------|------------|------------|-------|
+| 25 | **Full-bleed section backgrounds** | Hero, CTAs, and footer break out of container for visual impact. Creates rhythm while scrolling -- contained content alternates with full-width brand sections. | Low | Layout restructure | Everything trapped in `container mx-auto` |
+| 26 | **Hover micro-interactions** | Card lift on hover (translateY + shadow increase), button state transitions, link underline animations. 150-200ms transitions. These separate "working website" from "designed experience." | Low | Card grid | Hard static states |
+| 27 | **Animated stat counters** | "2,500+ posts. 20+ years. Millions earned." Counters animate on scroll into view. One-time intersection observer trigger. Communicates scale. | Low | Hero section | Nothing |
+| 28 | **Breadcrumb navigation** | Structured data for SEO (Google shows breadcrumbs in search results). Appears on post/category/tag pages. Schema.org BreadcrumbList markup. | Low | Nothing | Missing |
+
+---
 
 ## Anti-Features
 
-Features to explicitly NOT build. Common mistakes or scope traps.
+Design choices to deliberately avoid. Common mistakes in the personal brand blog space.
 
-| Anti-Feature | Why Avoid | What to Do Instead |
-|--------------|-----------|-------------------|
-| **Custom Page Builder** | Scope creep, maintenance nightmare | Use Livewire components, focus on content |
-| **Built-in Analytics Dashboard** | Privacy nightmare, reinventing wheel | Integrate privacy-friendly external analytics (Matomo, Plausible) |
-| **Comment Login/Registration** | Friction kills engagement | First-time moderation + Gravatar is enough |
-| **Social Media Auto-Posting** | Fragile integrations, API changes | Use Zapier/IFTTT or external tools |
-| **Email Sending Built-In** | Deliverability issues, spam management | Use transactional email service (Postmark, SendGrid) |
-| **Plugin/Extension System** | WordPress complexity, security risk | Livewire components are enough flexibility |
-| **Multi-Language Support** | Massive complexity for personal blog | Use separate instances or external service |
-| **Forum/Community Features** | Different product, different codebase | Link to Discord/Discourse if needed |
-| **E-commerce Integration** | Not a blog feature, use external | Link to Gumroad/Stripe Checkout |
-| **Advanced Role Builder** | Over-engineering for 5-10 authors max | Fixed roles (Admin/Editor/Author/Contributor) sufficient |
-| **Post Formats** | WordPress legacy, confusing UX | Standard posts + optional "type" taxonomy if needed |
-| **Revision Comparison UI** | High complexity, low ROI | Simple revision list with restore is enough |
-| **Built-in Backup System** | Database-level backups better | Laravel schedule + S3, handled at infra level |
-| **WYSIWYG Editor from Scratch** | Reinventing wheel poorly | Use TipTap, Quill, or markdown with preview |
-| **Built-in Image Editing** | Scope creep | Upload → auto-optimize → done |
+| # | Anti-Feature | Why Avoid | What to Do Instead |
+|---|--------------|-----------|-------------------|
+| 1 | **Sticky header on scroll** | Decision already made: static header. Sticky headers consume vertical space on mobile, add scroll-listener complexity, and fight with reading progress bar for top-of-viewport real estate. For a reading-focused blog, let the header scroll away and give content full screen. | Static header that scrolls with page. Back-to-top button provides navigation recovery. |
+| 2 | **Aggressive popups on page load** | Interrupting before delivering value is hostile UX. Google penalizes intrusive interstitials on mobile. | Inline CTAs after content. Post-end newsletter form. Never interrupt reading. |
+| 3 | **Sidebar on every page** | Current two-column layout with 320px sidebar constrains content width. For a reading-focused redesign, sidebar is clutter on post detail pages. On homepage, card grid replaces the need for sidebar discovery. | Remove sidebar from post detail. Homepage uses card grid. Move useful widgets (about, newsletter) into footer or dedicated sections. Keep sidebar optional on archive pages only if needed. |
+| 4 | **Dark mode as simple color inversion** | Just flipping colors looks cheap. Accent colors that work on white rarely work on dark backgrounds. Shadows invert wrong. | Semantic color tokens with intentional dark palette. Reduce accent brightness 10-15% for dark mode. Use lighter shadows on dark backgrounds. |
+| 5 | **Tiny text for "elegant" feel** | Under-16px body is unreadable for sustained reading. ShoeMoney audience skews older (20-year readership). | 18-20px body minimum. 1.6 line-height. Decision already made. |
+| 6 | **Auto-playing video** | Wastes bandwidth, annoys users, kills LCP scores. | Thumbnail with play button if video content is added later. |
+| 7 | **Carousel/slider for featured posts** | Low engagement (users see slide 1 only). Adds JS complexity. Accessibility nightmare. | Static grid of 3-5 featured cards, all visible simultaneously. |
+| 8 | **Infinite scroll** | Breaks back button, prevents footer access, impossible to find "that post from page 3." Decision already made: "Load More" button. | "Load More" button that appends posts. Maintains URL state. |
+| 9 | **Parallax scrolling** | Dated (2015 trend). Causes motion sickness. Performance cost. | Subtle fade-in-on-scroll via Intersection Observer. Respect `prefers-reduced-motion`. |
+| 10 | **Social media feed embeds** | Slow loading, layout breaks when APIs change (X API unstable), third-party tracking. | Static social icons linking to profiles. No embedded feeds. |
+| 11 | **Generic stock photography** | Nothing kills personal brand faster than stock photos. This is Jeremy's blog. | Typography-driven design (bold type on colored backgrounds). Personal photos only when available. Cards without images should look intentional, not broken. |
+| 12 | **Cookie-cutter Tailwind UI** | Current site looks like every `create-laravel-app` output. Component libraries without heavy customization scream "template." | Custom border-radius (e.g., 12px not default 8px), custom shadow values, distinctive spacing rhythm, brand colors on structural elements. Design system should feel bespoke. |
+| 13 | **Too many font weights/sizes** | 6+ different sizes creates visual chaos. | Strict type scale defined in Tailwind config. 3-4 heading sizes, 1 body, 1 small. |
+| 14 | **Stuffed sidebar with 5+ widgets** | "Sidebar junk drawer." Decision fatigue. Low engagement on most widgets. | If sidebar exists on any page, curate to 2-3 max. Better: move content into purpose-built sections. |
 
-### Why These Are Anti-Features
-- **Scope Traps**: Features that seem simple but balloon into products themselves
-- **Maintenance Burden**: External integrations via APIs break; built-in = your problem
-- **Security Surface**: More features = more attack vectors (especially user uploads, plugins)
-- **Performance Tax**: Every feature adds weight; ship less, go faster
-- **Focus Dilution**: Blog = content publishing; don't try to be Notion/WordPress/Ghost simultaneously
+---
 
 ## Feature Dependencies
 
 ```
-Core Content Model
-├── Posts
-│   ├── Categories (M:M)
-│   ├── Tags (M:M)
-│   ├── Author (1:M)
-│   └── Comments (1:M)
-│       └── Moderation System
-├── Static Pages
-└── Media Library
-    └── Image Optimization
+FOUNDATIONAL (must come first, everything depends on these):
+  Color System (semantic tokens) ──┬──> Dark mode proper palette
+                                   ├──> Card grid styling
+                                   ├──> Hero section
+                                   ├──> Code block themes
+                                   ├──> Category color coding
+                                   └──> All button/link states
 
-Search & Discovery
-├── Algolia Integration → Post Indexing
-├── Related Posts → Tag/Category Matching
-└── Archives → Date/Category/Tag/Author queries
+  Typography System ───────────────┬──> Card titles
+                                   ├──> Hero headline
+                                   ├──> Post detail reading experience
+                                   └──> Navigation visual weight
 
-SEO Foundation
-├── Meta Tags → OpenGraph, Twitter Cards
-├── Structured Data → Article Schema
-├── Sitemap → Auto-generation from routes
-└── 301 Redirects → Migration URL mapping
+STRUCTURAL (layout changes):
+  Layout restructure ──────────────┬──> Full-bleed sections (hero, footer)
+  (remove sidebar default,        ├──> Card grid on homepage
+   allow full-width sections)     └──> Content width constraint on posts
 
-User Management
-├── Multi-Author Support
-├── Role-Based Permissions → Admin/Editor/Author/Contributor
-└── Author Profiles → Bio, Avatar, Social Links
+COMPONENT (built on foundations):
+  Card Grid ───────────────────────┬──> Featured image support
+                                   ├──> "Load More" pagination
+                                   ├──> Featured posts section
+                                   └──> Related posts section
 
-Performance
-├── Image Optimization → WebP, lazy loading, responsive images
-├── Caching Strategy → Page cache, query cache
-└── CDN Integration → Static asset delivery
+  Hero Section ────────────────────┬──> Newsletter CTA (hero placement)
+                                   ├──> "As Seen In" bar (below hero)
+                                   └──> Animated counters
 
-Privacy & Compliance
-├── GDPR-Compliant Analytics → Matomo/Plausible
-├── Cookie Consent → If using analytics/ads
-└── Comment Privacy → Email not public, moderation
+  Post Detail ─────────────────────┬──> Reading progress bar
+                                   ├──> Social sharing
+                                   ├──> Author bio card
+                                   └──> Code block styling
 ```
 
-## MVP Recommendation
+**Critical path:** Color System + Typography System are the two pillars. Every visual component depends on knowing the exact colors and fonts. Do these first, validate in browser, then build components on top.
 
-For initial launch (migrating from WordPress), prioritize:
+---
 
-### Phase 1: Content Parity (Table Stakes)
-1. Post publishing with categories/tags
-2. Author management with basic profiles
-3. Comment system with first-time moderation
-4. Static pages (About, Contact)
-5. RSS/Atom feeds
-6. Image upload and optimization
-7. SEO fundamentals (meta, sitemap)
-8. URL preservation with 301 redirects
+## Specific Pattern References
 
-### Phase 2: Search & Discovery (Key Differentiator)
-1. Algolia typeahead search integration
-2. Related posts
-3. Archive views (date, category, tag, author)
-4. Reading time estimates
+### Card Grid Pattern (CSS Grid, responsive)
 
-### Phase 3: Author Experience
-1. Multi-author RBAC
-2. Draft/scheduled publishing
-3. Code syntax highlighting (for technical posts)
-4. Revision history
+```css
+.post-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 2rem;
+}
+```
 
-### Phase 4: Polish & Performance
-1. Dark mode
-2. Table of contents for long posts
-3. Performance optimization (sub-1s loads)
-4. Advanced SEO (schema.org)
+Card anatomy:
+```
++----------------------------------+
+| [CATEGORY BADGE - colored]       |
+| Post Title in Display Font       |
+| Two lines of excerpt text that   |
+| gives a taste of the content...  |
+|                                  |
+| Jan 15, 2026  ·  5 min read     |
++----------------------------------+
+```
 
-### Defer to Post-MVP
-- Email newsletter integration (use Substack/Buttondown initially)
-- Webmentions (niche feature)
-- Content series/collections (can use categories initially)
-- AI-assisted authoring (nice-to-have)
-- Monetization features (not immediate need)
-- Advanced analytics (use external tool)
+- NO featured image area on cards for posts without images (majority of archive). Cards without images are text-focused by design.
+- Cards WITH images: image as full-width card header with `object-fit: cover` and fixed aspect ratio (16:9 or 3:2).
+- Hover: `translateY(-4px)` + shadow increase. 200ms transition.
+- Category badge uses category accent color (when color coding is implemented).
 
-## Feature Complexity Assessment
+### Post Detail Reading Experience
 
-| Complexity | Features | Total Effort Estimate |
-|------------|----------|-----------------------|
-| **Low** | Categories, Tags, Static Pages, RSS, Permalinks, Social Sharing, Reading Time, Pin Posts, Gravatar | 2-3 weeks |
-| **Medium** | Comments + Moderation, Search (Algolia), SEO (meta/sitemap), Responsive Design, Image Management, RBAC, Code Highlighting, Dark Mode, TOC | 6-8 weeks |
-| **High** | Performance Optimization, Newsletter Integration, Advanced SEO (schema), Migration Tooling | 4-6 weeks |
+```
+[====== Progress Bar (brand color) ======------]  <- Fixed top, thin
 
-**Total MVP Estimate (Phases 1-3):** 12-17 weeks for feature development (excludes infrastructure, design, testing)
+# Post Title (display font, 36-44px)
+By Jeremy Schoemaker  ·  January 15, 2026  ·  8 min read
+[Category Badge] [Category Badge]
 
-## Migration-Specific Considerations
+---
 
-Given the WordPress migration context:
+Body text at 18-20px, max-width 750-800px, centered.
+Line-height 1.6-1.7. Paragraph spacing 1.5em+.
 
-### Must-Haves for Migration
-- **URL Mapping Table**: Store old → new URL mappings for 301 redirects
-- **Import Comments**: WordPress exports XML; parse and import with threading
-- **Import Authors**: Map WP users to Laravel users, preserve attribution
-- **Import Media**: Download images from old URLs, upload to new storage
-- **Shortcode Translation**: Identify common WP shortcodes, convert to Livewire equivalents
+Code blocks with syntax highlighting, copy button,
+language label. Rounded corners. Distinct background.
 
-### Migration Complexity by Content Type
-| Content Type | Complexity | Notes |
-|--------------|-----------|-------|
-| Posts | Low | Standard WordPress export XML |
-| Categories/Tags | Low | Direct mapping |
-| Comments | Medium | Threading structure, spam filtering |
-| Media | Medium | Re-download, optimize, update URLs in content |
-| Authors | Low | Create Laravel users, map IDs |
-| Custom Fields | High | May need custom handling per field type |
-| URL Redirects | Medium | Generate from old permalink structure |
+...article content...
+
+---
+
+[Share: X/Twitter | LinkedIn | Copy Link]
+
++------------------------------------------+
+| [Photo]  Jeremy Schoemaker               |
+|          Internet entrepreneur, blogger  |
+|          [Twitter] [LinkedIn] [YouTube]  |
++------------------------------------------+
+
++----------+ +----------+ +----------+
+| Related  | | Related  | | Related  |
+| Post 1   | | Post 2   | | Post 3   |
++----------+ +----------+ +----------+
+
++------------------------------------------+
+| Enjoyed this? Get the best stuff weekly. |
+| [email field] [Subscribe]                |
++------------------------------------------+
+
+--- Comments Section (existing) ---
+```
+
+### Code Block Pattern
+
+```html
+<div class="code-block relative rounded-xl overflow-hidden my-8">
+  <div class="code-header flex justify-between items-center px-4 py-2
+              bg-gray-800 dark:bg-gray-950 text-gray-400 text-xs">
+    <span class="language-label">javascript</span>
+    <button class="copy-btn hover:text-white transition-colors">Copy</button>
+  </div>
+  <pre class="p-4 overflow-x-auto bg-gray-900 dark:bg-gray-950">
+    <code class="language-javascript">...</code>
+  </pre>
+</div>
+```
+
+- Use Prism.js (2KB core, lightweight) or Shiki (build-time, zero runtime).
+- Dark background regardless of page theme (code blocks are always dark).
+- Rounded corners (12px to match card radius).
+- Horizontal scroll for long lines, never wrap code.
+- Copy button with "Copied!" feedback.
+- Language label in header bar.
+
+### Featured Image Fallback Strategy
+
+For a 20-year archive where most posts lack images:
+
+```
+IF post has featured_image:
+  Show image at top of card (16:9, object-fit: cover)
+  Show image as hero on detail page
+
+ELSE (no image):
+  Card: text-only layout (no image area, no placeholder)
+  Detail page: title + metadata only (no empty hero area)
+
+DO NOT: show generic placeholder, stock photo, or gradient
+```
+
+This is deliberate. Text-only cards look clean when the typography and spacing are strong. Placeholder images look worse than no images.
+
+### Hero Section Pattern
+
+```
++----------------------------------------------------------+
+|  [ROYAL BLUE BACKGROUND - full bleed]                    |
+|                                                          |
+|  [Photo]     BOLD HEADLINE (Space Grotesk, 48-64px)     |
+|              Subheadline (Inter, 20-24px)                |
+|              [PRIMARY CTA BUTTON - white on blue]        |
+|                                                          |
++----------------------------------------------------------+
+|  [AS SEEN IN: logo  logo  logo  logo]  <- optional bar  |
++----------------------------------------------------------+
+```
+
+- Full-bleed background (breaks out of container).
+- Photo is real, not stock. Personality over polish.
+- Headline is personality-driven: "I built a $17M business from a blog."
+- Single CTA. Never two competing CTAs.
+
+### Footer Pattern (Minimal per design decision)
+
+```
++----------------------------------------------------------+
+|  [DARK BACKGROUND - full bleed]                          |
+|                                                          |
+|  ShoeMoney          [Twitter] [LinkedIn] [YouTube]       |
+|  Making Money Online                                     |
+|                                                          |
+|  (c) 2026 ShoeMoney. All rights reserved.  Privacy|Terms|
++----------------------------------------------------------+
+```
+
+- NOT a mega-footer. Minimal per design decision.
+- Brand name + tagline, social icons, legal links. That is it.
+- Newsletter CTA goes in post-end and hero, NOT footer.
+
+---
+
+## Admin Panel Requirements
+
+The admin panel is not user-facing and should NOT be redesigned. However, these frontend features need admin support:
+
+| Frontend Feature | Admin Requirement | Complexity |
+|-----------------|-------------------|------------|
+| Featured/pinned posts | `is_featured` boolean on post edit form | Low |
+| Featured images | Image upload/URL field on post edit | Medium |
+| Hero section content | Settings fields: headline, subheadline, CTA text/URL, photo | Low |
+| "As Seen In" logos | Settings field or simple HTML widget | Low |
+| Category colors | Color picker on category edit form | Low |
+| Social profile URLs | Settings fields (social group) | Low |
+| Newsletter form | Settings field for provider integration later; form stores locally first | Low |
+
+---
+
+## MVP Recommendation (Phase Structure)
+
+### Phase 1: Design Foundation
+Build the system everything else depends on.
+1. Semantic color system (CSS custom properties, light + dark palettes)
+2. Typography system (Space Grotesk display + Inter body, type scale in Tailwind config)
+3. Warm background tones (off-white light, warm dark)
+4. Content width constraint (750-800px for prose)
+5. Layout restructure (allow full-bleed sections, remove default sidebar)
+6. Responsive mobile navigation with hamburger menu
+
+### Phase 2: Homepage Transformation
+Transform the first impression.
+7. Bold hero section with photo, headline, CTA (full-bleed)
+8. Card-based post grid (CSS Grid, responsive)
+9. Featured/pinned posts section ("Start Here")
+10. "Load More" pagination replacing default links
+11. "As Seen In" credibility bar
+
+### Phase 3: Post Reading Experience
+Make the reading experience premium.
+12. Reading progress indicator (brand color, fixed top)
+13. Post detail typography and width refinement
+14. Code block styling with syntax highlighting (Prism.js)
+15. Social sharing buttons
+16. Author bio card at end of post
+17. Related posts section (3-card grid)
+18. Back-to-top button
+
+### Phase 4: Engagement and Polish
+Add personality and interactivity.
+19. Newsletter signup forms (hero + post-end)
+20. Category color coding system
+21. Scroll-triggered fade-in animations
+22. Hover micro-interactions (card lift, button states)
+23. Animated stat counters in hero
+24. Breadcrumb navigation with Schema.org markup
+25. Footer redesign (minimal: brand, social icons, legal)
+
+### Defer to Later Milestones:
+- **Content hub / topic cluster pages** -- High complexity, needs content strategy
+- **"Most Popular" widget** -- Needs analytics data to populate
+- **Keyboard navigation (J/K)** -- Niche, low priority
+- **Video support** -- No current video content
+- **Branded newsletter slide-in** -- Needs A/B testing infrastructure
+
+---
+
+## Confidence Assessment
+
+| Area | Confidence | Reason |
+|------|------------|--------|
+| Table stakes features | HIGH | Standard across all modern blogs; confirmed by multiple design trend sources |
+| Card grid CSS patterns | HIGH | CSS Grid `auto-fit`/`minmax` is well-documented standard; subgrid has 97%+ browser support |
+| Typography recommendations | HIGH | Space Grotesk confirmed available on Google Fonts, 5 weights; font pairing patterns well-established |
+| Dark mode design system | HIGH | Semantic token approach confirmed as 2026 best practice by GitLab Pajamas, Style Dictionary, and multiple design system guides |
+| Code block styling | HIGH | Prism.js is mature (millions of sites), well-documented; pattern is straightforward |
+| Featured image fallback | HIGH | Text-only card approach is design choice, not technical limitation; confirmed by editorial sites that prioritize typography over imagery |
+| Differentiator features | MEDIUM | Hero section and "As Seen In" patterns drawn from competitor analysis, but effectiveness depends on execution and content quality |
+| Phase ordering | HIGH | Color + typography first is clear dependency; confirmed by feature dependency analysis |
+
+---
 
 ## Sources
 
-### Blog Platform Landscape & Features
-- [11 Best Blogging Platforms in 2026 (Expert Picks)](https://www.wpbeginner.com/beginners-guide/how-to-choose-the-best-blogging-platform/)
-- [8 Best Blogging Platforms For 2026: Free & Paid Options Compared](https://bloggingwizard.com/blogging-platforms/)
-- [Best Blogging Platforms in 2026: Top 15 Sites Compared | Printful](https://www.printful.com/blog/best-blogging-platform)
-- [The 5 Best Blogging Platforms of 2026 | Medium](https://medium.com/@nishantnischal/the-5-best-blogging-platforms-of-2025-ee7fb4b1e5c5)
+### CSS Grid and Card Layouts
+- [FreeFrontEnd: CSS Card Layouts](https://freefrontend.com/css-card-layouts/)
+- [FrontendTools: Modern CSS Layout Techniques 2025-2026](https://www.frontendtools.tech/blog/modern-css-layout-techniques-flexbox-grid-subgrid-2025)
+- [MDN: Common Grid Layouts](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Grid_layout/Common_grid_layouts)
 
-### Platform Comparisons (Ghost, Medium, Substack)
-- [WordPress vs. Substack vs. Ghost vs. Medium | Howuku Blog](https://howuku.com/blog/wordpress-vs-substack-vs-ghost-vs-medium)
-- [Substack vs Medium vs Ghost: What's Better for Your Readers?](https://1big.link/blog/getting-started/substack-vs-medium-vs-ghost-whats-better-for-your-readers/)
-- [Beehiiv V Substack V Ghost: Feature Comparison | Medium](https://medium.com/substack-beehiiv-ghost/beehiiv-v-substack-v-ghost-feature-comparison-3fc6c9c1c811)
-- [Ghost vs Substack | Feather](https://feather.so/blog/ghost-vs-substack)
+### Typography and Fonts
+- [Creative Boom: 50 Fonts Popular in 2026](https://www.creativeboom.com/resources/top-50-fonts-in-2026/)
+- [Elementor: Modern Fonts 2026](https://elementor.com/blog/modern-fonts-to-use-on-your-website/)
+- [IK Agency: Typography Trends 2026](https://www.ikagency.com/graphic-design-typography/typography-trends-2026/)
+- [Design Monks: Best UI Design Fonts 2026](https://www.designmonks.co/blog/best-fonts-for-ui-design)
 
-### WordPress Plugins & Features
-- [24 Must Have WordPress Plugins in 2026](https://www.wpbeginner.com/showcase/24-must-have-wordpress-plugins-for-business-websites/)
-- [15 essential plugins for WordPress blogs in 2026 - Productive Blogging](https://www.productiveblogging.com/essential-plugins-for-wordpress-blogs/)
-- [11 Must-Have WordPress Plugins That Are Essential in 2026](https://jetpack.com/resources/must-have-wordpress-plugins/)
-- [12 Must-Have WordPress Plugins for Developers in 2026](https://dev.to/thebitforge/12-must-have-wordpress-plugins-for-developers-in-2026-3kof)
+### Dark Mode Design Systems
+- [Siva Designer: Dark Mode Mandatory in 2026](https://www.sivadesigner.in/blog/dark-mode-evolution-modern-web-design/)
+- [Frank Congson: Design Tokens to Dark Mode](https://frankcongson.com/blog/design-tokens-to-dark-mode/)
+- [Imperavi: Designing Semantic Colors](https://imperavi.com/blog/designing-semantic-colors-for-your-system/)
+- [FrontendTools: Tailwind CSS Best Practices 2025-2026](https://www.frontendtools.tech/blog/tailwind-css-best-practices-design-system-patterns)
+- [design.dev: Dark Mode CSS Complete Guide](https://design.dev/guides/dark-mode-css/)
+- [GitLab Pajamas: Design Tokens](https://design.gitlab.com/product-foundations/design-tokens-using/)
 
-### Technical Writing & Developer Blogs
-- [Technical Writing Trends 2026: What's Shaping the Industry](https://www.timelytext.com/technical-writing-trends-for-2026/)
-- [10 Best Tech Blogs for Developers in 2026](https://tripleten.com/blog/posts/10-software-development-blogs-worth-bookmarking)
-- [Best Technical Writing Tools & Software in 2026](https://ferndesk.com/blog/best-technical-writing-tools)
-
-### Comment Moderation & Spam
-- [How to Stop WordPress Spam Comments | Kinsta](https://kinsta.com/blog/wordpress-spam-comments/)
-- [How to Stop WordPress Spam Comments: Full 2026 Guide](https://jetpack.com/resources/why-spam-comments-exist-and-how-to-stop-them/)
-- [12+ Vital Tips and Tools to Combat Comment Spam in WordPress](https://www.wpbeginner.com/beginners-guide/vital-tips-and-tools-to-combat-comment-spam-in-wordpress/)
-
-### Analytics & Privacy
-- [Privacy regulations 2026: what analytics teams need to know](https://matomo.org/blog/2026/01/privacy-regulations-changes-2026-analytics/)
-- [Privacy-Friendly Analytics: GDPR-Compliant Insights in 2025](https://secureprivacy.ai/blog/privacy-friendly-analytics)
-- [GDPR Analytics Tools for Compliance & Privacy | Improvado](https://improvado.io/blog/gdpr-compliant-analytics-tools)
-- [Best Privacy-Compliant Analytics Tools for 2026](https://www.mitzu.io/post/best-privacy-compliant-analytics-tools-for-2026)
-
-### Multi-Author Management
-- [WordPress User Roles & Permissions: The Ultimate 2026 Guide](https://jetpack.com/resources/wordpress-user-roles-the-ultimate-guide/)
-- [WordPress User Roles & Permissions: Detailed Guide (2026)](https://www.cloudways.com/blog/wordpress-user-roles/)
-- [PublishPress Authors Plugin](https://wordpress.org/plugins/publishpress-authors/)
-
-### SEO & Migration
-- [How to Use 301 Redirects When Redesigning or Migrating a WordPress Site](https://www.paralleldevs.com/blog/how-use-301-redirects-when-redesigning-or-migrating-wordpress-site-without-losing-seo/)
-- [SEO Migration 2026: The Complete Guide | VELOX](https://www.veloxmedia.com/blog/seo-migration-2026-the-complete-guide)
-- [How to Redirect a Domain Without Losing SEO: The Complete Guide](https://elementor.com/blog/how-to-redirect-a-domain-without-losing-seo/)
-- [Redirection Plugin – WordPress.org](https://wordpress.org/plugins/redirection/)
-
-### Image Optimization
-- [How to Optimize Images in 2026: A Comprehensive Guide](https://elementor.com/blog/how-to-optimize-images/)
-- [How To Optimize Images for Web and Performance](https://kinsta.com/blog/optimize-images-for-web/)
-- [How to Optimize Website Images: The Complete 2026 Guide](https://requestmetrics.com/web-performance/high-performance-images/)
-
-### Code Syntax Highlighting
-- [Best Code Syntax Highlighter for Snippets in your Blog](https://www.hanselman.com/blog/best-code-syntax-highlighter-for-snippets-in-your-blog)
+### Code Block Styling
 - [Prism.js](https://prismjs.com/)
-- [Exploring the best syntax highlighting libraries - LogRocket](https://blog.logrocket.com/exploring-best-syntax-highlighting-libraries/)
+- [Tania Rascia: Adding Syntax Highlighting](https://www.taniarascia.com/adding-syntax-highlighting-to-code-snippets/)
+- [DEV Community: Syntax Highlighting Guide](https://dev.to/ehlo_250/how-to-add-syntax-highlighting-to-code-snippets-on-your-website-app-or-blog-2mi2)
 
-### RSS/Newsletter Integration
-- [GitHub - rss2newsletter](https://github.com/ElliotKillick/rss2newsletter)
-- [Newsletter subscriptions via RSS · Harry Cresswell](https://harrycresswell.com/writing/newsletters-via-rss/)
-- [Convert newsletters to Atom/RSS feeds](https://axbom.com/newsletter-rss-atom-feed/)
+### Design Trends 2026
+- [KOTA: Brand Design Trends 2026](https://kota.co.uk/blog/branding-inspiration-brand-design-trends-for-2026)
+- [Adobe: Design Trends 2026](https://www.adobe.com/express/learn/blog/design-trends-2026)
+- [Muzli: Web Design Trends 2026](https://muz.li/blog/web-design-trends-2026/)
+- [Tubik Studio: UI Design Trends 2026](https://blog.tubikstudio.com/ui-design-trends-2026/)
+
+### Blog Layout and Reading UX
+- [BdThemes: Modern Blog Layout Design](https://bdthemes.com/best-blog-layout-design-to-rank-on-search-engine/)
+- [Schwartz-Edmisten: Optimal Blog Post Width](https://schwartz-edmisten.com/blog/the-scientifically-optimal-blog-post-width)
+- [Marketer Milk: Best Blog Designs 2026](https://www.marketermilk.com/blog/best-blog-designs)
