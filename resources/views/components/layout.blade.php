@@ -13,23 +13,48 @@
         }
     </script>
 
+    <link rel="preload" href="/fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/space-grotesk-variable.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/jetbrains-mono-variable.woff2" as="font" type="font/woff2" crossorigin>
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <x-seo::meta />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    {!! \App\Models\Setting::getValue('custom_header_code', '') !!}
+
     @livewireStyles
 </head>
-<body class="bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 antialiased min-h-screen flex flex-col transition-colors duration-200">
+<body class="bg-surface-page text-text-primary font-body antialiased min-h-screen flex flex-col transition-colors duration-200">
     <x-navigation />
 
+    @php
+        $hasWidgets = \App\Models\Widget::where('is_active', true)->exists();
+    @endphp
+
     <main class="flex-1 container mx-auto px-4 py-8">
-        {{ $slot }}
+        @if ($hasWidgets)
+            <div class="flex flex-col lg:flex-row gap-8">
+                <div class="flex-1 min-w-0">
+                    {{ $slot }}
+                </div>
+                <div class="w-full lg:w-80 shrink-0">
+                    <x-sidebar-widgets />
+                </div>
+            </div>
+        @else
+            {{ $slot }}
+        @endif
     </main>
 
     <x-footer />
+
+    {!! \App\Models\Setting::getValue('analytics_code', '') !!}
+    {!! \App\Models\Setting::getValue('custom_footer_code', '') !!}
 
     @livewireScripts
 </body>
