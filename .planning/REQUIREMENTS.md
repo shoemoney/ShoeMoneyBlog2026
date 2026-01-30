@@ -75,27 +75,27 @@ Requirements for the UI Overhaul milestone. Each maps to roadmap phases.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FOUN-01 | TBD | Pending |
-| FOUN-02 | TBD | Pending |
-| FOUN-03 | TBD | Pending |
-| TYPO-01 | TBD | Pending |
-| TYPO-02 | TBD | Pending |
-| TYPO-03 | TBD | Pending |
-| NAVL-01 | TBD | Pending |
-| NAVL-02 | TBD | Pending |
-| NAVL-03 | TBD | Pending |
-| PAGE-01 | TBD | Pending |
-| DARK-01 | TBD | Pending |
-| DARK-02 | TBD | Pending |
-| DARK-03 | TBD | Pending |
-| PLSH-01 | TBD | Pending |
-| PLSH-02 | TBD | Pending |
+| FOUN-01 | Phase 8 | Pending |
+| FOUN-02 | Phase 8 | Pending |
+| FOUN-03 | Phase 8 | Pending |
+| TYPO-01 | Phase 10 | Pending |
+| TYPO-02 | Phase 10 | Pending |
+| TYPO-03 | Phase 10 | Pending |
+| NAVL-01 | Phase 9 | Pending |
+| NAVL-02 | Phase 9 | Pending |
+| NAVL-03 | Phase 9 | Pending |
+| PAGE-01 | Phase 10 | Pending |
+| DARK-01 | Phase 11 | Pending |
+| DARK-02 | Phase 11 | Pending |
+| DARK-03 | Phase 11 | Pending |
+| PLSH-01 | Phase 12 | Pending |
+| PLSH-02 | Phase 12 | Pending |
 
 **Coverage:**
 - v2.0 requirements: 15 total
-- Mapped to phases: 0 (awaiting roadmap)
-- Unmapped: 15
+- Mapped to phases: 15
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-29*
-*Last updated: 2026-01-29 after milestone scoping*
+*Last updated: 2026-01-30 after roadmap creation*
