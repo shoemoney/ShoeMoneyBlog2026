@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-30)
 ## Current Position
 
 Phase: 8 (first of 5 in v2.0; Design Foundation)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-01-30 -- Roadmap created for v2.0 UI Overhaul
+Plan: 1 of 1 (complete)
+Status: Phase complete - ready for Phase 9 (Navigation Header)
+Last activity: 2026-01-30 -- Completed 08-01-PLAN.md (Design token system)
 
-Progress: [##########░░░░░░░░░░] v1.0 complete, v2.0 0%
+Progress: [##########█░░░░░░░░░] v1.0 complete, v2.0 20% (1/5 phases)
 
 ## Performance Metrics
 
@@ -27,7 +27,7 @@ Progress: [##########░░░░░░░░░░] v1.0 complete, v2.0 0%
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | v1.0 (1-7) | 42 | - | - |
-| 8. Design Foundation | 0 | TBD | - |
+| 8. Design Foundation | 1 | 3min | 3min |
 
 *Updated after each plan completion*
 
@@ -38,6 +38,11 @@ Progress: [##########░░░░░░░░░░] v1.0 complete, v2.0 0%
 - v2.0 scope: Royal blue + black + white palette, Space Grotesk/Inter/JetBrains Mono fonts, static header, hamburger mobile, sidebar kept, minimal footer, load more pagination, 18-20px body text, dark mode equal priority
 - v2.0 exclusions: No card grid (restyled list), no hero section, no featured posts, no newsletter, no category colors, no breadcrumbs (all deferred to v2.1+)
 - Admin dark mode confirmed in scope (DARK-02)
+- **Design tokens (08-01):** oklch color space for primitive tokens (wider gamut, perceptually uniform)
+- **Design tokens (08-01):** Two-layer semantic system - primitive colors → semantic purpose tokens → component utilities
+- **Design tokens (08-01):** Dual dark mode support - @media prefers-color-scheme + .dark class with identical overrides
+- **Design tokens (08-01):** Higher shadow opacity in dark mode (0.3-0.6 vs 0.05-0.1) for depth visibility
+- **Design tokens (08-01):** Font fallback optimization with size-adjust to prevent layout shift (CLS)
 
 ### Pending Todos
 
@@ -50,7 +55,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-30
-Stopped at: Roadmap created for v2.0 milestone
+Last session: 2026-01-30T06:37:08Z
+Stopped at: Completed 08-01-PLAN.md (Design Foundation - Design token system)
 Resume file: None
-Next action: Plan Phase 8 (Design Foundation)
+Next action: Plan Phase 9 (Navigation Header)
