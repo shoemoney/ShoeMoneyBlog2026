@@ -98,10 +98,20 @@ Route::prefix('admin')
         Route::get('/tags', \App\Livewire\Admin\Taxonomies\TagManager::class)
             ->name('admin.tags.index');
 
+        // Pages management
+        Route::get('/pages', \App\Livewire\Admin\Pages\PageIndex::class)->name('admin.pages.index');
+        Route::get('/pages/create', \App\Livewire\Admin\Pages\PageCreate::class)->name('admin.pages.create');
+        Route::get('/pages/{page}/edit', \App\Livewire\Admin\Pages\PageEdit::class)->name('admin.pages.edit');
+
         // Users management
         Route::get('/users', \App\Livewire\Admin\Users\UserIndex::class)->name('admin.users.index');
         Route::get('/users/create', \App\Livewire\Admin\Users\UserForm::class)->name('admin.users.create');
         Route::get('/users/{user}/edit', \App\Livewire\Admin\Users\UserForm::class)->name('admin.users.edit');
+
+        // Settings
+        Route::get('/settings', \App\Livewire\Admin\Settings\SiteSettings::class)->name('admin.settings.index');
+        Route::get('/settings/navigation', \App\Livewire\Admin\Settings\NavigationManager::class)->name('admin.settings.navigation');
+        Route::get('/settings/widgets', \App\Livewire\Admin\Settings\WidgetManager::class)->name('admin.settings.widgets');
     });
 
 // Page route (MUST be LAST - catch-all for single slugs)

@@ -18,8 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
         // without trailing slashes before they hit route matching
         $middleware->prepend(TrailingSlashRedirect::class);
 
-        // Response caching for public pages (prepend so it runs early)
-        $middleware->web(prepend: [
+        // Response caching for public pages (append so session is available for CSRF token replacement)
+        $middleware->web(append: [
             CacheResponse::class,
         ]);
 

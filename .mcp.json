@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "type": "stdio",
+      "command": "/Users/shoemoney/.bun/bin/mcp-server-playwright",
+      "args": [],
+      "env": {}
+    }
+  }
+}

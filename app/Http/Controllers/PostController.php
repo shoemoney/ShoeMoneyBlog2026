@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\Setting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -19,7 +20,7 @@ class PostController extends Controller
         $posts = Post::published()
             ->with('author', 'categories')
             ->orderBy('published_at', 'desc')
-            ->paginate(10);
+            ->paginate(Setting::getValue('posts_per_page', 10));
 
         seo()
             ->title('ShoeMoney - Making Money Online')

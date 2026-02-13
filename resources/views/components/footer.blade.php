@@ -8,10 +8,10 @@
 
             {{-- Secondary Links --}}
             <nav class="flex items-center space-x-6 text-sm text-gray-600">
-                <a href="/privacy/" class="hover:text-gray-900 transition-colors">
+                <a href="/privacy-policy/" class="hover:text-gray-900 transition-colors">
                     Privacy
                 </a>
-                <a href="/terms/" class="hover:text-gray-900 transition-colors">
+                <a href="/terms-of-service/" class="hover:text-gray-900 transition-colors">
                     Terms
                 </a>
             </nav>
