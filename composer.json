@@ -10,13 +10,18 @@
         "algolia/scout-extended": "^3.0",
         "archtechx/laravel-seo": "^0.10.3",
         "danharrin/livewire-rate-limiting": "^2.1",
+        "intervention/image": "^3.0",
         "laravel/framework": "^12.0",
+        "laravel/octane": "^2.13",
         "laravel/tinker": "^2.10.1",
+        "league/flysystem-aws-s3-v3": "^3.31",
         "livewire/livewire": "^4.0",
         "spatie/laravel-backup": "^9.3",
         "spatie/laravel-honeypot": "^4.6",
         "spatie/laravel-responsecache": "^7.7",
-        "spatie/laravel-sitemap": "^7.3"
+        "spatie/laravel-sitemap": "^7.3",
+        "spiral/roadrunner-cli": "^2.6.0",
+        "spiral/roadrunner-http": "^3.3.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

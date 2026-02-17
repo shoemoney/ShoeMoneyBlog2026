@@ -1,6 +1,15 @@
 @props(['post'])
 
 <article class="border-b border-gray-200 dark:border-gray-700 py-6">
+    @if($post->featured_image_url)
+        <a href="{{ $post->url }}" class="block mb-4">
+            <img src="{{ $post->featuredImage->getUrl('medium') }}"
+                 alt="{{ $post->title }}"
+                 class="w-full h-48 object-cover rounded-lg"
+                 loading="lazy">
+        </a>
+    @endif
+
     <a href="{{ $post->url }}" class="group block">
         <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 group-hover:text-brand-primary">
             {{ $post->title }}

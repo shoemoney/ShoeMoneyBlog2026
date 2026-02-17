@@ -1,5 +1,11 @@
 <x-layout>
     <article>
+        @if($post->featured_image_url)
+            <img src="{{ $post->featuredImage->getUrl('large') }}"
+                 alt="{{ $post->title }}"
+                 class="w-full max-h-96 object-cover rounded-lg mb-8">
+        @endif
+
         <header class="mb-8">
             <h1 class="text-4xl font-bold text-gray-900 dark:text-gray-100">{{ $post->title }}</h1>
 

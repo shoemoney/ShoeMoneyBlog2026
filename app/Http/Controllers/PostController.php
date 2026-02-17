@@ -18,7 +18,7 @@ class PostController extends Controller
     public function index(): View
     {
         $posts = Post::published()
-            ->with('author', 'categories')
+            ->with('author', 'categories', 'featuredImage')
             ->orderBy('published_at', 'desc')
             ->paginate(Setting::getValue('posts_per_page', 10));
 
@@ -50,13 +50,17 @@ class PostController extends Controller
             ->whereMonth('published_at', $month)
             ->whereDay('published_at', $day)
             ->where('status', 'published')
-            ->with('author', 'categories', 'tags')
+            ->with('author', 'categories', 'tags', 'featuredImage')
             ->firstOrFail();
 
-        seo()
+        $seo = seo()
             ->title($post->title . ' - ShoeMoney')
             ->description($post->excerpt ?: Str::limit(strip_tags($post->content), 160))
             ->url(url($post->url));
+
+        if ($post->featured_image_url) {
+            $seo->image($post->featured_image_url);
+        }
 
         return view('posts.show', compact('post'));
     }

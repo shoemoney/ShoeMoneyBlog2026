@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'featured_images' => [
+        'ref_images_path' => base_path('ref_images'),
+        'sizes' => ['small' => 400, 'medium' => 800, 'large' => 1200, 'inline' => 600],
+    ],
+
 ];
