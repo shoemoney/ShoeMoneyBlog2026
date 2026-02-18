@@ -1,8 +1,12 @@
 .gemini/
 CLAUDE.md
+/node_modules/
 node_modules/
 .env
 vendor/
 rr
 .rr.yaml
 .DS_Store
+*.sh
+/vendor/
+vendor/

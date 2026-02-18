@@ -22,6 +22,7 @@
 - [🔒 Security](#-security)
 - [📈 Performance & Caching](#-performance--caching)
 - [🌙 Dark Mode](#-dark-mode)
+- [🖼️ AI Featured Images](#️-ai-featured-images)
 - [🔍 Search](#-search)
 - [💾 Backups](#-backups)
 
@@ -159,27 +160,29 @@ Unknown shortcodes are **stripped entirely** rather than rendering ugly `[bracke
 │ password    │     │ content     │     │ content     │
 │ is_admin    │     │ excerpt     │     │ status      │
 │ role        │     │ status      │     │ published_at│
-│ created_at  │     │ published_at│     └─────────────┘
-└─────────────┘     │ reading_time│
-                    └─────────────┘
-                          │
-          ┌───────────────┼───────────────┐
-          ▼               ▼               ▼
-    ┌──────────┐   ┌────────────┐   ┌──────────┐
-    │ comments │   │categorizables│ │ taggables│
-    ├──────────┤   ├────────────┤   ├──────────┤
-    │ post_id  │   │category_id │   │ tag_id   │
-    │ parent_id│──►│*_type      │   │ *_type   │
-    │ author   │   │*_id        │   │ *_id     │
-    │ email    │   └────────────┘   └──────────┘
-    │ content  │         │               │
-    │ status   │         ▼               ▼
-    └──────────┘   ┌──────────┐   ┌──────────┐
-                   │categories│   │   tags   │
-                   ├──────────┤   ├──────────┤
-                   │ name     │   │ name     │
-                   │ slug     │   │ slug     │
-                   └──────────┘   └──────────┘
+│ created_at  │     │ published_at│     └──────┬──────┘
+└─────────────┘     │ reading_time│            │
+                    └──────┬──────┘            │
+                           │                   │
+          ┌────────────────┼───────────────┐   │
+          ▼                ▼               ▼   ▼
+    ┌──────────┐   ┌────────────┐   ┌──────────────────┐
+    │ comments │   │categorizables│ │ featured_images  │
+    ├──────────┤   ├────────────┤   ├──────────────────┤
+    │ post_id  │   │category_id │   │ imageable_id     │ ◄── polymorphic
+    │ parent_id│──►│*_type      │   │ imageable_type   │     (Post or Page)
+    │ author   │   │*_id        │   │ raw_url          │
+    │ email    │   └────────────┘   │ small/med/lg_url │
+    │ content  │         │          │ prompt_used      │
+    │ status   │         ▼          │ status           │
+    └──────────┘   ┌──────────┐    └──────────────────┘
+                   │categories│
+          ┌─────┐  ├──────────┤
+          │tags │  │ name     │
+          ├─────┤  │ slug     │
+          │name │  └──────────┘
+          │slug │
+          └─────┘
 ```
 
 ### 🔗 Key Design Decisions
@@ -202,6 +205,12 @@ Unknown shortcodes are **stripped entirely** rather than rendering ugly `[bracke
    - `role` enum for display purposes only
    - Gates & policies for authorization
 
+5. **Polymorphic Featured Images** 🖼️
+   - Separate `featured_images` table instead of columns on posts/pages
+   - `morphOne` relationship — one image per post or page
+   - Stores multiple size variants (small/medium/large/inline) on Cloudflare R2
+   - Tracks AI generation status, prompt used, and retry attempts
+
 ---
 
 ## ✨ Features
@@ -213,6 +222,7 @@ Unknown shortcodes are **stripped entirely** rather than rendering ugly `[bracke
 - ✅ Automatic slug generation
 - ✅ Reading time calculation
 - ✅ SEO meta tags via `archilex/laravel-seo`
+- ✅ AI-generated featured images (Gemini via OpenRouter)
 
 ### 💬 Comments
 - ✅ Threaded discussions (3 levels deep)
@@ -352,6 +362,14 @@ MAIL_FROM_ADDRESS=blog@shoemoney.com
 MAIL_FROM_NAME="ShoeMoney Blog"
 
 #──────────────────────────────────────────────────────────────
+# 🖼️ AI IMAGE GENERATION (OpenRouter + Gemini)
+#──────────────────────────────────────────────────────────────
+OPENROUTER_API_KEY=               # 🔑 From openrouter.ai
+API_URL=https://openrouter.ai/api/v1/chat/completions
+GENERAL_MODEL=google/gemini-3-flash-preview    # 📝 Prompt generation
+IMAGE_MODEL=google/gemini-3-pro-image-preview  # 🎨 Image generation
+
+#──────────────────────────────────────────────────────────────
 # 🚀 CACHE & QUEUE
 #──────────────────────────────────────────────────────────────
 CACHE_DRIVER=file                 # 🗂️ Use 'redis' in production
@@ -422,6 +440,8 @@ Add to your server's crontab:
 ```bash
 * * * * * cd /path/to/shoemoneyvelle && php artisan schedule:run >> /dev/null 2>&1
 ```
+
+* * * * * cd /Users/shoemoney/Projects/shoemoneyvelle && php artisan queue:work --memory=512
 
 This runs:
 - 🧹 `backup:clean` at 01:00 daily (removes old backups)
@@ -536,6 +556,74 @@ if (localStorage.theme === 'dark' ||
 
 ---
 
+## 🖼️ AI Featured Images
+
+Many posts from 20+ years of blogging were missing featured images. Instead of manually creating thousands of images, we built an **AI-powered generation pipeline** using Google's Gemini models via OpenRouter.
+
+### 🧠 How It Works
+
+```
+┌──────────────┐     ┌──────────────────┐     ┌──────────────────┐
+│  Post/Page   │────►│  Gemini Flash 3  │────►│ Gemini Pro Image │
+│  title +     │     │  writes a        │     │ generates image  │
+│  content     │     │  detailed prompt │     │ with face refs   │
+└──────────────┘     └──────────────────┘     └────────┬─────────┘
+                                                       │
+                     ┌──────────────────┐              │
+                     │  Cloudflare R2   │◄─────────────┘
+                     │  4 size variants │
+                     │  sm/md/lg/inline │
+                     └──────────────────┘
+```
+
+1. **Prompt generation** — Gemini Flash 3 reads the post title + content and writes a detailed image prompt
+2. **Image generation** — Gemini Pro Image 3 generates the image using the prompt + reference photos for face consistency
+3. **Resize & upload** — Intervention Image creates 4 size variants (400/600/800/1200px), uploaded to Cloudflare R2
+4. **Database tracking** — Polymorphic `featured_images` table tracks status, prompt, URLs, and retry attempts
+
+### 🗄️ Storage
+
+Images are stored on **Cloudflare R2** (S3-compatible) with this structure:
+
+```
+cdn.shoemoney.com/blog_image/featured_images/
+├── raw/        # Original AI-generated image
+├── small/      # 400px wide (thumbnails)
+├── medium/     # 800px wide (post cards)
+├── large/      # 1200px wide (hero images)
+└── inline/     # 600px wide (in-content)
+```
+
+### 🛠️ Usage
+
+```bash
+# Preview what would be generated
+php artisan images:generate --limit=5 --dry-run
+
+# Generate for a single post (synchronous, good for testing)
+php artisan images:generate --limit=1 --type=posts --sync
+
+# Batch generate 50 posts via queue
+php artisan images:generate --limit=50 --type=posts
+
+# Retry only failed generations
+php artisan images:generate --failed-only --sync
+
+# Force regenerate existing images
+php artisan images:generate --limit=10 --force --sync
+```
+
+### 🔑 Environment Variables
+
+```env
+OPENROUTER_API_KEY=              # OpenRouter API key
+API_URL=https://openrouter.ai/api/v1/chat/completions
+GENERAL_MODEL=google/gemini-3-flash-preview    # Prompt generation model
+IMAGE_MODEL=google/gemini-3-pro-image-preview  # Image generation model
+```
+
+---
+
 ## 🔍 Search
 
 ### 🔧 Algolia Configuration
@@ -628,6 +716,8 @@ Built with 💚 using:
 - [Algolia](https://www.algolia.com) — Search and discovery platform
 - [spatie/laravel-responsecache](https://github.com/spatie/laravel-responsecache) — Speed up your app
 - [spatie/laravel-backup](https://github.com/spatie/laravel-backup) — Backup your app
+- [Intervention Image](https://image.intervention.io) — Image processing & resizing
+- [OpenRouter](https://openrouter.ai) — AI model routing for image generation
 
 ---
 
