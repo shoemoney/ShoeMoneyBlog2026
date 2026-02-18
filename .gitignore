@@ -5,3 +5,4 @@ node_modules/
 vendor/
 rr
 .rr.yaml
+.DS_Store
