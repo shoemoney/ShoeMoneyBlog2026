@@ -35,8 +35,9 @@ You are an expert at writing image generation prompts. Given a blog post title a
 Guidelines:
 - CRITICAL: The image MUST be in LANDSCAPE orientation (wider than tall), 16:9 aspect ratio. Start every prompt with "Wide landscape 16:9 image:"
 - The image should be eye-catching and suitable as a blog post thumbnail/hero image
-- If the post topic involves a person doing something, describe a male character (30s, casual style) as the main subject. The face will be replaced via reference photos.
-- If no male character fits naturally, create a "soy face / excited YouTube thumbnail" style composition with an expressive male reacting to the topic
+- EVERY image MUST feature a male character (30s, casual style) as the main subject. Reference photos of this person will be provided during generation — the model MUST reproduce his exact likeness.
+- Describe the male character in a dynamic pose: either naturally part of the scene, doing an exaggerated "soy face / excited YouTube thumbnail" reaction, or fully immersed as the main character in the scenario
+- Always describe the character's position, pose, and interaction with the scene in detail so the reference photo person can be placed convincingly
 - Keep the style modern, clean, and professional
 - Include specific details about composition, lighting, colors, and mood
 - Output ONLY the image prompt text, nothing else - no quotes, no labels, no explanation
@@ -89,15 +90,35 @@ PROMPT;
             ];
         }
 
-        // Build the full prompt with face replacement instructions
-        $fullPrompt = $prompt;
+        // Build the full prompt — face instructions FIRST, then scene prompt
         if (!empty($referenceImagePaths)) {
-            $fullPrompt .= "\n\nIMPORTANT: Use the attached reference photo(s) as the face/appearance for any male character in the image. The character should have this exact face but in the scene described above.";
+            $contentParts[] = [
+                'type' => 'text',
+                'text' => <<<'FACE'
+!!! MOST IMPORTANT INSTRUCTION — DO NOT SKIP — READ THIS FIRST !!!
+
+The reference photo(s) above show a REAL PERSON. The generated image MUST feature THIS EXACT PERSON. This is the #1 priority of this entire request. If the final image does not clearly show the person from the reference photo, the output is a FAILURE.
+
+Study the reference photo(s) VERY carefully. Memorize every detail: face shape, jawline, nose, eyes, eyebrows, skin tone, hair color, hair style, facial hair, build, and overall appearance.
+
+Now pick ONE of these three styles RANDOMLY and execute it:
+
+1. FACE SWAP — Generate the scene below, but the main character's face MUST be an EXACT match of the reference photo person. Same face shape, same features, same skin tone, same hair. NOT a similar-looking person. THE SAME PERSON.
+
+2. SOY FACE OVERLAY — Put the reference photo person in the foreground doing an exaggerated excited "soy face" YouTube thumbnail reaction (mouth wide open, hands on cheeks or pointing). They must be reacting to the blog post topic behind them. The person MUST match the reference photo EXACTLY.
+
+3. TOTAL CHARACTER SWAP — The reference photo person IS the main character. Put them in a dynamic, random pose relevant to the blog topic. Recreate their COMPLETE appearance faithfully — face, body type, hair, skin tone — in the new scene.
+
+!!! FINAL CHECK: Before outputting the image, verify the person in it matches the reference photo. Same person. Not a different person. Not a generic person. THE EXACT PERSON FROM THE REFERENCE PHOTO. !!!
+
+Now here is the scene to generate:
+FACE,
+            ];
         }
 
         $contentParts[] = [
             'type' => 'text',
-            'text' => $fullPrompt,
+            'text' => $prompt,
         ];
 
         $response = Http::withHeaders($this->headers())->timeout(120)->post($this->apiUrl, [

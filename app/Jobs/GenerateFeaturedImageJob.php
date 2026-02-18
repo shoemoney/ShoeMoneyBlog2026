@@ -108,7 +108,7 @@ class GenerateFeaturedImageJob implements ShouldQueue
     }
 
     /**
-     * Pick 1-2 random jeremy*.png reference images.
+     * Return the two best reference images: jeremy1 (headshot) + jeremy2 (close-up).
      */
     private function getRandomRefImages(): array
     {
@@ -118,15 +118,12 @@ class GenerateFeaturedImageJob implements ShouldQueue
             return [];
         }
 
-        $files = glob($refDir . '/jeremy*.png');
+        // Always use the two clearest face references
+        $preferred = [
+            $refDir . '/jeremy1.png',
+            $refDir . '/jeremy2.png',
+        ];
 
-        if (empty($files)) {
-            return [];
-        }
-
-        shuffle($files);
-
-        // Use 1-2 reference images to keep payload reasonable
-        return array_slice($files, 0, rand(1, min(2, count($files))));
+        return array_filter($preferred, 'file_exists');
     }
 }
