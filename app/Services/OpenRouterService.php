@@ -129,6 +129,7 @@ FACE,
                     'content' => $contentParts,
                 ],
             ],
+            'modalities' => ['text', 'image'],
             'provider' => [
                 'sort' => 'throughput',
             ],
