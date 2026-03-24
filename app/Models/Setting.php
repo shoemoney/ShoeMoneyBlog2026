@@ -35,13 +35,14 @@ class Setting extends Model
     /**
      * Set a setting value by key.
      */
-    public static function setValue(string $key, mixed $value): void
+    public static function setValue(string $key, mixed $value, string $type = 'string', string $group = 'general'): void
     {
-        $setting = static::where('key', $key)->first();
+        $storeValue = is_array($value) ? json_encode($value) : (string) $value;
+        $storeType = is_array($value) ? 'json' : $type;
 
-        if ($setting) {
-            $storeValue = is_array($value) ? json_encode($value) : (string) $value;
-            $setting->update(['value' => $storeValue]);
-        }
+        static::updateOrCreate(
+            ['key' => $key],
+            ['value' => $storeValue, 'type' => $storeType, 'group' => $group]
+        );
     }
 }

@@ -17,14 +17,18 @@ class PostController extends Controller
      */
     public function index(): View
     {
-        $posts = Post::published()
+        $posts = Post::posts()->published()
             ->with('author', 'categories', 'featuredImage')
             ->orderBy('published_at', 'desc')
             ->paginate(Setting::getValue('posts_per_page', 10));
 
+        $siteName = Setting::getValue('site_name', 'ShoeMoney');
+        $siteTagline = Setting::getValue('site_tagline', 'Making Money Online');
+        $metaDescription = Setting::getValue('meta_description', 'The original blog about making money online since 2003');
+
         seo()
-            ->title('ShoeMoney - Making Money Online')
-            ->description('The original blog about making money online since 2003');
+            ->title($siteName . ($siteTagline ? ' - ' . $siteTagline : ''))
+            ->description($metaDescription);
 
         return view('posts.index', compact('posts'));
     }
@@ -44,7 +48,7 @@ class PostController extends Controller
     public function show(string $year, string $month, string $day, string $slug): View
     {
         // Query with full date validation to prevent URL manipulation
-        $post = Post::query()
+        $post = Post::posts()
             ->where('slug', $slug)
             ->whereYear('published_at', $year)
             ->whereMonth('published_at', $month)

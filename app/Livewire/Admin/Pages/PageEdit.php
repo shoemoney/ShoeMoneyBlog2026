@@ -31,7 +31,7 @@ class PageEdit extends Component
     {
         return [
             'title' => 'required|max:255',
-            'slug' => 'required|unique:pages,slug,' . $this->page->id . '|max:255',
+            'slug' => 'required|unique:posts,slug,' . $this->page->id . '|max:255',
             'content' => 'required',
             'menu_order' => 'integer|min:0',
         ];

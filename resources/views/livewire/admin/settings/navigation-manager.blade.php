@@ -45,9 +45,71 @@
             <div class="mb-4">
                 @if ($type === 'custom')
                     <label for="url" class="block text-sm font-medium text-gray-700 mb-1">URL</label>
-                    <input type="text" id="url" wire:model="url"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('url') border-red-500 @enderror"
-                        placeholder="https://example.com or /relative-path">
+                    <div x-data="{
+                        searchQuery: '',
+                        results: [],
+                        showDropdown: false,
+                        loading: false,
+                        async search() {
+                            if (this.searchQuery.length < 2) { this.results = []; this.showDropdown = false; return; }
+                            this.loading = true;
+                            this.results = await $wire.searchContent(this.searchQuery);
+                            this.showDropdown = this.results.length > 0;
+                            this.loading = false;
+                        },
+                        select(item) {
+                            $wire.set('url', item.url);
+                            if (!$wire.label || $wire.label.trim() === '') {
+                                $wire.set('label', item.title);
+                            }
+                            this.searchQuery = '';
+                            this.showDropdown = false;
+                            this.results = [];
+                        }
+                    }">
+                        {{-- Search autocomplete --}}
+                        <div class="relative mb-2">
+                            <input type="text"
+                                x-model="searchQuery"
+                                @input.debounce.300ms="search()"
+                                @focus="if(results.length) showDropdown = true"
+                                @click.away="showDropdown = false"
+                                placeholder="Search posts & pages to auto-fill..."
+                                class="w-full px-3 py-2 pl-9 border border-blue-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-blue-50"
+                                autocomplete="off">
+                            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                            <template x-if="loading">
+                                <div class="absolute right-3 top-1/2 -translate-y-1/2">
+                                    <svg class="animate-spin w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                                </div>
+                            </template>
+                            <div x-show="showDropdown" x-cloak
+                                 class="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                                <template x-for="(result, ri) in results" :key="ri">
+                                    <button type="button"
+                                        @click="select(result)"
+                                        class="w-full text-left px-3 py-2 hover:bg-blue-50 border-b border-gray-100 last:border-0 transition-colors">
+                                        <div class="flex items-center gap-2">
+                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium"
+                                                  :class="result.type === 'Page' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'"
+                                                  x-text="result.type"></span>
+                                            <span class="font-medium text-sm text-gray-900" x-text="result.title"></span>
+                                        </div>
+                                        <div class="text-xs text-gray-500 flex justify-between mt-0.5">
+                                            <span x-text="result.url"></span>
+                                            <span x-text="result.date" class="text-gray-400"></span>
+                                        </div>
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+                        {{-- Actual URL field --}}
+                        <input type="text" id="url" wire:model="url"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('url') border-red-500 @enderror"
+                            placeholder="https://example.com or /relative-path">
+                    </div>
                     @error('url') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                 @elseif ($type === 'page')
                     <label for="linkable_id" class="block text-sm font-medium text-gray-700 mb-1">Page</label>

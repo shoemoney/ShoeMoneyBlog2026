@@ -41,39 +41,6 @@
             </div>
         </div>
 
-        {{-- Pending Comments Card --}}
-        <div class="bg-gray-50 overflow-hidden rounded-lg border border-gray-200">
-            <div class="p-5">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <svg class="h-10 w-10 {{ $pendingComments > 0 ? 'text-yellow-500' : 'text-green-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                        </svg>
-                    </div>
-                    <div class="ml-5 w-0 flex-1">
-                        <dl>
-                            <dt class="text-sm font-medium text-gray-500 truncate">Pending Comments</dt>
-                            <dd class="text-3xl font-semibold text-gray-900">{{ number_format($pendingComments) }}</dd>
-                        </dl>
-                    </div>
-                </div>
-                <div class="mt-4 border-t border-gray-200 pt-4">
-                    <p class="text-sm text-gray-500">
-                        @if($pendingComments > 0)
-                            Comments awaiting moderation
-                        @else
-                            No comments need attention
-                        @endif
-                    </p>
-                </div>
-            </div>
-            <div class="bg-gray-100 px-5 py-3">
-                <a href="{{ route('admin.comments.index') }}" wire:navigate class="text-sm font-medium text-blue-600 hover:text-blue-500">
-                    Moderate comments &rarr;
-                </a>
-            </div>
-        </div>
-
         {{-- Total Users Card --}}
         <div class="bg-gray-50 overflow-hidden rounded-lg border border-gray-200">
             <div class="p-5">

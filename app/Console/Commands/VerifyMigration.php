@@ -3,12 +3,10 @@
 namespace App\Console\Commands;
 
 use App\Models\Category;
-use App\Models\Comment;
 use App\Models\Page;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
-use App\Models\WordPress\WpComment;
 use App\Models\WordPress\WpPost;
 use App\Models\WordPress\WpTermTaxonomy;
 use App\Models\WordPress\WpUser;
@@ -34,8 +32,6 @@ class VerifyMigration extends Command
         $this->verifyTags();
         $this->verifyPosts();
         $this->verifyPages();
-        $this->verifyComments();
-        $this->verifyCommentThreading();
         $this->verifyTaxonomyRelationships();
         $this->verifyUserRoles();
 
@@ -101,49 +97,6 @@ class VerifyMigration extends Command
             $this->passed[] = "Pages: {$laravelCount}/{$wpCount} OK";
         } else {
             $this->issues[] = "Pages: Expected {$wpCount}, found {$laravelCount}";
-        }
-    }
-
-    private function verifyComments(): void
-    {
-        $wpCount = WpComment::approved()->count();
-        $laravelCount = Comment::count();
-
-        // Allow small variance for orphaned comments
-        $tolerance = ceil($wpCount * 0.02); // 2% tolerance for orphaned comments
-
-        if (abs($wpCount - $laravelCount) <= $tolerance) {
-            $this->passed[] = "Comments: {$laravelCount}/{$wpCount} OK (within tolerance)";
-        } else {
-            $this->issues[] = "Comments: Expected ~{$wpCount}, found {$laravelCount}";
-        }
-    }
-
-    private function verifyCommentThreading(): void
-    {
-        // Count WordPress threaded comments
-        $wpThreaded = WpComment::approved()->where('comment_parent', '>', 0)->count();
-
-        // Count Laravel threaded comments
-        $laravelThreaded = Comment::whereNotNull('parent_id')->count();
-
-        $tolerance = ceil($wpThreaded * 0.02); // 2% tolerance
-
-        if (abs($wpThreaded - $laravelThreaded) <= $tolerance) {
-            $this->passed[] = "Comment Threading: {$laravelThreaded}/{$wpThreaded} OK";
-        } else {
-            $this->issues[] = "Comment Threading: Expected ~{$wpThreaded} threaded, found {$laravelThreaded}";
-        }
-
-        // Verify no orphaned parent_ids
-        $orphanedReplies = Comment::whereNotNull('parent_id')
-            ->whereDoesntHave('parent')
-            ->count();
-
-        if ($orphanedReplies === 0) {
-            $this->passed[] = "Comment Parents: No orphaned replies";
-        } else {
-            $this->issues[] = "Comment Parents: {$orphanedReplies} orphaned replies (parent missing)";
         }
     }
 

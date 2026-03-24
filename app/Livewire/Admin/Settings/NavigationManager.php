@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Settings;
 use App\Models\Category;
 use App\Models\MenuItem;
 use App\Models\Page;
+use App\Models\Post;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -131,6 +132,45 @@ class NavigationManager extends Component
             $item->update(['position' => $next->position]);
             $next->update(['position' => $tempPos]);
         }
+    }
+
+    /**
+     * Search posts and pages for the URL autocomplete.
+     */
+    public function searchContent(string $query): array
+    {
+        if (strlen($query) < 2) {
+            return [];
+        }
+
+        // Search published posts
+        $posts = Post::posts()
+            ->where('status', 'published')
+            ->where('title', 'like', '%' . $query . '%')
+            ->orderByDesc('published_at')
+            ->take(5)
+            ->get()
+            ->map(fn ($post) => [
+                'title' => $post->title,
+                'url' => $post->url,
+                'type' => 'Post',
+                'date' => $post->published_at?->format('M j, Y') ?? '',
+            ]);
+
+        // Search pages
+        $pages = Page::where('status', 'published')
+            ->where('title', 'like', '%' . $query . '%')
+            ->orderBy('title')
+            ->take(3)
+            ->get()
+            ->map(fn ($page) => [
+                'title' => $page->title,
+                'url' => $page->url,
+                'type' => 'Page',
+                'date' => '',
+            ]);
+
+        return collect($pages)->merge(collect($posts))->values()->toArray();
     }
 
     private function validationRules(): array

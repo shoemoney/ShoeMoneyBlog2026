@@ -39,7 +39,7 @@ class PostIndex extends Component
 
     public function render()
     {
-        $posts = Post::query()
+        $posts = Post::posts()
             ->with('author')
             ->when($this->search, function ($query) {
                 $query->where('title', 'like', '%' . $this->search . '%');

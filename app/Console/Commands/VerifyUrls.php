@@ -61,7 +61,7 @@ class VerifyUrls extends Command
     private function testContentType(string $type, ?int $limit): void
     {
         $query = match ($type) {
-            'posts' => Post::published()->orderBy('published_at', 'desc'),
+            'posts' => Post::posts()->published()->orderBy('published_at', 'desc'),
             'pages' => Page::query()->orderBy('id'),
             'categories' => Category::query()->orderBy('name'),
             'tags' => Tag::query()->orderBy('name'),

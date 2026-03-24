@@ -16,9 +16,6 @@ class SettingsSeeder extends Seeder
             ['key' => 'meta_description', 'value' => 'The original blog about making money online since 2003', 'type' => 'text', 'group' => 'general'],
             ['key' => 'posts_per_page', 'value' => '10', 'type' => 'integer', 'group' => 'general'],
 
-            // Comments
-            ['key' => 'comment_moderation', 'value' => 'first_time', 'type' => 'string', 'group' => 'comments'],
-
             // Social
             ['key' => 'social_twitter', 'value' => '', 'type' => 'string', 'group' => 'social'],
             ['key' => 'social_facebook', 'value' => '', 'type' => 'string', 'group' => 'social'],

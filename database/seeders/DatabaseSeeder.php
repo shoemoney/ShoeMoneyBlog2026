@@ -14,7 +14,6 @@ class DatabaseSeeder extends Seeder
      * 2. Categories and Tags (taxonomy for posts)
      * 3. Posts and Pages (content)
      * 4. Taxonomy Relationships (links posts to categories/tags)
-     * 5. Comments (references posts, users, and other comments)
      */
     public function run(): void
     {
@@ -41,13 +40,6 @@ class DatabaseSeeder extends Seeder
             TaxonomyRelationshipSeeder::class,
         ]);
 
-        // Phase 3: Engagement (depends on posts and users)
-        $this->command->newLine();
-        $this->command->info('Phase 3: Comments');
-        $this->call([
-            CommentSeeder::class,
-        ]);
-
         $this->command->newLine();
         $this->command->info('╔═══════════════════════════════════════╗');
         $this->command->info('║   Migration Complete!                 ║');
@@ -67,10 +59,8 @@ class DatabaseSeeder extends Seeder
                 ['Users', \App\Models\User::count()],
                 ['Categories', \App\Models\Category::count()],
                 ['Tags', \App\Models\Tag::count()],
-                ['Posts', \App\Models\Post::count()],
+                ['Posts', \App\Models\Post::posts()->count()],
                 ['Pages', \App\Models\Page::count()],
-                ['Comments', \App\Models\Comment::count()],
-                ['Comment Threads', \App\Models\Comment::whereNotNull('parent_id')->count()],
             ]
         );
     }

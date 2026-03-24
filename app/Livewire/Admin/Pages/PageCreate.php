@@ -21,7 +21,7 @@ class PageCreate extends Component
     {
         return [
             'title' => 'required|max:255',
-            'slug' => 'required|unique:pages,slug|max:255',
+            'slug' => 'required|unique:posts,slug|max:255',
             'content' => 'required',
             'menu_order' => 'integer|min:0',
         ];

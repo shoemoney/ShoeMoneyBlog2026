@@ -29,26 +29,11 @@
 
     @livewireStyles
 </head>
-<body class="bg-surface-page text-text-primary font-body antialiased min-h-screen flex flex-col transition-colors duration-200">
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-body antialiased min-h-screen flex flex-col transition-colors duration-200">
     <x-navigation />
 
-    @php
-        $hasWidgets = \App\Models\Widget::where('is_active', true)->exists();
-    @endphp
-
-    <main class="flex-1 container mx-auto px-4 py-8">
-        @if ($hasWidgets)
-            <div class="flex flex-col lg:flex-row gap-8">
-                <div class="flex-1 min-w-0">
-                    {{ $slot }}
-                </div>
-                <div class="w-full lg:w-80 shrink-0">
-                    <x-sidebar-widgets />
-                </div>
-            </div>
-        @else
-            {{ $slot }}
-        @endif
+    <main class="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {{ $slot }}
     </main>
 
     <x-footer />

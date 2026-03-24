@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
@@ -29,6 +28,8 @@ class Post extends Model
         'content',
         'excerpt',
         'status',
+        'post_type',
+        'menu_order',
         'published_at',
     ];
 
@@ -43,11 +44,6 @@ class Post extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
-    }
-
-    public function comments(): HasMany
-    {
-        return $this->hasMany(Comment::class);
     }
 
     public function tags(): MorphToMany
@@ -71,9 +67,30 @@ class Post extends Model
         return $query->where('status', 'draft');
     }
 
+    public function scopePosts($query)
+    {
+        return $query->where('post_type', 'post');
+    }
+
+    public function scopePages($query)
+    {
+        return $query->where('post_type', 'page');
+    }
+
+    public function isPage(): bool
+    {
+        return $this->post_type === 'page';
+    }
+
     // URL helper for WordPress-style permalinks
     public function getUrlAttribute(): string
     {
+        // Pages use simple slug-based URLs
+        if ($this->post_type === 'page') {
+            return '/' . $this->slug . '/';
+        }
+
+        // Posts use date-based URLs
         if (!$this->published_at) {
             return '#';
         }
@@ -135,6 +152,9 @@ class Post extends Model
      */
     public function shouldBeSearchable(): bool
     {
+        if ($this->post_type === 'page') {
+            return $this->status === 'published';
+        }
         return $this->status === 'published' && $this->published_at !== null;
     }
 

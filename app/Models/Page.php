@@ -2,76 +2,40 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\HasFeaturedImage;
-use App\Services\ShortcodeProcessor;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Illuminate\Support\Str;
-use Laravel\Scout\Searchable;
+use Illuminate\Database\Eloquent\Builder;
 
-class Page extends Model
+/**
+ * Page model - a thin proxy over the Post model.
+ *
+ * Pages are stored in the posts table with post_type = 'page'.
+ * This model exists for backward compatibility so existing code
+ * using Page:: continues to work seamlessly.
+ */
+class Page extends Post
 {
-    use HasFactory;
-    use HasFeaturedImage;
-    use Searchable;
+    protected $table = 'posts';
 
-    protected $fillable = [
-        'wordpress_id',
-        'user_id',
-        'title',
-        'slug',
-        'content',
-        'menu_order',
+    protected $attributes = [
+        'post_type' => 'page',
+        'status' => 'published',
     ];
 
-    public function author(): BelongsTo
+    protected static function booted(): void
     {
-        return $this->belongsTo(User::class, 'user_id');
-    }
+        static::addGlobalScope('pages', function (Builder $builder) {
+            $builder->where('post_type', 'page');
+        });
 
-    public function tags(): MorphToMany
-    {
-        return $this->morphToMany(Tag::class, 'taggable')->withTimestamps();
-    }
-
-    public function categories(): MorphToMany
-    {
-        return $this->morphToMany(Category::class, 'categorizable')->withTimestamps();
-    }
-
-    public function getUrlAttribute(): string
-    {
-        return '/' . $this->slug . '/';
+        static::creating(function (Page $page) {
+            $page->post_type = 'page';
+            $page->status ??= 'published';
+            $page->published_at ??= now();
+        });
     }
 
     /**
-     * Get rendered content with shortcodes processed to HTML.
+     * Override searchable index so pages have their own Algolia index.
      */
-    protected function renderedContent(): Attribute
-    {
-        return Attribute::make(
-            get: function () {
-                $processor = app(ShortcodeProcessor::class);
-                return $processor->process($this->content ?? '');
-            }
-        )->shouldCache();
-    }
-
-    // Search (Laravel Scout / Algolia)
-
-    public function toSearchableArray(): array
-    {
-        return [
-            'id' => $this->id,
-            'title' => $this->title,
-            'content' => Str::limit(strip_tags($this->content ?? ''), 5000),
-            'slug' => $this->slug,
-        ];
-    }
-
     public function searchableAs(): string
     {
         return config('scout.prefix') . 'pages';

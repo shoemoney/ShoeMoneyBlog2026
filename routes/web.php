@@ -86,10 +86,6 @@ Route::prefix('admin')
         Route::get('/posts/create', \App\Livewire\Admin\Posts\PostCreate::class)->name('admin.posts.create');
         Route::get('/posts/{post}/edit', \App\Livewire\Admin\Posts\PostEdit::class)->name('admin.posts.edit');
 
-        // Comments management
-        Route::get('/comments', \App\Livewire\Admin\Comments\CommentModeration::class)
-            ->name('admin.comments.index');
-
         // Categories management
         Route::get('/categories', \App\Livewire\Admin\Taxonomies\CategoryManager::class)
             ->name('admin.categories.index');

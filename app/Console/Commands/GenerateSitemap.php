@@ -40,7 +40,7 @@ class GenerateSitemap extends Command
 
         // Add posts (priority 0.8) - chunked for memory efficiency
         $this->info('Processing posts...');
-        Post::published()
+        Post::posts()->published()
             ->orderBy('published_at', 'desc')
             ->chunk(500, function ($posts) use ($sitemap, &$stats) {
                 foreach ($posts as $post) {

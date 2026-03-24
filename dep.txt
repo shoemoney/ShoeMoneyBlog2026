@@ -1,0 +1,12 @@
+archiver
+berkeley-db@4
+brew-cask-completion
+container-diff
+lbzip2
+libcroco
+libgit2@1.7
+lrzip
+neofetch
+node@20
+phpmd
+zopfli
