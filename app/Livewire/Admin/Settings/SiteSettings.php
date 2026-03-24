@@ -26,6 +26,10 @@ class SiteSettings extends Component
     public string $hero_title = '';
     public string $hero_blurb = '';
 
+    // Hero: Resume-style sections
+    public array $hero_focus_areas = [];
+    public array $hero_skills = [];
+
     // Social
     public string $social_twitter = '';
     public string $social_facebook = '';
@@ -73,6 +77,13 @@ class SiteSettings extends Component
         $this->hero_name = $settings->get('hero_name')?->value ?? 'ShoeMoney';
         $this->hero_title = $settings->get('hero_title')?->value ?? 'Entrepreneur & Blogger';
         $this->hero_blurb = $settings->get('hero_blurb')?->value ?? '';
+
+        // Hero: Resume sections
+        $focusRaw = $settings->get('hero_focus_areas')?->value ?? '[]';
+        $this->hero_focus_areas = is_array($focusRaw) ? $focusRaw : (json_decode($focusRaw, true) ?? []);
+
+        $skillsRaw = $settings->get('hero_skills')?->value ?? '[]';
+        $this->hero_skills = is_array($skillsRaw) ? $skillsRaw : (json_decode($skillsRaw, true) ?? []);
 
         // Social
         $this->social_twitter = $settings->get('social_twitter')?->value ?? '';
@@ -181,6 +192,30 @@ class SiteSettings extends Component
     {
         unset($this->hero_links[$index]);
         $this->hero_links = array_values($this->hero_links);
+    }
+
+    // Hero: Focus areas management
+    public function addFocusArea(): void
+    {
+        $this->hero_focus_areas[] = ['text' => ''];
+    }
+
+    public function removeFocusArea(int $index): void
+    {
+        unset($this->hero_focus_areas[$index]);
+        $this->hero_focus_areas = array_values($this->hero_focus_areas);
+    }
+
+    // Hero: Skills management
+    public function addSkillGroup(): void
+    {
+        $this->hero_skills[] = ['category' => '', 'items' => ''];
+    }
+
+    public function removeSkillGroup(int $index): void
+    {
+        unset($this->hero_skills[$index]);
+        $this->hero_skills = array_values($this->hero_skills);
     }
 
     /**
@@ -296,6 +331,8 @@ class SiteSettings extends Component
         Setting::setValue('popular_posts_items', $this->popular_posts_items, 'json', 'sidebar');
         Setting::setValue('hero_press_items', $this->hero_press_items, 'json', 'hero');
         Setting::setValue('hero_links', $this->hero_links, 'json', 'hero');
+        Setting::setValue('hero_focus_areas', $this->hero_focus_areas, 'json', 'hero');
+        Setting::setValue('hero_skills', $this->hero_skills, 'json', 'hero');
 
         session()->flash('success', 'Settings saved successfully.');
     }

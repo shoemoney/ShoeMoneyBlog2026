@@ -85,6 +85,58 @@
             </div>
         </div>
 
+
+        {{-- Hero: Focus Areas --}}
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-1">Hero: Focus Areas</h2>
+            <p class="text-sm text-gray-500 mb-4">What you're currently working on or focused on. Shown as a checklist in the hero.</p>
+            <div class="space-y-3">
+                @foreach($hero_focus_areas as $i => $area)
+                    <div class="flex items-center gap-2">
+                        <input type="text" wire:model="hero_focus_areas.{{ $i }}.text" placeholder="e.g. Application development, AI modeling..."
+                            class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+                        <button type="button" wire:click="removeFocusArea({{ $i }})"
+                            class="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                        </button>
+                    </div>
+                @endforeach
+                <button type="button" wire:click="addFocusArea"
+                    class="px-4 py-2 text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors">
+                    + Add Focus Area
+                </button>
+            </div>
+        </div>
+
+        {{-- Hero: Skills / Tech Stack --}}
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-1">Hero: Skills & Tech Stack</h2>
+            <p class="text-sm text-gray-500 mb-4">Grouped skill tags shown in the hero. Enter items as comma-separated values.</p>
+            <div class="space-y-3">
+                @foreach($hero_skills as $i => $group)
+                    <div class="flex items-start gap-2 p-3 bg-gray-50 rounded-lg">
+                        <div class="flex-1 space-y-2">
+                            <input type="text" wire:model="hero_skills.{{ $i }}.category" placeholder="Category (e.g. Languages, Frameworks, Databases)"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+                            <input type="text" wire:model="hero_skills.{{ $i }}.items" placeholder="PHP, Go, JavaScript, Rust (comma-separated)"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <button type="button" wire:click="removeSkillGroup({{ $i }})"
+                            class="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                        </button>
+                    </div>
+                @endforeach
+                <button type="button" wire:click="addSkillGroup"
+                    class="px-4 py-2 text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors">
+                    + Add Skill Group
+                </button>
+            </div>
+        </div>
         {{-- Hero: "As Seen In" Press Mentions --}}
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-1">Hero: Press / "As Seen In"</h2>

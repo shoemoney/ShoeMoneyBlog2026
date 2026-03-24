@@ -9,6 +9,10 @@
         if (is_string($heroLinks)) $heroLinks = json_decode($heroLinks, true) ?? [];
         $heroPressItems = \App\Models\Setting::getValue('hero_press_items', []);
         if (is_string($heroPressItems)) $heroPressItems = json_decode($heroPressItems, true) ?? [];
+        $heroFocusAreas = \App\Models\Setting::getValue('hero_focus_areas', []);
+        if (is_string($heroFocusAreas)) $heroFocusAreas = json_decode($heroFocusAreas, true) ?? [];
+        $heroSkills = \App\Models\Setting::getValue('hero_skills', []);
+        if (is_string($heroSkills)) $heroSkills = json_decode($heroSkills, true) ?? [];
         // Icon SVG map for hero links
         $iconSvgs = [
             'github' => '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>',
@@ -42,7 +46,7 @@
                     </div>
                 @endif
 
-                {{-- Right Side: Bio + Press + Links --}}
+                {{-- Right Side: Bio + Resume --}}
                 <div class="flex-1 text-center sm:text-left">
                     {{-- Name & Title --}}
                     <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100 font-display tracking-tight">
@@ -55,6 +59,49 @@
                         <p class="mt-3 text-gray-600 dark:text-gray-300 text-base leading-relaxed max-w-2xl">
                             {{ $heroBlurb }}
                         </p>
+                    @endif
+
+                    {{-- Focus Areas --}}
+                    @if(!empty($heroFocusAreas))
+                        <div class="mt-4">
+                            <div class="flex flex-wrap items-start gap-x-4 gap-y-1.5 justify-center sm:justify-start">
+                                @foreach($heroFocusAreas as $area)
+                                    @if(!empty($area['text']))
+                                        <span class="inline-flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-300">
+                                            <svg class="w-3.5 h-3.5 text-blue-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                            </svg>
+                                            {{ $area['text'] }}
+                                        </span>
+                                    @endif
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    {{-- Skills / Tech Stack --}}
+                    @if(!empty($heroSkills))
+                        <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                @foreach($heroSkills as $group)
+                                    @if(!empty($group['category']) && !empty($group['items']))
+                                        <div>
+                                            <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1.5">
+                                                {{ $group['category'] }}
+                                            </p>
+                                            <div class="flex flex-wrap gap-1.5">
+                                                @foreach(explode(',', $group['items']) as $skill)
+                                                    <span class="inline-block px-2 py-0.5 text-xs font-medium rounded-md
+                                                                 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+                                                        {{ trim($skill) }}
+                                                    </span>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            </div>
+                        </div>
                     @endif
 
                     {{-- "As Seen In" Press Mentions --}}
@@ -73,7 +120,7 @@
                                             <span class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ $press['name'] }}</span>
                                         @endif
                                         @if(!$loop->last)
-                                            <span class="text-gray-300 dark:text-gray-600">·</span>
+                                            <span class="text-gray-300 dark:text-gray-600">&middot;</span>
                                         @endif
                                     @endif
                                 @endforeach
