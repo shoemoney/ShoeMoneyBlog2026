@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Models\Setting;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -67,9 +68,18 @@ class PostController extends Controller
                 ->first();
 
             if ($post) {
+                Log::channel('single')->info('WP redirect', [
+                    'from' => "/{$year}/{$month}/{$day}/{$slug}",
+                    'to' => $post->url,
+                ]);
                 return redirect($post->url, 301);
             }
 
+            Log::channel('single')->warning('Post 404', [
+                'url' => "/{$year}/{$month}/{$day}/{$slug}",
+                'referer' => request()->header('referer'),
+                'ip' => request()->ip(),
+            ]);
             abort(404);
         }
 
