@@ -6,6 +6,7 @@ use App\Models\Post;
 use App\Models\Setting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class PostController extends Controller
@@ -45,7 +46,7 @@ class PostController extends Controller
      * @param string $slug
      * @return View
      */
-    public function show(string $year, string $month, string $day, string $slug): View
+    public function show(string $year, string $month, string $day, string $slug): View|RedirectResponse
     {
         // Query with full date validation to prevent URL manipulation
         $post = Post::posts()
@@ -55,7 +56,22 @@ class PostController extends Controller
             ->whereDay('published_at', $day)
             ->where('status', 'published')
             ->with('author', 'categories', 'tags', 'featuredImage')
-            ->firstOrFail();
+            ->first();
+
+        // If exact date match fails, try slug-only lookup and 301 redirect
+        // This handles old WordPress URLs where the migration date doesn't match
+        if (!$post) {
+            $post = Post::posts()
+                ->where('slug', $slug)
+                ->where('status', 'published')
+                ->first();
+
+            if ($post) {
+                return redirect($post->url, 301);
+            }
+
+            abort(404);
+        }
 
         $seo = seo()
             ->title($post->title . ' - ShoeMoney')
