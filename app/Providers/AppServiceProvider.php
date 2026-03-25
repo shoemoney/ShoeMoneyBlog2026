@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -20,6 +21,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Force HTTPS and correct host when behind Nginx proxy
+        if (app()->environment('production')) {
+            URL::forceScheme('https');
+            URL::forceRootUrl(config('app.url'));
+        }
+
         $this->configureSeo();
         $this->configureAuthorization();
     }
