@@ -77,32 +77,15 @@ class WidgetManager extends Component
         session()->flash('success', 'Widget deleted successfully.');
     }
 
-    public function moveUp(int $id): void
+    public function updatePosition(int $id, int $position): void
     {
-        $item = Widget::findOrFail($id);
-        $previous = Widget::where('position', '<', $item->position)
-            ->orderByDesc('position')
-            ->first();
-
-        if ($previous) {
-            $tempPos = $item->position;
-            $item->update(['position' => $previous->position]);
-            $previous->update(['position' => $tempPos]);
-        }
+        Widget::findOrFail($id)->update(['position' => $position]);
     }
 
-    public function moveDown(int $id): void
+    public function toggleActive(int $id): void
     {
-        $item = Widget::findOrFail($id);
-        $next = Widget::where('position', '>', $item->position)
-            ->orderBy('position')
-            ->first();
-
-        if ($next) {
-            $tempPos = $item->position;
-            $item->update(['position' => $next->position]);
-            $next->update(['position' => $tempPos]);
-        }
+        $widget = Widget::findOrFail($id);
+        $widget->update(['is_active' => !$widget->is_active]);
     }
 
     private function buildSettings(): ?array

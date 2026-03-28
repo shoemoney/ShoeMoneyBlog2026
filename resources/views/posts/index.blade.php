@@ -200,30 +200,7 @@
         </div>
 
         {{-- Right Sidebar --}}
-        <div class="w-full lg:w-80 shrink-0 space-y-6">
-            {{-- Latest Posts Widget --}}
-            <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-5 shadow-sm">
-                <h3 class="text-base font-bold text-gray-900 dark:text-gray-100 font-display mb-4 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    Latest Posts
-                </h3>
-                <ul class="space-y-3">
-                    @foreach($latestPosts as $latest)
-                        <li>
-                            <a href="{{ $latest->url }}" class="text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors leading-snug">
-                                {{ $latest->title }}
-                            </a>
-                            <div class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-                                {{ $latest->published_at?->format('M j, Y') }}
-                            </div>
-                        </li>
-                    @endforeach
-                </ul>
-            </div>
-
-            {{-- Existing Sidebar Widgets --}}
+        <div class="w-full lg:w-80 shrink-0">
             <x-sidebar-widgets />
         </div>
     </div>

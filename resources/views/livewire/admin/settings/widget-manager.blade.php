@@ -91,7 +91,7 @@
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order</th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Enabled</th>
                     <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
             </thead>
@@ -99,14 +99,14 @@
                 @forelse ($widgets as $widget)
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex items-center space-x-1">
-                                <button wire:click="moveUp({{ $widget->id }})" class="text-gray-400 hover:text-gray-600" title="Move up">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>
-                                </button>
-                                <button wire:click="moveDown({{ $widget->id }})" class="text-gray-400 hover:text-gray-600" title="Move down">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                                </button>
-                            </div>
+                            <select
+                                wire:change="updatePosition({{ $widget->id }}, $event.target.value)"
+                                class="w-16 px-2 py-1 text-sm border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500"
+                            >
+                                @for ($i = 0; $i <= $widgets->count(); $i++)
+                                    <option value="{{ $i }}" {{ $widget->position == $i ? 'selected' : '' }}>{{ $i }}</option>
+                                @endfor
+                            </select>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm font-medium text-gray-900">{{ $widget->title }}</div>
@@ -117,11 +117,12 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            @if ($widget->is_active)
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Active</span>
-                            @else
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Inactive</span>
-                            @endif
+                            <input
+                                type="checkbox"
+                                wire:click="toggleActive({{ $widget->id }})"
+                                {{ $widget->is_active ? 'checked' : '' }}
+                                class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            >
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <button wire:click="edit({{ $widget->id }})" class="text-blue-600 hover:text-blue-900 mr-3">Edit</button>

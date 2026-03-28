@@ -26,13 +26,6 @@ class PostController extends Controller
             ->limit(6)
             ->get();
 
-        // Latest Posts: most recent published, excluding featured to avoid dupes
-        $latestPosts = Post::posts()->published()
-            ->with('author', 'categories')
-            ->orderBy('published_at', 'desc')
-            ->limit(15)
-            ->get();
-
         $siteName = Setting::getValue('site_name', 'ShoeMoney');
         $siteTagline = Setting::getValue('site_tagline', 'Making Money Online');
         $metaDescription = Setting::getValue('meta_description', 'The original blog about making money online since 2003');
@@ -41,7 +34,7 @@ class PostController extends Controller
             ->title($siteName . ($siteTagline ? ' - ' . $siteTagline : ''))
             ->description($metaDescription);
 
-        return view('posts.index', compact('favorites', 'latestPosts'));
+        return view('posts.index', compact('favorites'));
     }
 
     /**
