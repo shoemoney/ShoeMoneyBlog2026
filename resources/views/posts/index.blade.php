@@ -177,9 +177,9 @@
         </section>
     @endif
 
-    {{-- Content Section: Reader Favorites + Latest Posts --}}
+    {{-- Posts Section --}}
     <div class="flex flex-col lg:flex-row gap-8">
-        {{-- Left: Reader Favorites --}}
+        {{-- Main Content: 3-column favorites grid --}}
         <div class="flex-1 min-w-0">
             <div class="flex items-center gap-3 mb-6">
                 <svg class="w-6 h-6 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
@@ -195,71 +195,36 @@
                     @endforeach
                 </div>
             @else
-                <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-12 text-center">
-                    <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
-                    </svg>
-                    <p class="text-gray-400 text-lg">Favorites coming soon...</p>
-                </div>
+                <p class="col-span-3 py-12 text-gray-400 text-center text-lg">No favorites yet. Star posts in the admin to feature them here.</p>
             @endif
         </div>
 
-        {{-- Right: Latest Posts --}}
-        <div class="w-full lg:w-96 shrink-0">
-            <div class="flex items-center gap-3 mb-6">
-                <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 font-display">Latest Posts</h2>
-            </div>
-
-            <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm divide-y divide-gray-100 dark:divide-gray-700">
-                @forelse($latestPosts as $latest)
-                    <a href="{{ $latest->url }}" class="flex items-start gap-3 p-4 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors group">
-                        {{-- Category icon --}}
-                        <div class="shrink-0 mt-0.5">
-                            @if($latest->categories->isNotEmpty())
-                                <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-                                    </svg>
-                                </span>
-                            @else
-                                <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-400">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
-                                    </svg>
-                                </span>
-                            @endif
-                        </div>
-
-                        {{-- Title + meta --}}
-                        <div class="flex-1 min-w-0">
-                            <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2 leading-snug">
+        {{-- Right Sidebar --}}
+        <div class="w-full lg:w-80 shrink-0 space-y-6">
+            {{-- Latest Posts Widget --}}
+            <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-5 shadow-sm">
+                <h3 class="text-base font-bold text-gray-900 dark:text-gray-100 font-display mb-4 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Latest Posts
+                </h3>
+                <ul class="space-y-3">
+                    @foreach($latestPosts as $latest)
+                        <li>
+                            <a href="{{ $latest->url }}" class="text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors leading-snug">
                                 {{ $latest->title }}
-                            </h3>
-                            <div class="flex items-center gap-2 mt-1 text-xs text-gray-400 dark:text-gray-500">
-                                @if($latest->published_at)
-                                    <time datetime="{{ $latest->published_at->toIso8601String() }}">
-                                        {{ $latest->published_at->format('M j, Y') }}
-                                    </time>
-                                @endif
-                                @if($latest->categories->isNotEmpty())
-                                    <span>&middot;</span>
-                                    <span class="text-blue-500 dark:text-blue-400">{{ $latest->categories->first()->name }}</span>
-                                @endif
+                            </a>
+                            <div class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                                {{ $latest->published_at?->format('M j, Y') }}
                             </div>
-                        </div>
-
-                        {{-- Arrow --}}
-                        <svg class="w-4 h-4 text-gray-300 group-hover:text-blue-500 shrink-0 mt-1 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
-                    </a>
-                @empty
-                    <div class="p-8 text-center text-gray-400">No posts yet.</div>
-                @endforelse
+                        </li>
+                    @endforeach
+                </ul>
             </div>
+
+            {{-- Existing Sidebar Widgets --}}
+            <x-sidebar-widgets />
         </div>
     </div>
 </x-layout>
