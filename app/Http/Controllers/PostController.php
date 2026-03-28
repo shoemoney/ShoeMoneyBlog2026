@@ -23,7 +23,7 @@ class PostController extends Controller
         $favorites = Post::posts()->published()->featured()
             ->with('author', 'categories', 'featuredImage')
             ->inRandomOrder()
-            ->limit(6)
+            ->limit(30)
             ->get();
 
         $siteName = Setting::getValue('site_name', 'ShoeMoney');
