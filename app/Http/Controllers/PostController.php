@@ -19,10 +19,19 @@ class PostController extends Controller
      */
     public function index(): View
     {
-        $posts = Post::posts()->published()
+        // Reader Favorites: featured posts in random order
+        $favorites = Post::posts()->published()->featured()
             ->with('author', 'categories', 'featuredImage')
+            ->inRandomOrder()
+            ->limit(6)
+            ->get();
+
+        // Latest Posts: most recent published, excluding featured to avoid dupes
+        $latestPosts = Post::posts()->published()
+            ->with('author', 'categories')
             ->orderBy('published_at', 'desc')
-            ->paginate(Setting::getValue('posts_per_page', 10));
+            ->limit(15)
+            ->get();
 
         $siteName = Setting::getValue('site_name', 'ShoeMoney');
         $siteTagline = Setting::getValue('site_tagline', 'Making Money Online');
@@ -32,7 +41,7 @@ class PostController extends Controller
             ->title($siteName . ($siteTagline ? ' - ' . $siteTagline : ''))
             ->description($metaDescription);
 
-        return view('posts.index', compact('posts'));
+        return view('posts.index', compact('favorites', 'latestPosts'));
     }
 
     /**

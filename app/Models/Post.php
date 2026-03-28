@@ -31,12 +31,14 @@ class Post extends Model
         'post_type',
         'menu_order',
         'published_at',
+        'is_featured',
     ];
 
     protected function casts(): array
     {
         return [
             'published_at' => 'datetime',
+            'is_featured' => 'boolean',
         ];
     }
 
@@ -70,6 +72,11 @@ class Post extends Model
     public function scopePosts($query)
     {
         return $query->where('post_type', 'post');
+    }
+
+    public function scopeFeatured($query)
+    {
+        return $query->where('is_featured', true);
     }
 
     public function scopePages($query)

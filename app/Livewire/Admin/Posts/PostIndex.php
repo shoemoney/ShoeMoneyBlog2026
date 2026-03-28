@@ -79,6 +79,12 @@ class PostIndex extends Component
         session()->flash('success', "{$count} post(s) deleted successfully.");
     }
 
+    public function toggleFeatured(int $id): void
+    {
+        $post = Post::findOrFail($id);
+        $post->update(['is_featured' => !$post->is_featured]);
+    }
+
     public function delete(int $id): void
     {
         $post = Post::findOrFail($id);
