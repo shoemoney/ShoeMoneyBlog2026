@@ -95,6 +95,28 @@ class PostEdit extends Component
         return null;
     }
 
+    public bool $showDeleteModal = false;
+
+    public function confirmDelete(): void
+    {
+        $this->showDeleteModal = true;
+    }
+
+    public function cancelDelete(): void
+    {
+        $this->showDeleteModal = false;
+    }
+
+    public function delete(): void
+    {
+        $this->post->categories()->detach();
+        $this->post->tags()->detach();
+        $this->post->delete();
+
+        session()->flash('success', 'Post deleted successfully.');
+        $this->redirect(route('admin.posts.index'), navigate: true);
+    }
+
     public function render()
     {
         return view('livewire.admin.posts.post-edit', [

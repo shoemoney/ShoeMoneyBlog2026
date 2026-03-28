@@ -42,7 +42,7 @@
                 <input
                     type="text"
                     id="slug"
-                    wire:model="slug"
+                    wire:model.blur="slug"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('slug') border-red-500 @enderror"
                     placeholder="post-url-slug"
                 >
@@ -59,7 +59,7 @@
                 </label>
                 <textarea
                     id="content"
-                    wire:model="content"
+                    wire:model.blur="content"
                     rows="12"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm @error('content') border-red-500 @enderror"
                     placeholder="Write your post content here. HTML is supported."
@@ -76,7 +76,7 @@
                 </label>
                 <textarea
                     id="excerpt"
-                    wire:model="excerpt"
+                    wire:model.blur="excerpt"
                     rows="3"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Brief summary for listings (optional)"
@@ -155,16 +155,51 @@
         </div>
 
         {{-- Actions --}}
-        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 rounded-b-lg flex items-center justify-end space-x-4">
-            <a href="{{ route('admin.posts.index') }}" class="px-4 py-2 text-gray-700 hover:text-gray-900">
-                Cancel
-            </a>
+        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 rounded-b-lg flex items-center justify-between">
             <button
-                type="submit"
-                class="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+                type="button"
+                wire:click="confirmDelete"
+                class="px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors"
             >
-                Update Post
+                Delete Post
             </button>
+            <div class="flex items-center space-x-4">
+                <a href="{{ route('admin.posts.index') }}" class="px-4 py-2 text-gray-700 hover:text-gray-900">
+                    Cancel
+                </a>
+                <button
+                    type="submit"
+                    class="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+                >
+                    Update Post
+                </button>
+            </div>
         </div>
     </form>
+
+    {{-- Delete Confirmation Modal --}}
+    @if ($showDeleteModal)
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" wire:click.self="cancelDelete">
+            <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Delete Post</h3>
+                <p class="text-gray-600 mb-1">Are you sure you want to delete:</p>
+                <p class="font-semibold text-gray-900 mb-4">"{{ $title }}"</p>
+                <p class="text-sm text-red-600 mb-6">This action cannot be undone.</p>
+                <div class="flex justify-end space-x-3">
+                    <button
+                        wire:click="cancelDelete"
+                        class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        wire:click="delete"
+                        class="px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors"
+                    >
+                        Yes, Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>
