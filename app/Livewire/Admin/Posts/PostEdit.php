@@ -20,6 +20,9 @@ class PostEdit extends Component
     public string $status = 'draft';
     public array $selectedCategories = [];
     public array $selectedTags = [];
+    public string $tagSearch = '';
+    public array $tagResults = [];
+    public array $selectedTagNames = [];
 
     public function mount(Post $post): void
     {
@@ -31,6 +34,7 @@ class PostEdit extends Component
         $this->status = $post->status ?? 'draft';
         $this->selectedCategories = $post->categories->pluck('id')->toArray();
         $this->selectedTags = $post->tags->pluck('id')->toArray();
+        $this->selectedTagNames = $post->tags->pluck('name', 'id')->toArray();
     }
 
     protected function rules(): array
@@ -44,6 +48,40 @@ class PostEdit extends Component
             'selectedCategories' => 'array',
             'selectedTags' => 'array',
         ];
+    }
+
+    public function updatedTagSearch(): void
+    {
+        if (strlen($this->tagSearch) < 2) {
+            $this->tagResults = [];
+            return;
+        }
+
+        $this->tagResults = Tag::where('name', 'like', '%' . $this->tagSearch . '%')
+            ->whereNotIn('id', $this->selectedTags)
+            ->orderBy('name')
+            ->limit(15)
+            ->pluck('name', 'id')
+            ->toArray();
+    }
+
+    public function addTag(int $id): void
+    {
+        if (!in_array($id, $this->selectedTags)) {
+            $tag = Tag::find($id);
+            if ($tag) {
+                $this->selectedTags[] = $id;
+                $this->selectedTagNames[$id] = $tag->name;
+            }
+        }
+        $this->tagSearch = '';
+        $this->tagResults = [];
+    }
+
+    public function removeTag(int $id): void
+    {
+        $this->selectedTags = array_values(array_diff($this->selectedTags, [$id]));
+        unset($this->selectedTagNames[$id]);
     }
 
     public function updatedTitle(): void
@@ -121,7 +159,6 @@ class PostEdit extends Component
     {
         return view('livewire.admin.posts.post-edit', [
             'categories' => Category::orderBy('name')->get(),
-            'tags' => Tag::orderBy('name')->get(),
         ]);
     }
 }
