@@ -42,11 +42,31 @@
         </div>
     </div>
 
+    {{-- Bulk Actions Bar --}}
+    @if (count($selected) > 0)
+        <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-between">
+            <span class="text-sm font-medium text-blue-800">{{ count($selected) }} post(s) selected</span>
+            <button
+                wire:click="confirmBulkDelete"
+                class="px-4 py-1.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors"
+            >
+                Delete Selected
+            </button>
+        </div>
+    @endif
+
     {{-- Posts Table --}}
     <div class="bg-white rounded-lg shadow overflow-hidden">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
+                    <th scope="col" class="w-12 px-4 py-3">
+                        <input
+                            type="checkbox"
+                            wire:model.live="selectAll"
+                            class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        >
+                    </th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Title
                     </th>
@@ -67,6 +87,14 @@
             <tbody class="bg-white divide-y divide-gray-200">
                 @forelse ($posts as $post)
                     <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="w-12 px-4 py-4">
+                            <input
+                                type="checkbox"
+                                wire:model.live="selected"
+                                value="{{ $post->id }}"
+                                class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            >
+                        </td>
                         <td class="px-6 py-4">
                             <div class="text-sm font-medium text-gray-900 max-w-md truncate">
                                 {{ $post->title }}
@@ -113,7 +141,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                        <td colspan="6" class="px-6 py-12 text-center text-gray-500">
                             @if ($search || $status)
                                 No posts found matching your criteria.
                             @else
@@ -130,6 +158,31 @@
     @if ($posts->hasPages())
         <div class="mt-6">
             {{ $posts->links() }}
+        </div>
+    @endif
+
+    {{-- Bulk Delete Confirmation Modal --}}
+    @if ($showBulkDeleteModal)
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" wire:click.self="cancelBulkDelete">
+            <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Delete {{ count($selected) }} Post(s)</h3>
+                <p class="text-gray-600 mb-4">Are you sure you want to delete {{ count($selected) }} selected post(s)?</p>
+                <p class="text-sm text-red-600 mb-6">This action cannot be undone.</p>
+                <div class="flex justify-end space-x-3">
+                    <button
+                        wire:click="cancelBulkDelete"
+                        class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        wire:click="bulkDelete"
+                        class="px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors"
+                    >
+                        Yes, Delete All
+                    </button>
+                </div>
+            </div>
         </div>
     @endif
 </div>
