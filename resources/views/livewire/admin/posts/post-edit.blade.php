@@ -111,18 +111,64 @@
                         @endif
                     </div>
 
-                    {{-- Prompt used --}}
-                    @if ($featuredImage->prompt_used)
-                        <div class="mb-3">
-                            <label class="block text-xs font-medium text-gray-500 mb-1">AI Prompt Used:</label>
-                            <div class="text-sm text-gray-700 bg-white border border-gray-200 rounded-lg p-3 max-h-32 overflow-y-auto font-mono text-xs leading-relaxed">
-                                {{ $featuredImage->prompt_used }}
-                            </div>
-                        </div>
-                    @endif
+                    {{-- Editable Prompt --}}
+                    <div class="mb-3">
+                        <label class="block text-xs font-medium text-gray-500 mb-1">AI Prompt (editable):</label>
+                        <textarea
+                            wire:model="customPrompt"
+                            rows="4"
+                            class="w-full text-sm text-gray-700 bg-white border border-gray-200 rounded-lg p-3 leading-relaxed focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-y"
+                            placeholder="Enter a custom prompt or leave blank to auto-generate from post content..."
+                        ></textarea>
+                        <p class="mt-1 text-xs text-gray-400">Edit the prompt above and click "Regenerate" to use it, or clear it to auto-generate a new one.</p>
+                    </div>
                 @else
-                    <p class="text-sm text-gray-500 mb-3">No featured image generated yet.</p>
+                    <div class="mb-3">
+                        <p class="text-sm text-gray-500 mb-2">No featured image generated yet.</p>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Custom Prompt (optional):</label>
+                        <textarea
+                            wire:model="customPrompt"
+                            rows="3"
+                            class="w-full text-sm text-gray-700 bg-white border border-gray-200 rounded-lg p-3 leading-relaxed focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-y"
+                            placeholder="Leave blank to auto-generate from post content..."
+                        ></textarea>
+                    </div>
                 @endif
+
+                {{-- Reference Images --}}
+                <div class="mb-3">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Reference Images:</label>
+                    <div class="flex flex-wrap gap-2 mb-2">
+                        @foreach ($referenceImages as $refImg)
+                            <div class="group flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-sm">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                <span class="text-gray-700">{{ $refImg }}</span>
+                                <button
+                                    type="button"
+                                    wire:click="removeReferenceImage('{{ $refImg }}')"
+                                    wire:confirm="Remove this reference image?"
+                                    class="ml-1 text-gray-400 hover:text-red-500 font-bold opacity-0 group-hover:opacity-100 transition-opacity"
+                                >&times;</button>
+                            </div>
+                        @endforeach
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input
+                            type="file"
+                            wire:model="newReferenceImage"
+                            accept="image/png,image/jpeg,image/webp"
+                            class="text-xs text-gray-500 file:mr-2 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-medium file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
+                        >
+                        @if ($newReferenceImage)
+                            <button
+                                type="button"
+                                wire:click="uploadReferenceImage"
+                                class="px-3 py-1 bg-gray-600 text-white text-xs font-medium rounded-lg hover:bg-gray-700"
+                            >Upload</button>
+                        @endif
+                    </div>
+                    <p class="mt-1 text-xs text-gray-400">These face/style reference images guide the AI when generating thumbnails.</p>
+                </div>
 
                 <button
                     type="button"

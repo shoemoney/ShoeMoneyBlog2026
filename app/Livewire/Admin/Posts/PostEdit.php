@@ -10,10 +10,13 @@ use App\Models\Tag;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 #[Layout('components.admin.layouts.app')]
 class PostEdit extends Component
 {
+    use WithFileUploads;
+
     public Post $post;
     public string $title = '';
     public string $slug = '';
@@ -25,6 +28,9 @@ class PostEdit extends Component
     public string $tagSearch = '';
     public array $tagResults = [];
     public array $selectedTagNames = [];
+    public string $customPrompt = '';
+    public $newReferenceImage;
+    public array $referenceImages = [];
 
     public function mount(Post $post): void
     {
@@ -37,6 +43,25 @@ class PostEdit extends Component
         $this->selectedCategories = $post->categories->pluck('id')->toArray();
         $this->selectedTags = $post->tags->pluck('id')->toArray();
         $this->selectedTagNames = $post->tags->pluck('name', 'id')->toArray();
+
+        // Load existing prompt for editing
+        if ($post->featuredImage?->prompt_used) {
+            $this->customPrompt = $post->featuredImage->prompt_used;
+        }
+
+        // Load reference images
+        $this->loadReferenceImages();
+    }
+
+    private function loadReferenceImages(): void
+    {
+        $refDir = config('services.featured_images.ref_images_path');
+        if ($refDir && is_dir($refDir)) {
+            $this->referenceImages = collect(scandir($refDir))
+                ->filter(fn ($f) => preg_match('/\.(png|jpe?g|webp)$/i', $f))
+                ->values()
+                ->toArray();
+        }
     }
 
     protected function rules(): array
@@ -165,15 +190,16 @@ class PostEdit extends Component
             $existing->delete();
         }
 
-        // Create a fresh pending record
+        // Create a fresh pending record, storing custom prompt if provided
         $featuredImage = FeaturedImage::create([
             'imageable_id' => $this->post->id,
             'imageable_type' => Post::class,
             'status' => 'pending',
             'attempts' => 0,
+            'prompt_used' => trim($this->customPrompt) ?: null,
         ]);
 
-        // Dispatch the job
+        // Dispatch the job (it will use prompt_used if already set, otherwise auto-generate)
         GenerateFeaturedImageJob::dispatch($featuredImage->id);
 
         // Reload the relationship
@@ -182,11 +208,55 @@ class PostEdit extends Component
         session()->flash('success', 'Thumbnail generation queued. It will appear shortly.');
     }
 
+    public function uploadReferenceImage(): void
+    {
+        $this->validate([
+            'newReferenceImage' => 'required|image|max:5120', // 5MB max
+        ]);
+
+        $refDir = config('services.featured_images.ref_images_path');
+        if (!$refDir || !is_dir($refDir)) {
+            session()->flash('error', 'Reference images directory not configured.');
+            return;
+        }
+
+        $filename = $this->newReferenceImage->getClientOriginalName();
+        $this->newReferenceImage->storeAs('', $filename, 'ref_images');
+
+        // Also copy to the actual ref_images dir used by the job
+        $this->newReferenceImage->move($refDir, $filename);
+
+        $this->newReferenceImage = null;
+        $this->loadReferenceImages();
+
+        session()->flash('success', "Reference image '{$filename}' uploaded.");
+    }
+
+    public function removeReferenceImage(string $filename): void
+    {
+        $refDir = config('services.featured_images.ref_images_path');
+        $path = $refDir . '/' . basename($filename);
+
+        if (file_exists($path)) {
+            unlink($path);
+        }
+
+        // Also remove from public for preview
+        $publicPath = public_path('ref_images/' . basename($filename));
+        if (file_exists($publicPath)) {
+            unlink($publicPath);
+        }
+
+        $this->loadReferenceImages();
+        session()->flash('success', "Reference image removed.");
+    }
+
     public function render()
     {
         return view('livewire.admin.posts.post-edit', [
             'categories' => Category::orderBy('name')->get(),
             'featuredImage' => $this->post->featuredImage,
+            'referenceImages' => $this->referenceImages,
         ]);
     }
 }

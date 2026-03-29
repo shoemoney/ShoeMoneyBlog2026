@@ -43,14 +43,20 @@ class GenerateFeaturedImageJob implements ShouldQueue
         ]);
 
         try {
-            // Step 1: Generate the image prompt from post content
-            $title = $imageable->title;
-            $content = $imageable->content ?? '';
+            // Step 1: Use custom prompt if provided, otherwise generate from post content
             $slug = $imageable->slug;
 
-            $prompt = $openRouter->generateImagePrompt($title, $content, $slug);
+            if (!empty($featuredImage->prompt_used)) {
+                // Custom prompt was set by user — use it as-is
+                $prompt = $featuredImage->prompt_used;
+            } else {
+                // Auto-generate prompt from post content
+                $title = $imageable->title;
+                $content = $imageable->content ?? '';
 
-            $featuredImage->update(['prompt_used' => $prompt]);
+                $prompt = $openRouter->generateImagePrompt($title, $content, $slug);
+                $featuredImage->update(['prompt_used' => $prompt]);
+            }
 
             // Step 2: Pick 1-2 random reference images
             $refPaths = $this->getRandomRefImages();
