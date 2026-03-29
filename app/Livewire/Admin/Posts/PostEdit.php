@@ -2,7 +2,9 @@
 
 namespace App\Livewire\Admin\Posts;
 
+use App\Jobs\GenerateFeaturedImageJob;
 use App\Models\Category;
+use App\Models\FeaturedImage;
 use App\Models\Post;
 use App\Models\Tag;
 use Illuminate\Support\Str;
@@ -26,7 +28,7 @@ class PostEdit extends Component
 
     public function mount(Post $post): void
     {
-        $this->post = $post;
+        $this->post = $post->load('featuredImage');
         $this->title = $post->title ?? '';
         $this->slug = $post->slug ?? '';
         $this->content = $post->content ?? '';
@@ -155,10 +157,36 @@ class PostEdit extends Component
         $this->redirect(route('admin.posts.index'), navigate: true);
     }
 
+    public function regenerateThumbnail(): void
+    {
+        // Delete existing featured image record if present
+        $existing = $this->post->featuredImage;
+        if ($existing) {
+            $existing->delete();
+        }
+
+        // Create a fresh pending record
+        $featuredImage = FeaturedImage::create([
+            'imageable_id' => $this->post->id,
+            'imageable_type' => Post::class,
+            'status' => 'pending',
+            'attempts' => 0,
+        ]);
+
+        // Dispatch the job
+        GenerateFeaturedImageJob::dispatch($featuredImage->id);
+
+        // Reload the relationship
+        $this->post->load('featuredImage');
+
+        session()->flash('success', 'Thumbnail generation queued. It will appear shortly.');
+    }
+
     public function render()
     {
         return view('livewire.admin.posts.post-edit', [
             'categories' => Category::orderBy('name')->get(),
+            'featuredImage' => $this->post->featuredImage,
         ]);
     }
 }

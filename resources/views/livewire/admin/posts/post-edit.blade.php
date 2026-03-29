@@ -86,6 +86,63 @@
                 @enderror
             </div>
 
+            {{-- Featured Image / Thumbnail --}}
+            <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                <label class="block text-sm font-medium text-gray-700 mb-3">
+                    Featured Image (AI Generated)
+                </label>
+
+                @if ($featuredImage)
+                    {{-- Current image --}}
+                    @if ($featuredImage->isCompleted() && $featuredImage->medium_url)
+                        <div class="mb-3">
+                            <img src="{{ $featuredImage->medium_url }}" alt="Featured image" class="w-full max-w-md rounded-lg shadow-sm">
+                        </div>
+                    @endif
+
+                    {{-- Status badge --}}
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-xs font-medium">Status:</span>
+                        @if ($featuredImage->isCompleted())
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Completed</span>
+                        @elseif ($featuredImage->status === 'generating')
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Generating...</span>
+                        @elseif ($featuredImage->isPending())
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Pending</span>
+                        @elseif ($featuredImage->isFailed())
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Failed</span>
+                            @if ($featuredImage->error_message)
+                                <span class="text-xs text-red-500">{{ Str::limit($featuredImage->error_message, 80) }}</span>
+                            @endif
+                        @endif
+                    </div>
+
+                    {{-- Prompt used --}}
+                    @if ($featuredImage->prompt_used)
+                        <div class="mb-3">
+                            <label class="block text-xs font-medium text-gray-500 mb-1">AI Prompt Used:</label>
+                            <div class="text-sm text-gray-700 bg-white border border-gray-200 rounded-lg p-3 max-h-32 overflow-y-auto font-mono text-xs leading-relaxed">
+                                {{ $featuredImage->prompt_used }}
+                            </div>
+                        </div>
+                    @endif
+                @else
+                    <p class="text-sm text-gray-500 mb-3">No featured image generated yet.</p>
+                @endif
+
+                <button
+                    type="button"
+                    wire:click="regenerateThumbnail"
+                    wire:confirm="This will replace the current featured image. Continue?"
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                    {{ $featuredImage ? 'Regenerate Thumbnail' : 'Generate Thumbnail' }}
+                </button>
+            </div>
+
             {{-- Status --}}
             <div>
                 <label for="status" class="block text-sm font-medium text-gray-700 mb-1">
