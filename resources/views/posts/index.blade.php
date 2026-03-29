@@ -68,7 +68,7 @@
                         <div class="shrink-0">
                             <img src="{{ $heroPhoto }}"
                                  alt="{{ $heroName }}"
-                                 class="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl object-cover shadow-md ring-4 ring-blue-50 dark:ring-gray-700">
+                                 class="w-40 h-40 sm:w-52 sm:h-52 lg:w-60 lg:h-60 rounded-2xl object-cover shadow-md ring-4 ring-blue-50 dark:ring-gray-700">
                         </div>
                     @endif
 
