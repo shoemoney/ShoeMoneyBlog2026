@@ -46,21 +46,15 @@
             </div>
 
             {{-- Content --}}
-            <div>
-                <label for="content" class="block text-sm font-medium text-gray-700 mb-1">
+            <div wire:ignore>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
                     Content <span class="text-red-500">*</span>
                 </label>
-                <textarea
-                    id="content"
-                    wire:model.blur="content"
-                    rows="12"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm @error('content') border-red-500 @enderror"
-                    placeholder="Write your post content here. HTML is supported."
-                ></textarea>
-                @error('content')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
+                <x-admin.tiptap-editor wire-model="content" :content="$content" />
             </div>
+            @error('content')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+            @enderror
 
             {{-- Excerpt --}}
             <div>
