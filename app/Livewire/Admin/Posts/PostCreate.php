@@ -2,7 +2,9 @@
 
 namespace App\Livewire\Admin\Posts;
 
+use App\Jobs\GenerateFeaturedImageJob;
 use App\Models\Category;
+use App\Models\FeaturedImage;
 use App\Models\Post;
 use App\Models\Tag;
 use Illuminate\Support\Str;
@@ -19,6 +21,9 @@ class PostCreate extends Component
     public string $status = 'draft';
     public array $selectedCategories = [];
     public array $selectedTags = [];
+    public string $tagSearch = '';
+    public array $tagResults = [];
+    public array $selectedTagNames = [];
 
     protected function rules(): array
     {
@@ -31,6 +36,40 @@ class PostCreate extends Component
             'selectedCategories' => 'array',
             'selectedTags' => 'array',
         ];
+    }
+
+    public function updatedTagSearch(): void
+    {
+        if (strlen($this->tagSearch) < 2) {
+            $this->tagResults = [];
+            return;
+        }
+
+        $this->tagResults = Tag::where('name', 'like', '%' . $this->tagSearch . '%')
+            ->whereNotIn('id', $this->selectedTags)
+            ->orderBy('name')
+            ->limit(15)
+            ->pluck('name', 'id')
+            ->toArray();
+    }
+
+    public function addTag(int $id): void
+    {
+        if (!in_array($id, $this->selectedTags)) {
+            $tag = Tag::find($id);
+            if ($tag) {
+                $this->selectedTags[] = $id;
+                $this->selectedTagNames[$id] = $tag->name;
+            }
+        }
+        $this->tagSearch = '';
+        $this->tagResults = [];
+    }
+
+    public function removeTag(int $id): void
+    {
+        $this->selectedTags = array_values(array_diff($this->selectedTags, [$id]));
+        unset($this->selectedTagNames[$id]);
     }
 
     public function updatedTitle(): void
@@ -63,7 +102,16 @@ class PostCreate extends Component
             $post->tags()->sync($this->selectedTags);
         }
 
-        session()->flash('success', 'Post created successfully.');
+        // Auto-generate AI featured image
+        $featuredImage = FeaturedImage::create([
+            'imageable_id' => $post->id,
+            'imageable_type' => Post::class,
+            'status' => 'pending',
+            'attempts' => 0,
+        ]);
+        GenerateFeaturedImageJob::dispatch($featuredImage->id);
+
+        session()->flash('success', 'Post created successfully. Thumbnail generation queued.');
 
         $this->redirect(route('admin.posts.index'), navigate: true);
     }
@@ -72,7 +120,6 @@ class PostCreate extends Component
     {
         return view('livewire.admin.posts.post-create', [
             'categories' => Category::orderBy('name')->get(),
-            'tags' => Tag::orderBy('name')->get(),
         ]);
     }
 }

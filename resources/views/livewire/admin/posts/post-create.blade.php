@@ -35,7 +35,7 @@
                 <input
                     type="text"
                     id="slug"
-                    wire:model="slug"
+                    wire:model.blur="slug"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('slug') border-red-500 @enderror"
                     placeholder="post-url-slug"
                 >
@@ -52,7 +52,7 @@
                 </label>
                 <textarea
                     id="content"
-                    wire:model="content"
+                    wire:model.blur="content"
                     rows="12"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm @error('content') border-red-500 @enderror"
                     placeholder="Write your post content here. HTML is supported."
@@ -69,7 +69,7 @@
                 </label>
                 <textarea
                     id="excerpt"
-                    wire:model="excerpt"
+                    wire:model.blur="excerpt"
                     rows="3"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Brief summary for listings (optional)"
@@ -124,21 +124,46 @@
                 <label class="block text-sm font-medium text-gray-700 mb-2">
                     Tags
                 </label>
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 p-4 border border-gray-200 rounded-lg bg-gray-50 max-h-48 overflow-y-auto">
-                    @forelse ($tags as $tag)
-                        <label class="flex items-center space-x-2 cursor-pointer">
-                            <input
-                                type="checkbox"
-                                wire:model="selectedTags"
-                                value="{{ $tag->id }}"
-                                class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                            >
-                            <span class="text-sm text-gray-700">{{ $tag->name }}</span>
-                        </label>
-                    @empty
-                        <p class="text-sm text-gray-500 col-span-full">No tags available</p>
-                    @endforelse
+
+                {{-- Selected tags as pills --}}
+                @if (count($selectedTagNames))
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        @foreach ($selectedTagNames as $id => $name)
+                            <span class="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">
+                                {{ $name }}
+                                <button type="button" wire:click="removeTag({{ $id }})" class="text-blue-600 hover:text-blue-900 font-bold">&times;</button>
+                            </span>
+                        @endforeach
+                    </div>
+                @endif
+
+                {{-- Tag search input --}}
+                <div class="relative">
+                    <input
+                        type="text"
+                        wire:model.live.debounce.300ms="tagSearch"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Search tags..."
+                        autocomplete="off"
+                    >
+
+                    {{-- Search results dropdown --}}
+                    @if (count($tagResults))
+                        <div class="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                            @foreach ($tagResults as $id => $name)
+                                <button
+                                    type="button"
+                                    wire:click="addTag({{ $id }})"
+                                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700"
+                                >
+                                    {{ $name }}
+                                </button>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
+
+                <p class="mt-1 text-sm text-gray-500">{{ count($selectedTags) }} tag(s) selected</p>
             </div>
         </div>
 
