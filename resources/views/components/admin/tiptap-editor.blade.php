@@ -2,8 +2,6 @@
 
 <div
     x-data="tiptapEditor(@js($content), '{{ $wireModel }}')"
-    x-init="init()"
-    x-on:destroy="destroy()"
     class="tiptap-wrapper border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500"
 >
     {{-- Toolbar --}}

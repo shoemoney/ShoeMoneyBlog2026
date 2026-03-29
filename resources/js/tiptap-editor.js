@@ -31,14 +31,6 @@ export default function tiptapEditor(content, wireModelName) {
         previewMode: false,
 
         init() {
-            // Guard against double initialization (Livewire + Alpine can trigger twice)
-            if (this.editor) {
-                this.editor.destroy()
-                this.editor = null
-            }
-            // Clear any existing ProseMirror instances from container
-            this.$refs.editorContainer.innerHTML = ''
-
             const self = this
 
             this.editor = new Editor({
