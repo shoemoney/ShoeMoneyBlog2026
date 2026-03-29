@@ -60,119 +60,119 @@
                 </div>
             @endif
 
-            <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-8 p-6 sm:p-8">
-                {{-- Photo Left --}}
-                @if($heroPhoto)
-                    <div class="shrink-0">
-                        <img src="{{ $heroPhoto }}"
-                             alt="{{ $heroName }}"
-                             class="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl object-cover shadow-md ring-4 ring-blue-50 dark:ring-gray-700">
+            <div class="p-6 sm:p-8">
+                {{-- Top Row: Photo + Name/Title/Blurb/Focus Areas --}}
+                <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-8">
+                    {{-- Photo --}}
+                    @if($heroPhoto)
+                        <div class="shrink-0">
+                            <img src="{{ $heroPhoto }}"
+                                 alt="{{ $heroName }}"
+                                 class="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl object-cover shadow-md ring-4 ring-blue-50 dark:ring-gray-700">
+                        </div>
+                    @endif
+
+                    {{-- Name, Title, Blurb, Focus Areas --}}
+                    <div class="flex-1 text-center sm:text-left">
+                        <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100 font-display tracking-tight">
+                            {{ $heroName }}
+                        </h1>
+                        <p class="text-blue-600 dark:text-blue-400 font-medium text-lg mt-1">{{ $heroTitle }}</p>
+
+                        @if($heroBlurb)
+                            <p class="mt-3 text-gray-600 dark:text-gray-300 text-base leading-relaxed">
+                                {{ $heroBlurb }}
+                            </p>
+                        @endif
+
+                        @if(!empty($heroFocusAreas))
+                            <div class="mt-4">
+                                <div class="flex flex-wrap items-start gap-x-4 gap-y-1.5 justify-center sm:justify-start">
+                                    @foreach($heroFocusAreas as $area)
+                                        @if(!empty($area['text']))
+                                            <span class="inline-flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-300">
+                                                <svg class="w-3.5 h-3.5 text-blue-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                                </svg>
+                                                {{ $area['text'] }}
+                                            </span>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
                     </div>
-                @endif
+                </div>
 
-                {{-- Right Side: Bio + Resume --}}
-                <div class="flex-1 text-center sm:text-left">
-                    {{-- Name & Title --}}
-                    <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100 font-display tracking-tight">
-                        {{ $heroName }}
-                    </h1>
-                    <p class="text-blue-600 dark:text-blue-400 font-medium text-lg mt-1">{{ $heroTitle }}</p>
-
-                    {{-- Bio Blurb --}}
-                    @if($heroBlurb)
-                        <p class="mt-3 text-gray-600 dark:text-gray-300 text-base leading-relaxed max-w-2xl">
-                            {{ $heroBlurb }}
-                        </p>
-                    @endif
-
-                    {{-- Focus Areas --}}
-                    @if(!empty($heroFocusAreas))
-                        <div class="mt-4">
-                            <div class="flex flex-wrap items-start gap-x-4 gap-y-1.5 justify-center sm:justify-start">
-                                @foreach($heroFocusAreas as $area)
-                                    @if(!empty($area['text']))
-                                        <span class="inline-flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-300">
-                                            <svg class="w-3.5 h-3.5 text-blue-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                            </svg>
-                                            {{ $area['text'] }}
-                                        </span>
-                                    @endif
-                                @endforeach
-                            </div>
-                        </div>
-                    @endif
-
-                    {{-- Skills / Tech Stack --}}
-                    @if(!empty($heroSkills))
-                        <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                                @foreach($heroSkills as $group)
-                                    @if(!empty($group['category']) && !empty($group['items']))
-                                        <div>
-                                            <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1.5">
-                                                {{ $group['category'] }}
-                                            </p>
-                                            <div class="flex flex-wrap gap-1.5">
-                                                @foreach(explode(',', $group['items']) as $skill)
-                                                    <span class="inline-block px-2 py-0.5 text-xs font-medium rounded-md
-                                                                 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
-                                                        {{ trim($skill) }}
-                                                    </span>
-                                                @endforeach
-                                            </div>
+                {{-- Full-Width: Skills / Tech Stack --}}
+                @if(!empty($heroSkills))
+                    <div class="mt-6 pt-5 border-t border-gray-100 dark:border-gray-700">
+                        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+                            @foreach($heroSkills as $group)
+                                @if(!empty($group['category']) && !empty($group['items']))
+                                    <div>
+                                        <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1.5">
+                                            {{ $group['category'] }}
+                                        </p>
+                                        <div class="flex flex-wrap gap-1.5">
+                                            @foreach(explode(',', $group['items']) as $skill)
+                                                <span class="inline-block px-2 py-0.5 text-xs font-medium rounded-md
+                                                             bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+                                                    {{ trim($skill) }}
+                                                </span>
+                                            @endforeach
                                         </div>
-                                    @endif
-                                @endforeach
-                            </div>
-                        </div>
-                    @endif
-
-                    {{-- "As Seen In" Press Mentions --}}
-                    @if(!empty($heroPressItems))
-                        <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
-                            <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2">As Seen In</p>
-                            <div class="flex flex-wrap items-center gap-x-4 gap-y-1 justify-center sm:justify-start">
-                                @foreach($heroPressItems as $press)
-                                    @if(!empty($press['name']))
-                                        @if(!empty($press['url']))
-                                            <a href="{{ $press['url'] }}" target="_blank" rel="noopener"
-                                               class="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                                                {{ $press['name'] }}
-                                            </a>
-                                        @else
-                                            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ $press['name'] }}</span>
-                                        @endif
-                                        @if(!$loop->last)
-                                            <span class="text-gray-300 dark:text-gray-600">&middot;</span>
-                                        @endif
-                                    @endif
-                                @endforeach
-                            </div>
-                        </div>
-                    @endif
-
-                    {{-- Project & Social Links --}}
-                    @if(!empty($heroLinks))
-                        <div class="mt-4 flex flex-wrap items-center gap-3 justify-center sm:justify-start">
-                            @foreach($heroLinks as $heroLink)
-                                @if(!empty($heroLink['url']))
-                                    <a href="{{ $heroLink['url'] }}" target="_blank" rel="noopener"
-                                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium
-                                              bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300
-                                              hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 dark:hover:text-blue-400
-                                              transition-all"
-                                       title="{{ $heroLink['label'] ?? $heroLink['icon'] ?? 'Link' }}">
-                                        {!! $iconSvgs[$heroLink['icon'] ?? 'link'] ?? $iconSvgs['link'] !!}
-                                        @if(!empty($heroLink['label']))
-                                            <span>{{ $heroLink['label'] }}</span>
-                                        @endif
-                                    </a>
+                                    </div>
                                 @endif
                             @endforeach
                         </div>
-                    @endif
-                </div>
+                    </div>
+                @endif
+
+                {{-- Full-Width: "As Seen In" Press Mentions --}}
+                @if(!empty($heroPressItems))
+                    <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                        <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2">As Seen In</p>
+                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 justify-center sm:justify-start">
+                            @foreach($heroPressItems as $press)
+                                @if(!empty($press['name']))
+                                    @if(!empty($press['url']))
+                                        <a href="{{ $press['url'] }}" target="_blank" rel="noopener"
+                                           class="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                            {{ $press['name'] }}
+                                        </a>
+                                    @else
+                                        <span class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ $press['name'] }}</span>
+                                    @endif
+                                    @if(!$loop->last)
+                                        <span class="text-gray-300 dark:text-gray-600">&middot;</span>
+                                    @endif
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Full-Width: Project & Social Links --}}
+                @if(!empty($heroLinks))
+                    <div class="mt-4 flex flex-wrap items-center gap-3 justify-center sm:justify-start">
+                        @foreach($heroLinks as $heroLink)
+                            @if(!empty($heroLink['url']))
+                                <a href="{{ $heroLink['url'] }}" target="_blank" rel="noopener"
+                                   class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium
+                                          bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300
+                                          hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 dark:hover:text-blue-400
+                                          transition-all"
+                                   title="{{ $heroLink['label'] ?? $heroLink['icon'] ?? 'Link' }}">
+                                    {!! $iconSvgs[$heroLink['icon'] ?? 'link'] ?? $iconSvgs['link'] !!}
+                                    @if(!empty($heroLink['label']))
+                                        <span>{{ $heroLink['label'] }}</span>
+                                    @endif
+                                </a>
+                            @endif
+                        @endforeach
+                    </div>
+                @endif
             </div>
         </section>
     @endif
