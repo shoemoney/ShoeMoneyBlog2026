@@ -1,0 +1,44 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php:*)",
+      "Bash(composer show:*)",
+      "Bash(composer require:*)",
+      "Bash(mysql:*)",
+      "Bash(sudo mysql:*)",
+      "Bash(unset:*)",
+      "Bash(source /Users/shoemoney/Projects/ShoeMoneyVelle/.env)",
+      "WebFetch(domain:cdn.shoemoney.com)",
+      "Bash(AWS_ACCESS_KEY_ID=\"$AWS_ACCESS_KEY_ID\" AWS_SECRET_ACCESS_KEY=\"$AWS_SECRET_ACCESS_KEY\" aws s3:*)",
+      "Bash(AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY aws s3 ls:*)",
+      "Bash(export AWS_ACCESS_KEY_ID=e5dd0a96e65c8ca79379d582dcc03bdf)",
+      "Bash(export AWS_SECRET_ACCESS_KEY:*)",
+      "Bash(/usr/local/bin/mysql:*)",
+      "Bash(/opt/homebrew/bin/mysql:*)",
+      "Bash(/opt/homebrew/Cellar/mariadb/12.2.2/bin/mariadb:*)",
+      "Bash(AWS_ACCESS_KEY_ID=\"$AWS_ACCESS_KEY_ID\" AWS_SECRET_ACCESS_KEY=\"$AWS_SECRET_ACCESS_KEY\" aws s3 cp:*)",
+      "Bash(composer update:*)",
+      "Skill(commit-commands:commit)",
+      "Bash(aws ec2:*)",
+      "Bash(__NEW_LINE_57f17240844d8229__ aws ec2 modify-subnet-attribute --subnet-id subnet-089ed51e334036b06 --map-public-ip-on-launch)",
+      "Bash(__NEW_LINE_57f17240844d8229__ echo \"Tagged and enabled auto-assign public IP\")",
+      "Bash(aws route53:*)",
+      "mcp__claude_ai_Cloudflare_Developer_Platform__accounts_list",
+      "Bash(CF_TOKEN=\"9RxjZYxdyxtL4NaF6fdoTctqfrhDQxAPgMID3E8F\")",
+      "Bash(ZONE_ID=\"5e2bf106e23a03c3a8e75eba3870fe49\")",
+      "Bash(RECORD_ID=\"67706525829769beab569f9572982d54\")",
+      "Bash(__NEW_LINE_00baab7585f8a8a7__ curl -s -X PATCH \"https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records/$RECORD_ID\" -H \"Authorization: Bearer $CF_TOKEN\" -H \"Content-Type: application/json\" --data '{\"\"content\"\":\"\"100.49.4.12\"\"}')",
+      "mcp__plugin_laravel-boost_laravel-boost__read-log-entries",
+      "mcp__plugin_laravel-boost_laravel-boost__tinker",
+      "mcp__plugin_laravel-boost_laravel-boost__database-query",
+      "mcp__plugin_laravel-boost_laravel-boost__database-schema",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "playwright"
+  ]
+}

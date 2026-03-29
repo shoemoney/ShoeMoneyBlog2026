@@ -215,18 +215,23 @@ class PostEdit extends Component
         ]);
 
         $refDir = config('services.featured_images.ref_images_path');
-        if (!$refDir || !is_dir($refDir)) {
+        if (!$refDir) {
             session()->flash('error', 'Reference images directory not configured.');
             return;
         }
 
+        // Create directory if it doesn't exist
+        if (!is_dir($refDir)) {
+            mkdir($refDir, 0755, true);
+        }
+
         $filename = $this->newReferenceImage->getClientOriginalName();
-        $this->newReferenceImage->storeAs('', $filename, 'ref_images');
+        $tempPath = $this->newReferenceImage->getRealPath();
 
-        // Also copy to the actual ref_images dir used by the job
-        $this->newReferenceImage->move($refDir, $filename);
+        // Copy the Livewire temp upload directly to the ref_images directory
+        copy($tempPath, $refDir . '/' . $filename);
 
-        $this->newReferenceImage = null;
+        $this->reset('newReferenceImage');
         $this->loadReferenceImages();
 
         session()->flash('success', "Reference image '{$filename}' uploaded.");

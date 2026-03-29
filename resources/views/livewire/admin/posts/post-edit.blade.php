@@ -159,13 +159,16 @@
                             accept="image/png,image/jpeg,image/webp"
                             class="text-xs text-gray-500 file:mr-2 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-medium file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
                         >
-                        @if ($newReferenceImage)
-                            <button
-                                type="button"
-                                wire:click="uploadReferenceImage"
-                                class="px-3 py-1 bg-gray-600 text-white text-xs font-medium rounded-lg hover:bg-gray-700"
-                            >Upload</button>
-                        @endif
+                        <button
+                            type="button"
+                            wire:click="uploadReferenceImage"
+                            wire:loading.attr="disabled"
+                            wire:target="newReferenceImage"
+                            class="px-3 py-1 bg-gray-600 text-white text-xs font-medium rounded-lg hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <span wire:loading.remove wire:target="newReferenceImage">Upload</span>
+                            <span wire:loading wire:target="newReferenceImage">Uploading...</span>
+                        </button>
                     </div>
                     <p class="mt-1 text-xs text-gray-400">These face/style reference images guide the AI when generating thumbnails.</p>
                 </div>
