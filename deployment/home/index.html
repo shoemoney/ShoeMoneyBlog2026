@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0b0d0f">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jeremy Schoemaker</title>
+<meta name="description" content="Jeremy Schoemaker — two exits ($17M, $12M), Linux security at Wells Fargo Financial, now building credential-vault and routing infrastructure for the LLM stack.">
+<link rel="canonical" href="https://shoemoney.com/">
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
+<meta property="og:type" content="profile">
+<meta property="og:url" content="https://shoemoney.com/">
+<meta property="og:title" content="Jeremy Schoemaker">
+<meta property="og:description" content="Two exits ($17M, $12M). Linux security at Wells Fargo Financial. Now: credential vaults, rate-limit-aware routing, and usage accounting for the LLM stack.">
+<meta property="og:site_name" content="shoemoney.com">
+<meta property="og:image" content="https://shoemoney.com/portrait.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  color-scheme: dark;
+  --bg:#0b0d0f; --surface:#101316;
+  --ink:#edf0f2; --ink-2:#d3d9de; --body:#adb5bd; --muted:#939ba3;
+  --rule:#1e2327; --rule-2:#333b42;
+  --accent:#57c9aa;
+  --warn-bg:#1c1708; --warn-ink:#e3ba58; --warn-rule:#6b551e;
+  --f-mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --f-sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --t-label:.6875rem; --t-meta:.75rem; --t-sm:.8125rem;
+  --t-body:.875rem; --t-title:.9375rem; --t-lede:1rem;
+  --t-display:clamp(1.375rem,3.2vw,1.625rem);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--body);font-family:var(--f-sans);
+  font-size:16px;-webkit-font-smoothing:antialiased;padding:44px 24px 64px}
+main{max-width:760px;margin:0 auto}
+
+/* notice */
+.notice{max-width:760px;margin:0 auto 44px;background:var(--warn-bg);
+  border:1px solid var(--warn-rule);border-left-width:3px;border-radius:3px;
+  padding:12px 16px;font:400 var(--t-body)/1.55 var(--f-sans);color:var(--warn-ink)}
+.notice-tag{font:500 var(--t-label)/1 var(--f-mono);letter-spacing:.14em;
+  margin-right:10px;white-space:nowrap}
+.notice a{color:inherit;text-decoration-thickness:1px;text-underline-offset:3px}
+
+/* masthead */
+.masthead{display:flex;gap:30px;align-items:flex-start;margin-bottom:40px}
+.portrait{width:184px;height:184px;border-radius:3px;object-fit:cover;
+  border:1px solid var(--rule);flex-shrink:0;filter:saturate(.92)}
+h1{font:600 var(--t-display)/1.2 var(--f-sans);letter-spacing:-.012em;color:var(--ink);margin-bottom:6px}
+.meta{font:400 var(--t-sm)/1.5 var(--f-mono);color:var(--muted);margin-bottom:14px}
+.lede{font:400 var(--t-lede)/1.62 var(--f-sans);color:var(--ink-2);max-width:60ch}
+
+/* bands */
+.band{margin-top:40px}
+.band-label{display:flex;align-items:center;gap:14px;margin-bottom:14px;
+  font:500 var(--t-label)/1 var(--f-mono);letter-spacing:.16em;
+  text-transform:uppercase;color:var(--muted)}
+.band-label::after{content:"";flex:1;height:1px;background:var(--rule)}
+
+.rows{list-style:none}
+.row{display:grid;grid-template-columns:5.5rem 1fr 9.5rem;align-items:baseline;
+  padding:14px 0;border-bottom:1px solid var(--rule);transition:background .12s}
+.row:hover{background:color-mix(in srgb,var(--ink) 3%,transparent)}
+.date{color:var(--muted);padding-right:16px;font:400 var(--t-sm)/1.5 var(--f-mono)}
+.entry{border-left:1px solid var(--rule);padding-left:20px;min-width:0}
+.title{font:500 var(--t-title)/1.4 var(--f-sans);color:var(--ink);margin-bottom:4px}
+.title a{color:inherit}
+.detail{font:400 var(--t-body)/1.6 var(--f-sans);color:var(--body);max-width:62ch;text-wrap:pretty}
+.figure{text-align:right;padding-left:16px;color:var(--ink);
+  font:400 var(--t-sm)/1.5 var(--f-mono);font-variant-numeric:tabular-nums;
+  font-feature-settings:"tnum" 1}
+.figure.empty{color:var(--rule-2)}
+
+/* footing */
+.total{border-bottom:0;padding-top:18px}
+.total .entry{border-left:1px solid var(--rule);text-align:right;padding-right:0}
+.total .label{color:var(--muted);font:400 var(--t-sm)/1.5 var(--f-mono)}
+.total .figure{border-bottom:3px double var(--rule-2);padding-bottom:6px;
+  color:var(--ink);font-weight:500}
+
+/* diagram */
+.diagram{font:400 .78125rem/1.45 var(--f-mono);color:var(--muted);
+  margin:14px 0 4px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+.diagram .ok{color:var(--accent)} .diagram .warn{color:var(--warn-ink)}
+
+/* ratio figure */
+.ratio{margin:16px 0 4px;max-width:62ch}
+.ratio .n{font:500 clamp(2rem,7vw,2.75rem)/1 var(--f-mono);letter-spacing:-.03em;
+  color:var(--accent);font-variant-numeric:tabular-nums}
+.ratio .track{position:relative;height:3px;background:var(--rule-2);margin:12px 0 8px}
+.ratio .fill{position:absolute;inset:0 auto 0 0;width:.67%;min-width:2px;background:var(--accent);display:block}
+.ratio .lab{display:flex;justify-content:space-between;gap:12px;
+  font:400 var(--t-meta)/1.4 var(--f-mono);letter-spacing:.06em;
+  text-transform:uppercase;color:var(--muted)}
+@media(max-width:480px){.ratio .lab{flex-direction:column;gap:2px}}
+
+
+/* github activity — baked at build time, no runtime requests */
+.gh{margin-top:2px}
+.heat{width:100%;height:auto;display:block;max-width:581px}
+.heat rect{shape-rendering:crispEdges}
+.heat .l0{fill:#171b1f}
+.heat .l1{fill:#1f4d43}
+.heat .l2{fill:#2c7c68}
+.heat .l3{fill:#3fa88a}
+.heat .l4{fill:#57c9aa}
+.gh-stats{display:flex;flex-wrap:wrap;gap:6px 26px;margin-top:12px;
+  font:400 var(--t-sm)/1.6 var(--f-mono);color:var(--muted)}
+.gh-stats b{font-weight:400;color:var(--ink);font-variant-numeric:tabular-nums}
+.gh-note{font:400 var(--t-meta)/1.6 var(--f-mono);color:var(--muted);margin-top:8px}
+
+/* addenda with dot leaders */
+.addenda{display:grid;grid-template-columns:1fr;gap:8px 40px;margin-top:16px}
+@media(min-width:640px){.addenda{grid-template-columns:1fr 1fr}}
+.addenda div{display:flex;align-items:baseline;font:400 var(--t-sm)/1.6 var(--f-mono);color:var(--body)}
+.lead{flex:1;margin:0 8px;border-bottom:1px dotted var(--rule-2);transform:translateY(-.28em)}
+.addenda b{font-weight:400;color:var(--ink);font-variant-numeric:tabular-nums}
+
+/* links row */
+.elsewhere{font:400 var(--t-sm)/2 var(--f-mono);margin-top:14px}
+.press{font:400 var(--t-sm)/2 var(--f-mono);color:var(--muted);margin-top:6px}
+.press a{color:var(--muted)}
+
+a{color:var(--accent);text-decoration:underline;
+  text-decoration-color:color-mix(in srgb,var(--accent) 35%,transparent);
+  text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{text-decoration-color:var(--accent)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+
+footer{max-width:760px;margin:44px auto 0;padding-top:16px;border-top:1px solid var(--rule);
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;
+  font:400 var(--t-meta)/1.6 var(--f-mono);color:var(--muted)}
+footer a{color:var(--muted)}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+@media(max-width:720px){
+  .row{grid-template-columns:4.75rem 1fr}
+  .date{grid-column:1;grid-row:1}
+  .entry{grid-column:2;grid-row:1}
+  .figure{grid-column:2;grid-row:2;text-align:left;padding-left:20px;margin-top:6px;color:var(--muted)}
+  .total .figure{text-align:left}
+}
+@media(max-width:560px){
+  body{padding:28px 16px 40px}
+  .row{grid-template-columns:1fr;padding:16px 0}
+  .date{grid-row:auto;margin-bottom:4px}
+  .entry{grid-column:1;border-left:0;padding-left:0}
+  .figure{grid-column:1;padding-left:0}
+  .masthead{gap:18px}
+  .portrait{width:132px;height:132px}
+}
+</style>
+</head>
+<body>
+
+<aside class="notice" aria-label="Site notice">
+  <p><span class="notice-tag">ARCHIVE OFFLINE</span>The 12,000-post ShoeMoney.com archive is withheld pending a court matter. This page is one static file; nothing here links into it. <a href="/hudson">What happened &rarr;</a></p>
+</aside>
+
+<main>
+
+  <header class="masthead">
+    <img class="portrait" src="/portrait.jpg" alt="Jeremy Schoemaker" width="184" height="184">
+    <div>
+      <h1>Jeremy Schoemaker</h1>
+      <p class="meta">shoemoney &middot; Dallas, Texas &middot; <a href="mailto:jeremy@shoemoney.com">jeremy@shoemoney.com</a></p>
+      <p class="lede">Twenty-five years of shipping. Two companies built and sold. Before that, Linux security at a bank. Now: credential vaults, rate-limit-aware routing, and usage accounting for the LLM stack.</p>
+    </div>
+  </header>
+
+  <section class="band">
+    <h2 class="band-label"><span>Active</span></h2>
+    <ol class="rows">
+
+      <li class="row">
+        <span class="date">2026</span>
+        <div class="entry">
+          <h3 class="title"><a href="https://github.com/shoemoney/aigate" rel="noopener">aigate</a></h3>
+          <p class="detail">Multi-account LLM credential vault. An AES-256-GCM key registry &mdash; machines fetch provider credentials on demand instead of hardcoding them. Rate-limit-aware routing across accounts of the same provider. Live usage dashboard. It answers, for a team of one, the questions an enterprise asks: who can use which model, through which account, at what cost. Node.js, open source.</p>
+<pre class="diagram" role="img" aria-label="Request flow: a client calls aigate, which distributes across three provider accounts of the same provider. When account B returns HTTP 429 the request sheds to account C. Keys are AES-256-GCM encrypted and never leave the server."> client ──▶ aigate ──┬──▶ acct-a   <span class="ok">ok</span>
+                     ├──▶ acct-b   <span class="warn">429</span>  shed → acct-c
+                     └──▶ acct-c   <span class="ok">ok</span>
+               │
+               └── keys: AES-256-GCM, never on the client</pre>
+        </div>
+        <span class="figure">75 beta users</span>
+      </li>
+
+      <li class="row">
+        <span class="date">2026</span>
+        <div class="entry">
+          <h3 class="title"><a href="https://github.com/shoemoney/eldritchdm" rel="noopener">eldritchdm</a></h3>
+          <p class="detail">Agents built against the OpenRouter API and local models over MCP. Python, open source.</p>
+        </div>
+        <span class="figure empty" aria-hidden="true">&mdash;</span>
+      </li>
+
+      <li class="row">
+        <span class="date">2025</span>
+        <div class="entry">
+          <h3 class="title"><a href="https://github.com/shoemoney/devbox" rel="noopener">devbox</a></h3>
+          <p class="detail">Self-hostable file-sync hub. Version history, hooks, live dashboard. Go, AGPLv3.</p>
+        </div>
+        <span class="figure empty" aria-hidden="true">&mdash;</span>
+      </li>
+
+      <li class="row">
+        <span class="date">2023</span>
+        <div class="entry">
+          <h3 class="title">twitter.com &rarr; x.com</h3>
+          <p class="detail">nginx <code>map()</code> rewrite tables for the domain migration, written for the transition team.</p>
+        </div>
+        <span class="figure empty" aria-hidden="true">&mdash;</span>
+      </li>
+
+    </ol>
+  </section>
+
+  <section class="band">
+    <h2 class="band-label"><span>Settled</span></h2>
+    <ol class="rows">
+
+      <li class="row">
+        <span class="date">2013&ndash;2020</span>
+        <div class="entry"><h3 class="title">BuddyTV</h3><p class="detail">Board of advisors.</p></div>
+        <span class="figure empty" aria-hidden="true">&mdash;</span>
+      </li>
+
+      <li class="row">
+        <span class="date">2014&ndash;2019</span>
+        <div class="entry"><h3 class="title">Facebook</h3><p class="detail">Monetization board.</p></div>
+        <span class="figure empty" aria-hidden="true">&mdash;</span>
+      </li>
+
+      <li class="row">
+        <span class="date">2015</span>
+        <div class="entry">
+          <h3 class="title">PAR Program</h3>
+          <p class="detail">B2B SaaS. Roughly 20 beta accounts grown into enterprise contracts &mdash; Adidas, Marlboro, State Farm, a national political committee. Team of 12. Acquired.</p>
+        </div>
+        <span class="figure">$12,000,000.00</span>
+      </li>
+
+      <li class="row">
+        <span class="date">2013</span>
+        <div class="entry"><h3 class="title">Nothing&rsquo;s Changed But My Change</h3><p class="detail">Book.</p></div>
+        <span class="figure empty" aria-hidden="true">&mdash;</span>
+      </li>
+
+      <li class="row">
+        <span class="date">2010</span>
+        <div class="entry"><h3 class="title">Fast Company Influence Project</h3><p class="detail">Rank 1 of 32,955.</p></div>
+        <span class="figure empty" aria-hidden="true">&mdash;</span>
+      </li>
+
+      <li class="row">
+        <span class="date">2007</span>
+        <div class="entry">
+          <h3 class="title">AuctionAds</h3>
+          <p class="detail">Ad API for eBay auctions. 20,000+ self-serve publishers and about $2M/month within four months, two-person core team. eBay Star Developer Award, 2007. Acquired.</p>
+          <figure class="ratio">
+            <div class="n">150&#8202;:&#8202;1</div>
+            <span class="track"><span class="fill"></span></span>
+            <div class="lab"><span>200,000 API calls</span><span>30,000,000 impressions served</span></div>
+            <figcaption class="vh">Caching architecture served thirty million monthly ad impressions from two hundred thousand upstream API calls, a ratio of one hundred fifty to one.</figcaption>
+          </figure>
+        </div>
+        <span class="figure">$17,000,000.00</span>
+      </li>
+
+      <li class="row">
+        <span class="date">2005</span>
+        <div class="entry">
+          <h3 class="title">Google AdSense</h3>
+          <p class="detail">Single-month payment, August 2005. Cited by <a href="http://www.slate.com/id/2201325/" rel="noopener">Slate</a>. The thing most people know me for and the least interesting thing on this page.</p>
+        </div>
+        <span class="figure">$132,994.97</span>
+      </li>
+
+      <li class="row">
+        <span class="date">2000&ndash;2003</span>
+        <div class="entry">
+          <h3 class="title">Wells Fargo Financial</h3>
+          <p class="detail">Lead Linux security engineer. Reviewed infrastructure security for bank acquisitions; decided what entered production.</p>
+        </div>
+        <span class="figure empty" aria-hidden="true">&mdash;</span>
+      </li>
+
+      <li class="row total">
+        <span class="date"></span>
+        <div class="entry"><span class="label">total realized</span></div>
+        <span class="figure">$29,132,994.97</span>
+      </li>
+
+    </ol>
+  </section>
+
+  <section class="band gh">
+    <h2 class="band-label"><span>Github</span></h2>
+    <svg class="heat" viewBox="0 0 581 75" width="581" height="75" role="img" aria-label="GitHub contribution graph: 5,323 contributions in the last year."><rect x="0" y="0" width="9" height="9" rx="2" class="l1"/><rect x="0" y="11" width="9" height="9" rx="2" class="l1"/><rect x="0" y="22" width="9" height="9" rx="2" class="l1"/><rect x="0" y="33" width="9" height="9" rx="2" class="l0"/><rect x="0" y="44" width="9" height="9" rx="2" class="l0"/><rect x="0" y="55" width="9" height="9" rx="2" class="l0"/><rect x="0" y="66" width="9" height="9" rx="2" class="l1"/><rect x="11" y="0" width="9" height="9" rx="2" class="l1"/><rect x="11" y="11" width="9" height="9" rx="2" class="l0"/><rect x="11" y="22" width="9" height="9" rx="2" class="l1"/><rect x="11" y="33" width="9" height="9" rx="2" class="l0"/><rect x="11" y="44" width="9" height="9" rx="2" class="l1"/><rect x="11" y="55" width="9" height="9" rx="2" class="l2"/><rect x="11" y="66" width="9" height="9" rx="2" class="l2"/><rect x="22" y="0" width="9" height="9" rx="2" class="l1"/><rect x="22" y="11" width="9" height="9" rx="2" class="l0"/><rect x="22" y="22" width="9" height="9" rx="2" class="l0"/><rect x="22" y="33" width="9" height="9" rx="2" class="l0"/><rect x="22" y="44" width="9" height="9" rx="2" class="l0"/><rect x="22" y="55" width="9" height="9" rx="2" class="l0"/><rect x="22" y="66" width="9" height="9" rx="2" class="l0"/><rect x="33" y="0" width="9" height="9" rx="2" class="l0"/><rect x="33" y="11" width="9" height="9" rx="2" class="l0"/><rect x="33" y="22" width="9" height="9" rx="2" class="l2"/><rect x="33" y="33" width="9" height="9" rx="2" class="l0"/><rect x="33" y="44" width="9" height="9" rx="2" class="l0"/><rect x="33" y="55" width="9" height="9" rx="2" class="l1"/><rect x="33" y="66" width="9" height="9" rx="2" class="l1"/><rect x="44" y="0" width="9" height="9" rx="2" class="l0"/><rect x="44" y="11" width="9" height="9" rx="2" class="l3"/><rect x="44" y="22" width="9" height="9" rx="2" class="l0"/><rect x="44" y="33" width="9" height="9" rx="2" class="l0"/><rect x="44" y="44" width="9" height="9" rx="2" class="l0"/><rect x="44" y="55" width="9" height="9" rx="2" class="l0"/><rect x="44" y="66" width="9" height="9" rx="2" class="l0"/><rect x="55" y="0" width="9" height="9" rx="2" class="l0"/><rect x="55" y="11" width="9" height="9" rx="2" class="l0"/><rect x="55" y="22" width="9" height="9" rx="2" class="l0"/><rect x="55" y="33" width="9" height="9" rx="2" class="l0"/><rect x="55" y="44" width="9" height="9" rx="2" class="l0"/><rect x="55" y="55" width="9" height="9" rx="2" class="l0"/><rect x="55" y="66" width="9" height="9" rx="2" class="l0"/><rect x="66" y="0" width="9" height="9" rx="2" class="l0"/><rect x="66" y="11" width="9" height="9" rx="2" class="l0"/><rect x="66" y="22" width="9" height="9" rx="2" class="l0"/><rect x="66" y="33" width="9" height="9" rx="2" class="l0"/><rect x="66" y="44" width="9" height="9" rx="2" class="l0"/><rect x="66" y="55" width="9" height="9" rx="2" class="l0"/><rect x="66" y="66" width="9" height="9" rx="2" class="l0"/><rect x="77" y="0" width="9" height="9" rx="2" class="l0"/><rect x="77" y="11" width="9" height="9" rx="2" class="l0"/><rect x="77" y="22" width="9" height="9" rx="2" class="l0"/><rect x="77" y="33" width="9" height="9" rx="2" class="l0"/><rect x="77" y="44" width="9" height="9" rx="2" class="l0"/><rect x="77" y="55" width="9" height="9" rx="2" class="l0"/><rect x="77" y="66" width="9" height="9" rx="2" class="l0"/><rect x="88" y="0" width="9" height="9" rx="2" class="l0"/><rect x="88" y="11" width="9" height="9" rx="2" class="l0"/><rect x="88" y="22" width="9" height="9" rx="2" class="l0"/><rect x="88" y="33" width="9" height="9" rx="2" class="l0"/><rect x="88" y="44" width="9" height="9" rx="2" class="l0"/><rect x="88" y="55" width="9" height="9" rx="2" class="l0"/><rect x="88" y="66" width="9" height="9" rx="2" class="l0"/><rect x="99" y="0" width="9" height="9" rx="2" class="l0"/><rect x="99" y="11" width="9" height="9" rx="2" class="l0"/><rect x="99" y="22" width="9" height="9" rx="2" class="l0"/><rect x="99" y="33" width="9" height="9" rx="2" class="l0"/><rect x="99" y="44" width="9" height="9" rx="2" class="l0"/><rect x="99" y="55" width="9" height="9" rx="2" class="l0"/><rect x="99" y="66" width="9" height="9" rx="2" class="l0"/><rect x="110" y="0" width="9" height="9" rx="2" class="l0"/><rect x="110" y="11" width="9" height="9" rx="2" class="l0"/><rect x="110" y="22" width="9" height="9" rx="2" class="l0"/><rect x="110" y="33" width="9" height="9" rx="2" class="l0"/><rect x="110" y="44" width="9" height="9" rx="2" class="l0"/><rect x="110" y="55" width="9" height="9" rx="2" class="l0"/><rect x="110" y="66" width="9" height="9" rx="2" class="l0"/><rect x="121" y="0" width="9" height="9" rx="2" class="l0"/><rect x="121" y="11" width="9" height="9" rx="2" class="l0"/><rect x="121" y="22" width="9" height="9" rx="2" class="l0"/><rect x="121" y="33" width="9" height="9" rx="2" class="l0"/><rect x="121" y="44" width="9" height="9" rx="2" class="l0"/><rect x="121" y="55" width="9" height="9" rx="2" class="l0"/><rect x="121" y="66" width="9" height="9" rx="2" class="l0"/><rect x="132" y="0" width="9" height="9" rx="2" class="l0"/><rect x="132" y="11" width="9" height="9" rx="2" class="l0"/><rect x="132" y="22" width="9" height="9" rx="2" class="l0"/><rect x="132" y="33" width="9" height="9" rx="2" class="l0"/><rect x="132" y="44" width="9" height="9" rx="2" class="l0"/><rect x="132" y="55" width="9" height="9" rx="2" class="l0"/><rect x="132" y="66" width="9" height="9" rx="2" class="l0"/><rect x="143" y="0" width="9" height="9" rx="2" class="l0"/><rect x="143" y="11" width="9" height="9" rx="2" class="l0"/><rect x="143" y="22" width="9" height="9" rx="2" class="l0"/><rect x="143" y="33" width="9" height="9" rx="2" class="l0"/><rect x="143" y="44" width="9" height="9" rx="2" class="l0"/><rect x="143" y="55" width="9" height="9" rx="2" class="l0"/><rect x="143" y="66" width="9" height="9" rx="2" class="l0"/><rect x="154" y="0" width="9" height="9" rx="2" class="l0"/><rect x="154" y="11" width="9" height="9" rx="2" class="l0"/><rect x="154" y="22" width="9" height="9" rx="2" class="l0"/><rect x="154" y="33" width="9" height="9" rx="2" class="l0"/><rect x="154" y="44" width="9" height="9" rx="2" class="l0"/><rect x="154" y="55" width="9" height="9" rx="2" class="l0"/><rect x="154" y="66" width="9" height="9" rx="2" class="l0"/><rect x="165" y="0" width="9" height="9" rx="2" class="l1"/><rect x="165" y="11" width="9" height="9" rx="2" class="l1"/><rect x="165" y="22" width="9" height="9" rx="2" class="l0"/><rect x="165" y="33" width="9" height="9" rx="2" class="l0"/><rect x="165" y="44" width="9" height="9" rx="2" class="l0"/><rect x="165" y="55" width="9" height="9" rx="2" class="l0"/><rect x="165" y="66" width="9" height="9" rx="2" class="l0"/><rect x="176" y="0" width="9" height="9" rx="2" class="l0"/><rect x="176" y="11" width="9" height="9" rx="2" class="l0"/><rect x="176" y="22" width="9" height="9" rx="2" class="l0"/><rect x="176" y="33" width="9" height="9" rx="2" class="l0"/><rect x="176" y="44" width="9" height="9" rx="2" class="l0"/><rect x="176" y="55" width="9" height="9" rx="2" class="l0"/><rect x="176" y="66" width="9" height="9" rx="2" class="l0"/><rect x="187" y="0" width="9" height="9" rx="2" class="l0"/><rect x="187" y="11" width="9" height="9" rx="2" class="l0"/><rect x="187" y="22" width="9" height="9" rx="2" class="l2"/><rect x="187" y="33" width="9" height="9" rx="2" class="l1"/><rect x="187" y="44" width="9" height="9" rx="2" class="l0"/><rect x="187" y="55" width="9" height="9" rx="2" class="l1"/><rect x="187" y="66" width="9" height="9" rx="2" class="l0"/><rect x="198" y="0" width="9" height="9" rx="2" class="l1"/><rect x="198" y="11" width="9" height="9" rx="2" class="l0"/><rect x="198" y="22" width="9" height="9" rx="2" class="l3"/><rect x="198" y="33" width="9" height="9" rx="2" class="l0"/><rect x="198" y="44" width="9" height="9" rx="2" class="l2"/><rect x="198" y="55" width="9" height="9" rx="2" class="l1"/><rect x="198" y="66" width="9" height="9" rx="2" class="l2"/><rect x="209" y="0" width="9" height="9" rx="2" class="l2"/><rect x="209" y="11" width="9" height="9" rx="2" class="l0"/><rect x="209" y="22" width="9" height="9" rx="2" class="l0"/><rect x="209" y="33" width="9" height="9" rx="2" class="l0"/><rect x="209" y="44" width="9" height="9" rx="2" class="l2"/><rect x="209" y="55" width="9" height="9" rx="2" class="l1"/><rect x="209" y="66" width="9" height="9" rx="2" class="l1"/><rect x="220" y="0" width="9" height="9" rx="2" class="l1"/><rect x="220" y="11" width="9" height="9" rx="2" class="l1"/><rect x="220" y="22" width="9" height="9" rx="2" class="l0"/><rect x="220" y="33" width="9" height="9" rx="2" class="l0"/><rect x="220" y="44" width="9" height="9" rx="2" class="l1"/><rect x="220" y="55" width="9" height="9" rx="2" class="l2"/><rect x="220" y="66" width="9" height="9" rx="2" class="l2"/><rect x="231" y="0" width="9" height="9" rx="2" class="l0"/><rect x="231" y="11" width="9" height="9" rx="2" class="l0"/><rect x="231" y="22" width="9" height="9" rx="2" class="l0"/><rect x="231" y="33" width="9" height="9" rx="2" class="l0"/><rect x="231" y="44" width="9" height="9" rx="2" class="l3"/><rect x="231" y="55" width="9" height="9" rx="2" class="l1"/><rect x="231" y="66" width="9" height="9" rx="2" class="l0"/><rect x="242" y="0" width="9" height="9" rx="2" class="l0"/><rect x="242" y="11" width="9" height="9" rx="2" class="l0"/><rect x="242" y="22" width="9" height="9" rx="2" class="l0"/><rect x="242" y="33" width="9" height="9" rx="2" class="l0"/><rect x="242" y="44" width="9" height="9" rx="2" class="l0"/><rect x="242" y="55" width="9" height="9" rx="2" class="l0"/><rect x="242" y="66" width="9" height="9" rx="2" class="l1"/><rect x="253" y="0" width="9" height="9" rx="2" class="l0"/><rect x="253" y="11" width="9" height="9" rx="2" class="l0"/><rect x="253" y="22" width="9" height="9" rx="2" class="l0"/><rect x="253" y="33" width="9" height="9" rx="2" class="l0"/><rect x="253" y="44" width="9" height="9" rx="2" class="l0"/><rect x="253" y="55" width="9" height="9" rx="2" class="l0"/><rect x="253" y="66" width="9" height="9" rx="2" class="l0"/><rect x="264" y="0" width="9" height="9" rx="2" class="l0"/><rect x="264" y="11" width="9" height="9" rx="2" class="l0"/><rect x="264" y="22" width="9" height="9" rx="2" class="l0"/><rect x="264" y="33" width="9" height="9" rx="2" class="l0"/><rect x="264" y="44" width="9" height="9" rx="2" class="l0"/><rect x="264" y="55" width="9" height="9" rx="2" class="l0"/><rect x="264" y="66" width="9" height="9" rx="2" class="l0"/><rect x="275" y="0" width="9" height="9" rx="2" class="l0"/><rect x="275" y="11" width="9" height="9" rx="2" class="l3"/><rect x="275" y="22" width="9" height="9" rx="2" class="l0"/><rect x="275" y="33" width="9" height="9" rx="2" class="l0"/><rect x="275" y="44" width="9" height="9" rx="2" class="l1"/><rect x="275" y="55" width="9" height="9" rx="2" class="l1"/><rect x="275" y="66" width="9" height="9" rx="2" class="l0"/><rect x="286" y="0" width="9" height="9" rx="2" class="l0"/><rect x="286" y="11" width="9" height="9" rx="2" class="l0"/><rect x="286" y="22" width="9" height="9" rx="2" class="l0"/><rect x="286" y="33" width="9" height="9" rx="2" class="l0"/><rect x="286" y="44" width="9" height="9" rx="2" class="l0"/><rect x="286" y="55" width="9" height="9" rx="2" class="l1"/><rect x="286" y="66" width="9" height="9" rx="2" class="l4"/><rect x="297" y="0" width="9" height="9" rx="2" class="l4"/><rect x="297" y="11" width="9" height="9" rx="2" class="l0"/><rect x="297" y="22" width="9" height="9" rx="2" class="l0"/><rect x="297" y="33" width="9" height="9" rx="2" class="l0"/><rect x="297" y="44" width="9" height="9" rx="2" class="l1"/><rect x="297" y="55" width="9" height="9" rx="2" class="l2"/><rect x="297" y="66" width="9" height="9" rx="2" class="l0"/><rect x="308" y="0" width="9" height="9" rx="2" class="l0"/><rect x="308" y="11" width="9" height="9" rx="2" class="l0"/><rect x="308" y="22" width="9" height="9" rx="2" class="l0"/><rect x="308" y="33" width="9" height="9" rx="2" class="l0"/><rect x="308" y="44" width="9" height="9" rx="2" class="l0"/><rect x="308" y="55" width="9" height="9" rx="2" class="l0"/><rect x="308" y="66" width="9" height="9" rx="2" class="l2"/><rect x="319" y="0" width="9" height="9" rx="2" class="l4"/><rect x="319" y="11" width="9" height="9" rx="2" class="l3"/><rect x="319" y="22" width="9" height="9" rx="2" class="l1"/><rect x="319" y="33" width="9" height="9" rx="2" class="l1"/><rect x="319" y="44" width="9" height="9" rx="2" class="l1"/><rect x="319" y="55" width="9" height="9" rx="2" class="l0"/><rect x="319" y="66" width="9" height="9" rx="2" class="l1"/><rect x="330" y="0" width="9" height="9" rx="2" class="l1"/><rect x="330" y="11" width="9" height="9" rx="2" class="l0"/><rect x="330" y="22" width="9" height="9" rx="2" class="l1"/><rect x="330" y="33" width="9" height="9" rx="2" class="l0"/><rect x="330" y="44" width="9" height="9" rx="2" class="l0"/><rect x="330" y="55" width="9" height="9" rx="2" class="l0"/><rect x="330" y="66" width="9" height="9" rx="2" class="l0"/><rect x="341" y="0" width="9" height="9" rx="2" class="l1"/><rect x="341" y="11" width="9" height="9" rx="2" class="l0"/><rect x="341" y="22" width="9" height="9" rx="2" class="l0"/><rect x="341" y="33" width="9" height="9" rx="2" class="l0"/><rect x="341" y="44" width="9" height="9" rx="2" class="l0"/><rect x="341" y="55" width="9" height="9" rx="2" class="l0"/><rect x="341" y="66" width="9" height="9" rx="2" class="l0"/><rect x="352" y="0" width="9" height="9" rx="2" class="l0"/><rect x="352" y="11" width="9" height="9" rx="2" class="l0"/><rect x="352" y="22" width="9" height="9" rx="2" class="l0"/><rect x="352" y="33" width="9" height="9" rx="2" class="l0"/><rect x="352" y="44" width="9" height="9" rx="2" class="l0"/><rect x="352" y="55" width="9" height="9" rx="2" class="l0"/><rect x="352" y="66" width="9" height="9" rx="2" class="l0"/><rect x="363" y="0" width="9" height="9" rx="2" class="l1"/><rect x="363" y="11" width="9" height="9" rx="2" class="l0"/><rect x="363" y="22" width="9" height="9" rx="2" class="l0"/><rect x="363" y="33" width="9" height="9" rx="2" class="l0"/><rect x="363" y="44" width="9" height="9" rx="2" class="l0"/><rect x="363" y="55" width="9" height="9" rx="2" class="l0"/><rect x="363" y="66" width="9" height="9" rx="2" class="l0"/><rect x="374" y="0" width="9" height="9" rx="2" class="l0"/><rect x="374" y="11" width="9" height="9" rx="2" class="l0"/><rect x="374" y="22" width="9" height="9" rx="2" class="l0"/><rect x="374" y="33" width="9" height="9" rx="2" class="l0"/><rect x="374" y="44" width="9" height="9" rx="2" class="l0"/><rect x="374" y="55" width="9" height="9" rx="2" class="l0"/><rect x="374" y="66" width="9" height="9" rx="2" class="l0"/><rect x="385" y="0" width="9" height="9" rx="2" class="l0"/><rect x="385" y="11" width="9" height="9" rx="2" class="l1"/><rect x="385" y="22" width="9" height="9" rx="2" class="l1"/><rect x="385" y="33" width="9" height="9" rx="2" class="l1"/><rect x="385" y="44" width="9" height="9" rx="2" class="l0"/><rect x="385" y="55" width="9" height="9" rx="2" class="l0"/><rect x="385" y="66" width="9" height="9" rx="2" class="l2"/><rect x="396" y="0" width="9" height="9" rx="2" class="l2"/><rect x="396" y="11" width="9" height="9" rx="2" class="l0"/><rect x="396" y="22" width="9" height="9" rx="2" class="l0"/><rect x="396" y="33" width="9" height="9" rx="2" class="l4"/><rect x="396" y="44" width="9" height="9" rx="2" class="l3"/><rect x="396" y="55" width="9" height="9" rx="2" class="l1"/><rect x="396" y="66" width="9" height="9" rx="2" class="l0"/><rect x="407" y="0" width="9" height="9" rx="2" class="l0"/><rect x="407" y="11" width="9" height="9" rx="2" class="l0"/><rect x="407" y="22" width="9" height="9" rx="2" class="l1"/><rect x="407" y="33" width="9" height="9" rx="2" class="l1"/><rect x="407" y="44" width="9" height="9" rx="2" class="l0"/><rect x="407" y="55" width="9" height="9" rx="2" class="l0"/><rect x="407" y="66" width="9" height="9" rx="2" class="l0"/><rect x="418" y="0" width="9" height="9" rx="2" class="l0"/><rect x="418" y="11" width="9" height="9" rx="2" class="l0"/><rect x="418" y="22" width="9" height="9" rx="2" class="l0"/><rect x="418" y="33" width="9" height="9" rx="2" class="l1"/><rect x="418" y="44" width="9" height="9" rx="2" class="l0"/><rect x="418" y="55" width="9" height="9" rx="2" class="l0"/><rect x="418" y="66" width="9" height="9" rx="2" class="l0"/><rect x="429" y="0" width="9" height="9" rx="2" class="l0"/><rect x="429" y="11" width="9" height="9" rx="2" class="l0"/><rect x="429" y="22" width="9" height="9" rx="2" class="l0"/><rect x="429" y="33" width="9" height="9" rx="2" class="l0"/><rect x="429" y="44" width="9" height="9" rx="2" class="l3"/><rect x="429" y="55" width="9" height="9" rx="2" class="l4"/><rect x="429" y="66" width="9" height="9" rx="2" class="l2"/><rect x="440" y="0" width="9" height="9" rx="2" class="l0"/><rect x="440" y="11" width="9" height="9" rx="2" class="l0"/><rect x="440" y="22" width="9" height="9" rx="2" class="l0"/><rect x="440" y="33" width="9" height="9" rx="2" class="l0"/><rect x="440" y="44" width="9" height="9" rx="2" class="l0"/><rect x="440" y="55" width="9" height="9" rx="2" class="l0"/><rect x="440" y="66" width="9" height="9" rx="2" class="l0"/><rect x="451" y="0" width="9" height="9" rx="2" class="l0"/><rect x="451" y="11" width="9" height="9" rx="2" class="l0"/><rect x="451" y="22" width="9" height="9" rx="2" class="l0"/><rect x="451" y="33" width="9" height="9" rx="2" class="l0"/><rect x="451" y="44" width="9" height="9" rx="2" class="l0"/><rect x="451" y="55" width="9" height="9" rx="2" class="l0"/><rect x="451" y="66" width="9" height="9" rx="2" class="l0"/><rect x="462" y="0" width="9" height="9" rx="2" class="l0"/><rect x="462" y="11" width="9" height="9" rx="2" class="l3"/><rect x="462" y="22" width="9" height="9" rx="2" class="l3"/><rect x="462" y="33" width="9" height="9" rx="2" class="l4"/><rect x="462" y="44" width="9" height="9" rx="2" class="l3"/><rect x="462" y="55" width="9" height="9" rx="2" class="l4"/><rect x="462" y="66" width="9" height="9" rx="2" class="l3"/><rect x="473" y="0" width="9" height="9" rx="2" class="l4"/><rect x="473" y="11" width="9" height="9" rx="2" class="l3"/><rect x="473" y="22" width="9" height="9" rx="2" class="l2"/><rect x="473" y="33" width="9" height="9" rx="2" class="l3"/><rect x="473" y="44" width="9" height="9" rx="2" class="l4"/><rect x="473" y="55" width="9" height="9" rx="2" class="l4"/><rect x="473" y="66" width="9" height="9" rx="2" class="l4"/><rect x="484" y="0" width="9" height="9" rx="2" class="l4"/><rect x="484" y="11" width="9" height="9" rx="2" class="l4"/><rect x="484" y="22" width="9" height="9" rx="2" class="l4"/><rect x="484" y="33" width="9" height="9" rx="2" class="l4"/><rect x="484" y="44" width="9" height="9" rx="2" class="l4"/><rect x="484" y="55" width="9" height="9" rx="2" class="l0"/><rect x="484" y="66" width="9" height="9" rx="2" class="l4"/><rect x="495" y="0" width="9" height="9" rx="2" class="l4"/><rect x="495" y="11" width="9" height="9" rx="2" class="l4"/><rect x="495" y="22" width="9" height="9" rx="2" class="l4"/><rect x="495" y="33" width="9" height="9" rx="2" class="l4"/><rect x="495" y="44" width="9" height="9" rx="2" class="l4"/><rect x="495" y="55" width="9" height="9" rx="2" class="l3"/><rect x="495" y="66" width="9" height="9" rx="2" class="l4"/><rect x="506" y="0" width="9" height="9" rx="2" class="l4"/><rect x="506" y="11" width="9" height="9" rx="2" class="l2"/><rect x="506" y="22" width="9" height="9" rx="2" class="l1"/><rect x="506" y="33" width="9" height="9" rx="2" class="l3"/><rect x="506" y="44" width="9" height="9" rx="2" class="l4"/><rect x="506" y="55" width="9" height="9" rx="2" class="l4"/><rect x="506" y="66" width="9" height="9" rx="2" class="l4"/><rect x="517" y="0" width="9" height="9" rx="2" class="l4"/><rect x="517" y="11" width="9" height="9" rx="2" class="l4"/><rect x="517" y="22" width="9" height="9" rx="2" class="l0"/><rect x="517" y="33" width="9" height="9" rx="2" class="l0"/><rect x="517" y="44" width="9" height="9" rx="2" class="l0"/><rect x="517" y="55" width="9" height="9" rx="2" class="l0"/><rect x="517" y="66" width="9" height="9" rx="2" class="l0"/><rect x="528" y="0" width="9" height="9" rx="2" class="l0"/><rect x="528" y="11" width="9" height="9" rx="2" class="l3"/><rect x="528" y="22" width="9" height="9" rx="2" class="l4"/><rect x="528" y="33" width="9" height="9" rx="2" class="l2"/><rect x="528" y="44" width="9" height="9" rx="2" class="l0"/><rect x="528" y="55" width="9" height="9" rx="2" class="l0"/><rect x="528" y="66" width="9" height="9" rx="2" class="l1"/><rect x="539" y="0" width="9" height="9" rx="2" class="l0"/><rect x="539" y="11" width="9" height="9" rx="2" class="l1"/><rect x="539" y="22" width="9" height="9" rx="2" class="l4"/><rect x="539" y="33" width="9" height="9" rx="2" class="l0"/><rect x="539" y="44" width="9" height="9" rx="2" class="l0"/><rect x="539" y="55" width="9" height="9" rx="2" class="l0"/><rect x="539" y="66" width="9" height="9" rx="2" class="l0"/><rect x="550" y="0" width="9" height="9" rx="2" class="l0"/><rect x="550" y="11" width="9" height="9" rx="2" class="l1"/><rect x="550" y="22" width="9" height="9" rx="2" class="l2"/><rect x="550" y="33" width="9" height="9" rx="2" class="l1"/><rect x="550" y="44" width="9" height="9" rx="2" class="l0"/><rect x="550" y="55" width="9" height="9" rx="2" class="l3"/><rect x="550" y="66" width="9" height="9" rx="2" class="l4"/><rect x="561" y="0" width="9" height="9" rx="2" class="l4"/><rect x="561" y="11" width="9" height="9" rx="2" class="l4"/><rect x="561" y="22" width="9" height="9" rx="2" class="l0"/><rect x="561" y="33" width="9" height="9" rx="2" class="l4"/><rect x="561" y="44" width="9" height="9" rx="2" class="l4"/><rect x="561" y="55" width="9" height="9" rx="2" class="l4"/><rect x="561" y="66" width="9" height="9" rx="2" class="l4"/><rect x="572" y="0" width="9" height="9" rx="2" class="l3"/><rect x="572" y="11" width="9" height="9" rx="2" class="l3"/><rect x="572" y="22" width="9" height="9" rx="2" class="l3"/><rect x="572" y="33" width="9" height="9" rx="2" class="l2"/><rect x="572" y="44" width="9" height="9" rx="2" class="l4"/><rect x="572" y="55" width="9" height="9" rx="2" class="l4"/><rect x="572" y="66" width="9" height="9" rx="2" class="l3"/></svg>
+    <div class="gh-stats">
+      <span>contributions, last year <b>5,323</b></span>
+      <span>repositories touched <b>56</b></span>
+      <span>public repos <b>481</b></span>
+    </div>
+    <p class="gh-note">most of it is private work; <a href="https://github.com/shoemoney" rel="noopener">github.com/shoemoney</a></p>
+  </section>
+
+  <section class="band">
+    <h2 class="band-label"><span>Addenda</span></h2>
+    <div class="addenda">
+      <div><span>Conference talks</span><span class="lead"></span><b>50+</b></div>
+      <div><span>Raised for charity</span><span class="lead"></span><b>$80,000+</b></div>
+      <div><span>Current stack</span><span class="lead"></span><b>Go, Node, Postgres</b></div>
+      <div><span>Also</span><span class="lead"></span><b>FastAPI, Redis, GraphQL</b></div>
+    </div>
+  </section>
+
+  <section class="band">
+    <h2 class="band-label"><span>Elsewhere</span></h2>
+    <p class="elsewhere">
+      <a href="https://github.com/shoemoney" rel="noopener">github/shoemoney</a> &middot;
+      <a href="https://x.com/shoemoney" rel="noopener">x/shoemoney</a> &middot;
+      <a href="https://linkedin.com/in/shoemoney" rel="noopener">linkedin/in/shoemoney</a> &middot;
+      <a href="https://en.wikipedia.org/wiki/Jeremy_Schoemaker" rel="noopener">wikipedia</a> &middot;
+      <a href="https://www.amazon.com/Nothings-Changed-But-Change-ShoeMoney/dp/1480189243" rel="noopener">the book</a>
+    </p>
+    <p class="press">
+      <a href="https://www.nytimes.com/2006/12/30/business/30online.html" rel="noopener">The New York Times</a> &middot;
+      <a href="http://www.slate.com/id/2201325/" rel="noopener">Slate</a> &middot;
+      <a href="https://www.fastcompany.com/1693693/measuring-influence-one-click-time" rel="noopener">Fast Company</a> &middot;
+      <a href="http://siliconprairienews.com/2015/11/par-acquired-by-gosocial-for-12-million/" rel="noopener">Silicon Prairie News</a> &middot;
+      <a href="http://www.searchenginejournal.com/shoemoney-best-affiliate-marketing-blog-of-2006/" rel="noopener">Search Engine Journal</a>
+    </p>
+  </section>
+
+</main>
+
+<footer>
+  <div>&copy; Jeremy Schoemaker</div>
+  <div>one static HTML file &middot; no build step &middot; no JavaScript &middot; archive offline: <a href="/hudson">/hudson</a></div>
+</footer>
+
+</body>
+</html>

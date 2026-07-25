@@ -10,3 +10,6 @@ rr
 *.sh
 /vendor/
 vendor/
+
+# local tooling scratch
+.playwright-mcp/
